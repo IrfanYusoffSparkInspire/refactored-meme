@@ -56,10 +56,12 @@
             <div id="drawControls" class="hidden">
                 <div class="flex flex-wrap items-center gap-2 mb-4">
                     <label class="text-sm text-gray-600 w-full sm:w-auto">Drawing Tool:</label>
-                    <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 active-tool flex-1 sm:flex-none">Tray</button>
-                    <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none">MS Trunking</button>
-                    <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none">HDG Trunking</button>
-                    <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none">Eraser</button>
+                    <button id="selectTool" class="px-3 py-2 bg-gray-400 text-white rounded-md text-sm hover:bg-gray-500 active-tool flex-1 sm:flex-none border-2 border-gray-600 shadow-lg">Select/Edit</button>
+                    <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex-1 sm:flex-none transition-all duration-200">Tray</button>
+                    <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none transition-all duration-200">MS Trunking</button>
+                    <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none transition-all duration-200">HDG Trunking</button>
+                    <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 flex-1 sm:flex-none transition-all duration-200">Add Logo</button>
+                    <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none transition-all duration-200">Eraser</button>
                     <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
                 </div>
             </div>
@@ -94,11 +96,12 @@
             <div id="drawInstructions" class="hidden text-sm text-gray-600">
                 <p><strong>Draw Mode:</strong></p>
                 <ul class="list-disc list-inside mt-1">
-                    <li>Select red or purple line tool to draw straight dashed lines</li>
-                    <li>Click and drag to draw straight lines on the image</li>
-                    <li>Click on existing lines to select and edit them (move/resize)</li>
-                    <li>Press Delete key to remove selected lines</li>
-                    <li>Use eraser tool to delete lines by clicking</li>
+                    <li><strong>Select/Edit:</strong> Default mode for selecting and editing existing objects safely</li>
+                    <li><strong>Drawing Tools:</strong> Select Tray (red), MS Trunking (purple), or HDG Trunking (green) to draw straight dashed lines</li>
+                    <li><strong>Add Logo:</strong> Click anywhere to place the company logo</li>
+                    <li><strong>Eraser:</strong> Click on objects to delete them</li>
+                    <li>Click on existing objects to select and edit them (move/resize)</li>
+                    <li>Press Delete key to remove selected objects</li>
                     <li>Use "Clear All" to remove all drawings</li>
                 </ul>
             </div>
@@ -111,9 +114,11 @@
         let currentImage = null;
         let cropRect = null;
         let isDrawMode = false;
-        let currentDrawTool = 'tray';
+        let currentDrawTool = null;
         let originalImageData = null;
         let isEraserMode = false;
+        let isLogoMode = false;
+        let isSelectMode = true;
         
         // Fixed crop dimensions
         const CROP_WIDTH = 600;
@@ -302,26 +307,51 @@
         });
 
         // Drawing tool selection
+        document.getElementById('selectTool').addEventListener('click', function() {
+            currentDrawTool = null;
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = true;
+            updateDrawToolUI();
+        });
+
         document.getElementById('trayTool').addEventListener('click', function() {
             currentDrawTool = 'tray';
             isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
             updateDrawToolUI();
         });
 
         document.getElementById('msTrunkingTool').addEventListener('click', function() {
             currentDrawTool = 'msTrunking';
             isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
             updateDrawToolUI();
         });
 
         document.getElementById('hdgTrunkingTool').addEventListener('click', function() {
             currentDrawTool = 'hdgTrunking';
             isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('logoTool').addEventListener('click', function() {
+            isLogoMode = true;
+            isEraserMode = false;
+            isSelectMode = false;
+            currentDrawTool = null;
             updateDrawToolUI();
         });
 
         document.getElementById('eraserTool').addEventListener('click', function() {
             isEraserMode = true;
+            isLogoMode = false;
+            isSelectMode = false;
+            currentDrawTool = null;
             canvas.isDrawingMode = false; // Disable drawing mode for eraser
             updateDrawToolUI();
         });
@@ -336,16 +366,32 @@
         }
 
         function updateDrawToolUI() {
-            document.querySelectorAll('#trayTool, #msTrunkingTool, #hdgTrunkingTool, #eraserTool').forEach(btn => {
-                btn.classList.remove('active-tool', 'ring-2', 'ring-white');
+            // Remove active styling from all tools
+            document.querySelectorAll('#selectTool, #trayTool, #msTrunkingTool, #hdgTrunkingTool, #logoTool, #eraserTool').forEach(btn => {
+                btn.classList.remove('active-tool', 'border-2', 'shadow-lg');
+                btn.classList.add('transition-all', 'duration-200');
             });
             
-            if (isEraserMode) {
-                document.getElementById('eraserTool').classList.add('active-tool', 'ring-2', 'ring-white');
+            if (isSelectMode) {
+                document.getElementById('selectTool').classList.add('active-tool', 'border-2', 'border-gray-600', 'shadow-lg');
+                canvas.isDrawingMode = false;
+                canvas.defaultCursor = 'default';
+            } else if (isEraserMode) {
+                document.getElementById('eraserTool').classList.add('active-tool', 'border-2', 'border-yellow-300', 'shadow-lg');
                 canvas.isDrawingMode = false;
                 canvas.defaultCursor = 'crosshair';
-            } else {
-                document.getElementById(currentDrawTool + 'Tool').classList.add('active-tool', 'ring-2', 'ring-white');
+            } else if (isLogoMode) {
+                document.getElementById('logoTool').classList.add('active-tool', 'border-2', 'border-blue-300', 'shadow-lg');
+                canvas.isDrawingMode = false;
+                canvas.defaultCursor = 'crosshair';
+            } else if (currentDrawTool) {
+                const toolButton = document.getElementById(currentDrawTool + 'Tool');
+                if (toolButton) {
+                    const borderColor = currentDrawTool === 'tray' ? 'border-red-300' : 
+                                      currentDrawTool === 'msTrunking' ? 'border-purple-300' : 
+                                      'border-green-300';
+                    toolButton.classList.add('active-tool', 'border-2', borderColor, 'shadow-lg');
+                }
                 canvas.isDrawingMode = false; // We handle drawing manually for straight lines
                 canvas.defaultCursor = 'crosshair';
             }
@@ -361,17 +407,36 @@
             
             const pointer = canvas.getPointer(e.e);
             
-            if (isEraserMode) {
-                // Eraser mode - find and remove clicked line
+            if (isSelectMode) {
+                // Select mode - only allow selecting existing objects
                 const target = canvas.findTarget(e.e, false);
-                if (target && target.type === 'line' && target !== cropRect && target !== currentImage) {
+                if (target && target !== cropRect && target !== currentImage) {
+                    canvas.setActiveObject(target);
+                    canvas.renderAll();
+                } else {
+                    canvas.discardActiveObject();
+                    canvas.renderAll();
+                }
+                return;
+            }
+            
+            if (isEraserMode) {
+                // Eraser mode - find and remove clicked object
+                const target = canvas.findTarget(e.e, false);
+                if (target && (target.type === 'line' || target.type === 'image') && target !== cropRect && target !== currentImage) {
                     canvas.remove(target);
                     canvas.renderAll();
                 }
                 return;
             }
             
-            // Check if clicking on existing object for selection
+            if (isLogoMode) {
+                // Logo mode - place logo at click position
+                placeLogo(pointer.x, pointer.y);
+                return;
+            }
+            
+            // Drawing mode - check if clicking on existing object first
             const target = canvas.findTarget(e.e, false);
             if (target && target !== cropRect && target !== currentImage) {
                 canvas.setActiveObject(target);
@@ -379,25 +444,89 @@
                 return;
             }
             
-            // Start drawing new line
-            canvas.discardActiveObject();
-            isDrawing = true;
-            startPoint = { x: pointer.x, y: pointer.y };
-            
-            // Create temporary line for preview
-            currentLine = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-                stroke: getToolColor(currentDrawTool),
-                strokeWidth: 9,
-                strokeDashArray: [8, 4],
-                selectable: false,
-                evented: false,
-                opacity: 0.7
+            // Start drawing new line only if we have a drawing tool selected
+            if (currentDrawTool) {
+                canvas.discardActiveObject();
+                isDrawing = true;
+                startPoint = { x: pointer.x, y: pointer.y };
+                
+                // Create temporary line for preview
+                currentLine = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+                    stroke: getToolColor(currentDrawTool),
+                    strokeWidth: 9,
+                    strokeDashArray: [8, 4],
+                    selectable: false,
+                    evented: false,
+                    opacity: 0.7
+                });
+                canvas.add(currentLine);
+            }
+        }
+
+        function placeLogo(x, y) {
+            // Try to load from file first
+            fabric.Image.fromURL('./Timelogo.png', function(logoImg) {
+                if (logoImg && logoImg.width > 0) {
+                    addLogoToCanvas(logoImg, x, y);
+                } else {
+                    console.warn('Could not load logo from ./Timelogo.png, trying different approach...');
+                    // Fallback: create a temporary file input to load logo
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+                    
+                    fileInput.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                fabric.Image.fromURL(event.target.result, function(logoImg) {
+                                    addLogoToCanvas(logoImg, x, y);
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                        document.body.removeChild(fileInput);
+                    };
+                    
+                    document.body.appendChild(fileInput);
+                    fileInput.click();
+                }
             });
-            canvas.add(currentLine);
+        }
+        
+        function addLogoToCanvas(logoImg, x, y) {
+            // Scale the logo to a reasonable size (adjust as needed)
+            const maxSize = 80; // Maximum width/height in pixels
+            const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
+            
+            logoImg.set({
+                left: x,
+                top: y,
+                originX: 'center',
+                originY: 'center',
+                scaleX: scale,
+                scaleY: scale,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                cornerColor: '#fff',
+                cornerStrokeColor: '#2563eb',
+                borderColor: '#2563eb',
+                cornerSize: 8
+            });
+            
+            canvas.add(logoImg);
+            canvas.bringToFront(logoImg);
+            canvas.bringToFront(cropRect);
+            canvas.setActiveObject(logoImg);
+            canvas.renderAll();
         }
 
         function handleMouseMove(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode || !currentLine) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentLine) return;
             
             const pointer = canvas.getPointer(e.e);
             
@@ -410,7 +539,7 @@
         }
 
         function handleMouseUp(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode) return;
             
             const pointer = canvas.getPointer(e.e);
             isDrawing = false;
@@ -607,7 +736,17 @@
         style.textContent = `
             .active-tool {
                 transform: scale(1.05);
-                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                position: relative;
+                z-index: 10;
+            }
+            .active-tool::after {
+                content: '';
+                position: absolute;
+                inset: -2px;
+                border-radius: inherit;
+                background: linear-gradient(45deg, rgba(255,255,255,0.3), transparent);
+                z-index: -1;
             }
         `;
         document.head.appendChild(style);
