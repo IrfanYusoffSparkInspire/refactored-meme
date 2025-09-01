@@ -90,6 +90,16 @@
             </div>
         </div>
 
+        <!-- Image Gallery Selector (initially hidden) -->
+        <div id="imageGallery" class="bg-white rounded-lg shadow-md p-6 mt-6 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Select an Image</h3>
+                <button id="closeGallery" class="text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="galleryGrid">
+                <!-- Images will be loaded here dynamically -->
+            </div>
+        </div>
 
         <!-- Info Panel -->
         <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 mt-6 hidden">
@@ -442,30 +452,20 @@
                     }
                     legendItems.get(toolName).count++;
                 } else if (obj.type === 'image' && obj !== currentImage) {
-                    // This is a logo
-                    if (!legendItems.has('Logo')) {
-                        legendItems.set('Logo', { color: '#3b82f6', count: 0 });
-                    }
-                    legendItems.get('Logo').count++;
+                    // This is a logo - skip adding to legend
+                    // Logos don't need to be shown in legend
                 }
             });
             
             // Build legend HTML
             let legendHTML = '';
             legendItems.forEach((item, name) => {
-                if (name === 'Logo') {
-                    legendHTML += `
-                        <div class="flex items-center mb-0.5">
-                            <div class="w-2.5 h-2.5 rounded-sm mr-1.5 border border-gray-400" style="background: linear-gradient(45deg, #3b82f6 25%, transparent 25%), linear-gradient(-45deg, #3b82f6 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #3b82f6 75%), linear-gradient(-45deg, transparent 75%, #3b82f6 75%); background-size: 3px 3px; background-position: 0 0, 0 1px, 1px -1px, -1px 0px;"></div>
-                            <span class="text-gray-700 text-xs">${name}</span>
-                        </div>`;
-                } else {
-                    legendHTML += `
-                        <div class="flex items-center mb-0.5">
-                            <div class="w-2.5 h-0.5 mr-1.5 border-dashed" style="background-color: ${item.color}; border: 1px dashed ${item.color};"></div>
-                            <span class="text-gray-700 text-xs">${name}</span>
-                        </div>`;
-                }
+                // Only show line types, skip logos
+                legendHTML += `
+                    <div class="flex items-center mb-0.5">
+                        <div class="w-2.5 h-0.5 mr-1.5 border-dashed" style="background-color: ${item.color}; border: 1px dashed ${item.color};"></div>
+                        <span class="text-gray-700 text-xs">${name}</span>
+                    </div>`;
             });
             
             legendContent.innerHTML = legendHTML;
@@ -778,6 +778,92 @@
             document.getElementById('imageInput').value = '';
         });
         
+        // Available images in the images folder
+        const availableImages = [
+            { name: 'DB', filename: 'DB.png', displayName: 'Distribution Board' },
+            { name: 'ELR', filename: 'ELR.png', displayName: 'Earth Leakage Relay' },
+            { name: 'Isolator', filename: 'Isolator.png', displayName: 'Isolator' },
+            { name: 'KWH_METER', filename: 'KWH_METER.png', displayName: 'KWH Meter' },
+            { name: 'Timelogo', filename: 'Timelogo.png', displayName: 'Time Logo' },
+            { name: 'double_pedestal', filename: 'double_pedestal.png', displayName: 'Double Pedestal' },
+            { name: 'wheel_stopper', filename: 'wheel_stopper.png', displayName: 'Wheel Stopper' }
+        ];
+        
+        // Show image gallery
+        function showImageGallery() {
+            const gallery = document.getElementById('imageGallery');
+            const galleryGrid = document.getElementById('galleryGrid');
+            
+            // Clear existing content
+            galleryGrid.innerHTML = '';
+            
+            // Add each image to the gallery
+            availableImages.forEach(imageInfo => {
+                const imageCard = document.createElement('div');
+                imageCard.className = 'border border-gray-300 rounded-lg p-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-200';
+                imageCard.innerHTML = `
+                    <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-20 object-contain mb-2 rounded">
+                    <p class="text-xs text-gray-700 text-center truncate">${imageInfo.displayName}</p>
+                `;
+                
+                imageCard.addEventListener('click', () => {
+                    selectImage(imageInfo);
+                });
+                
+                galleryGrid.appendChild(imageCard);
+            });
+            
+            // Show the gallery
+            gallery.classList.remove('hidden');
+            gallery.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Select and add image to canvas
+        function selectImage(imageInfo) {
+            const imagePath = `images/${imageInfo.filename}`;
+            
+            fabric.Image.fromURL(imagePath, function(logoImg) {
+                // Add logo to center of canvas
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                addLogoToCanvas(logoImg, centerX, centerY);
+            });
+            
+            // Hide the gallery
+            document.getElementById('imageGallery').classList.add('hidden');
+        }
+        
+        // Add logo to canvas function
+        function addLogoToCanvas(logoImg, x, y) {
+            // Scale the logo to a reasonable size
+            const maxSize = 60; // Maximum width/height in pixels
+            const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
+            
+            logoImg.set({
+                left: x,
+                top: y,
+                originX: 'center',
+                originY: 'center',
+                scaleX: scale,
+                scaleY: scale,
+                selectable: true,
+                evented: true,
+                hasControls: true,
+                hasBorders: true,
+                cornerColor: '#fff',
+                cornerStrokeColor: '#2563eb',
+                borderColor: '#2563eb',
+                cornerSize: 6
+            });
+            
+            canvas.add(logoImg);
+            canvas.bringToFront(logoImg);
+            canvas.bringToFront(cropRect);
+            canvas.setActiveObject(logoImg);
+            canvas.renderAll();
+            updateLegend(); // Update legend when logo is added
+        }
+        
         // Function to combine canvas with legend overlay
         async function getCanvasWithLegend() {
             return new Promise((resolve) => {
@@ -869,28 +955,15 @@
                                     }
                                 }
                                 
-                                // Special handling for logo (pattern)
-                                if (text === 'Logo') {
-                                    // Draw checkered pattern for logo (smaller)
-                                    tempCtx.fillStyle = '#3b82f6';
-                                    for (let x = 0; x < 8; x += 2) {
-                                        for (let y = 0; y < 6; y += 2) {
-                                            if ((x + y) % 4 === 0) {
-                                                tempCtx.fillRect(legendX + 6 + x, itemY - 4 + y, 1, 1);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    // Draw colored line for other items (smaller)
-                                    tempCtx.strokeStyle = color;
-                                    tempCtx.lineWidth = 1.5;
-                                    tempCtx.setLineDash([2, 1]); // Smaller dashed line
-                                    tempCtx.beginPath();
-                                    tempCtx.moveTo(legendX + 6, itemY - 1);
-                                    tempCtx.lineTo(legendX + 16, itemY - 1);
-                                    tempCtx.stroke();
-                                    tempCtx.setLineDash([]); // Reset dash
-                                }
+                                // Draw colored line for all items (logos are excluded from legend)
+                                tempCtx.strokeStyle = color;
+                                tempCtx.lineWidth = 1.5;
+                                tempCtx.setLineDash([2, 1]); // Smaller dashed line
+                                tempCtx.beginPath();
+                                tempCtx.moveTo(legendX + 6, itemY - 1);
+                                tempCtx.lineTo(legendX + 16, itemY - 1);
+                                tempCtx.stroke();
+                                tempCtx.setLineDash([]); // Reset dash
                                 
                                 // Draw text
                                 tempCtx.fillStyle = '#374151';
@@ -1001,6 +1074,93 @@
             }
         }
         
+        // Tool button event listeners
+        document.getElementById('selectTool').addEventListener('click', function() {
+            currentDrawTool = null;
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = true;
+            isDrawMode = true;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('trayTool').addEventListener('click', function() {
+            currentDrawTool = 'tray';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('msTrunkingTool').addEventListener('click', function() {
+            currentDrawTool = 'msTrunking';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('hdgTrunkingTool').addEventListener('click', function() {
+            currentDrawTool = 'hdgTrunking';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('giPipeTool').addEventListener('click', function() {
+            currentDrawTool = 'giPipe';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('corrugatedPipeTool').addEventListener('click', function() {
+            currentDrawTool = 'corrugatedPipe';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('logoTool').addEventListener('click', function() {
+            if (!currentImage) {
+                alert('Please upload and position an image first before adding logos.');
+                return;
+            }
+            
+            currentDrawTool = null;
+            isEraserMode = false;
+            isLogoMode = true;
+            isSelectMode = false;
+            isDrawMode = true;
+            updateDrawToolUI();
+            
+            // Show image gallery
+            showImageGallery();
+        });
+
+        document.getElementById('eraserTool').addEventListener('click', function() {
+            currentDrawTool = null;
+            isEraserMode = true;
+            isLogoMode = false;
+            isSelectMode = false;
+            isDrawMode = true;
+            updateDrawToolUI();
+        });
+
+        // Gallery close button
+        document.getElementById('closeGallery').addEventListener('click', function() {
+            document.getElementById('imageGallery').classList.add('hidden');
+        });
+
+        // Place logo function for click placement
+        function placeLogo(x, y) {
+            // This will be called from the image gallery selection
+            // The actual logo placement is handled in selectImage function
+        }
+
         // Keyboard event handling for delete key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Delete' || e.key === 'Backspace') {
