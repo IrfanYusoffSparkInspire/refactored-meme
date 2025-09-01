@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Image Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Image Editor</h1>
+        
+        <!-- Upload Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-center justify-center w-full">
+                <label for="imageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-8 h-8 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-500">
+                            <span class="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                    </div>
+                    <input id="imageInput" type="file" class="hidden" accept="image/*" />
+                </label>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div id="toolbar" class="bg-white rounded-lg shadow-md p-2 sm:p-4 mb-6 hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
+                <h3 class="text-lg font-semibold text-gray-800">Tools</h3>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4">
+                    <label class="text-sm text-gray-600">Mode:</label>
+                    <select id="editMode" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                        <option value="crop">Crop Mode</option>
+                        <option value="draw">Draw Mode</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Crop Controls -->
+            <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4 mb-4">
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm text-gray-600">Zoom:</label>
+                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.1" value="1" class="w-24">
+                    <span id="zoomValue" class="text-sm text-gray-600">1x</span>
+                </div>
+                <button id="resetZoom" class="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600">Reset</button>
+            </div>
+
+            <!-- Drawing Controls -->
+            <div id="drawControls" class="hidden">
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    <label class="text-sm text-gray-600 w-full sm:w-auto">Drawing Tool:</label>
+                    <button id="redDashTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 active-tool flex-1 sm:flex-none">Red Line</button>
+                    <button id="purpleDashTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none">Purple Line</button>
+                    <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none">Eraser</button>
+                    <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4">
+                <button id="exportImage" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm sm:text-base">Export for Backend</button>
+                <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm sm:text-base">Reset</button>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="bg-white rounded-lg shadow-md p-2 sm:p-6">
+            <div class="flex justify-center">
+                <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 600px; height: 400px;">
+                    <canvas id="fabricCanvas" width="600" height="400" style="max-width: 100%; height: auto;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 mt-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Instructions</h3>
+            <div id="cropInstructions" class="text-sm text-gray-600">
+                <p><strong>Crop Mode:</strong></p>
+                <ul class="list-disc list-inside mt-1">
+                    <li>Use the zoom slider to scale the image</li>
+                    <li>Drag the image to position it within the crop area</li>
+                    <li>The final crop will be 600x400 pixels</li>
+                </ul>
+            </div>
+            <div id="drawInstructions" class="hidden text-sm text-gray-600">
+                <p><strong>Draw Mode:</strong></p>
+                <ul class="list-disc list-inside mt-1">
+                    <li>Select red or purple line tool to draw straight dashed lines</li>
+                    <li>Click and drag to draw straight lines on the image</li>
+                    <li>Click on existing lines to select and edit them (move/resize)</li>
+                    <li>Press Delete key to remove selected lines</li>
+                    <li>Use eraser tool to delete lines by clicking</li>
+                    <li>Use "Clear All" to remove all drawings</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let canvas;
+        let currentImage = null;
+        let cropRect = null;
+        let isDrawMode = false;
+        let currentDrawTool = 'red';
+        let originalImageData = null;
+        let isEraserMode = false;
+        
+        // Fixed crop dimensions
+        const CROP_WIDTH = 600;
+        const CROP_HEIGHT = 400;
+
+        // Initialize Fabric.js canvas
+        function initCanvas() {
+            canvas = new fabric.Canvas('fabricCanvas', {
+                width: CROP_WIDTH,
+                height: CROP_HEIGHT,
+                backgroundColor: '#f8f9fa'
+            });
+
+            // Add crop rectangle (visual guide)
+            cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: CROP_WIDTH,
+                height: CROP_HEIGHT,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            canvas.add(cropRect);
+
+            // Canvas event listeners
+            // Mouse and touch events
+            canvas.on('mouse:down', handleMouseDown);
+            canvas.on('mouse:move', handleMouseMove);
+            canvas.on('mouse:up', handleMouseUp);
+            
+            // Touch events for mobile
+            canvas.on('touch:gesture', function(e) {
+                e.e.preventDefault();
+                e.e.stopPropagation();
+            });
+            
+            canvas.on('touch:drag', function(e) {
+                if (isDrawMode) {
+                    handleMouseMove(e);
+                }
+            });
+            canvas.on('path:created', handlePathCreated);
+        }
+
+        // Handle file upload
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    loadImage(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load image onto canvas
+        function loadImage(imageSrc) {
+            fabric.Image.fromURL(imageSrc, function(img) {
+                // Store original image data
+                originalImageData = imageSrc;
+                
+                // Remove existing image if any
+                if (currentImage) {
+                    canvas.remove(currentImage);
+                }
+
+                // Scale image to fit within crop area initially
+                const scaleX = CROP_WIDTH / img.width;
+                const scaleY = CROP_HEIGHT / img.height;
+                const scale = Math.min(scaleX, scaleY);
+                
+                img.set({
+                    left: CROP_WIDTH / 2,
+                    top: CROP_HEIGHT / 2,
+                    originX: 'center',
+                    originY: 'center',
+                    scaleX: scale,
+                    scaleY: scale
+                });
+
+                currentImage = img;
+                canvas.add(img);
+                canvas.sendToBack(img);
+                canvas.bringToFront(cropRect);
+                canvas.renderAll();
+
+                // Show toolbar and info panel
+                document.getElementById('toolbar').classList.remove('hidden');
+                document.getElementById('infoPanel').classList.remove('hidden');
+                
+                // Update zoom slider
+                document.getElementById('zoomSlider').value = scale;
+                document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
+            });
+        }
+
+        // Mode switching
+        document.getElementById('editMode').addEventListener('change', function(e) {
+            const mode = e.target.value;
+            isDrawMode = mode === 'draw';
+            
+            if (isDrawMode) {
+                document.getElementById('cropControls').classList.add('hidden');
+                document.getElementById('drawControls').classList.remove('hidden');
+                document.getElementById('cropInstructions').classList.add('hidden');
+                document.getElementById('drawInstructions').classList.remove('hidden');
+                
+                // Disable image selection and movement
+                if (currentImage) {
+                    currentImage.set({
+                        selectable: false,
+                        evented: false
+                    });
+                }
+                
+                // Enable drawing mode
+                canvas.isDrawingMode = false; // We'll handle drawing manually
+                canvas.selection = true; // Allow selection of drawn lines
+            } else {
+                document.getElementById('cropControls').classList.remove('hidden');
+                document.getElementById('drawControls').classList.add('hidden');
+                document.getElementById('cropInstructions').classList.remove('hidden');
+                document.getElementById('drawInstructions').classList.add('hidden');
+                
+                // Enable image selection and movement
+                if (currentImage) {
+                    currentImage.set({
+                        selectable: true,
+                        evented: true
+                    });
+                }
+                
+                canvas.isDrawingMode = false;
+                canvas.selection = true;
+            }
+            canvas.renderAll();
+        });
+
+        // Zoom controls
+        document.getElementById('zoomSlider').addEventListener('input', function(e) {
+            const zoom = parseFloat(e.target.value);
+            if (currentImage) {
+                currentImage.set({
+                    scaleX: zoom,
+                    scaleY: zoom
+                });
+                canvas.renderAll();
+                document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
+            }
+        });
+
+        document.getElementById('resetZoom').addEventListener('click', function() {
+            if (currentImage) {
+                const scaleX = CROP_WIDTH / (currentImage.width * currentImage.scaleX);
+                const scaleY = CROP_HEIGHT / (currentImage.height * currentImage.scaleY);
+                const scale = Math.min(scaleX, scaleY);
+                
+                currentImage.set({
+                    scaleX: scale,
+                    scaleY: scale,
+                    left: CROP_WIDTH / 2,
+                    top: CROP_HEIGHT / 2
+                });
+                canvas.renderAll();
+                
+                document.getElementById('zoomSlider').value = scale;
+                document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
+            }
+        });
+
+        // Drawing tool selection
+        document.getElementById('redDashTool').addEventListener('click', function() {
+            currentDrawTool = 'red';
+            isEraserMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('purpleDashTool').addEventListener('click', function() {
+            currentDrawTool = 'purple';
+            isEraserMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('eraserTool').addEventListener('click', function() {
+            isEraserMode = true;
+            updateDrawToolUI();
+        });
+
+        function updateDrawToolUI() {
+            document.querySelectorAll('#redDashTool, #purpleDashTool, #eraserTool').forEach(btn => {
+                btn.classList.remove('active-tool', 'ring-2', 'ring-white');
+            });
+            
+            if (isEraserMode) {
+                document.getElementById('eraserTool').classList.add('active-tool', 'ring-2', 'ring-white');
+                canvas.defaultCursor = 'crosshair';
+            } else {
+                document.getElementById(currentDrawTool + 'DashTool').classList.add('active-tool', 'ring-2', 'ring-white');
+                canvas.defaultCursor = 'crosshair';
+            }
+        }
+
+        // Drawing functionality
+        let isDrawing = false;
+        let startPoint = null;
+        let currentLine = null;
+
+        function handleMouseDown(e) {
+            if (!isDrawMode) return;
+            
+            // Check if we're clicking on an existing object (for editing)
+            const target = canvas.findTarget(e.e, false);
+            if (target && target !== cropRect && target !== currentImage && !isEraserMode) {
+                // If clicking on an existing line, select it for editing
+                canvas.setActiveObject(target);
+                canvas.renderAll();
+                return;
+            }
+            
+            // Get canvas bounds and calculate proper pointer position
+            const canvasElement = canvas.getElement();
+            const canvasBounds = canvasElement.getBoundingClientRect();
+            const transform = getComputedStyle(canvasElement).transform;
+            
+            let scaleX = 1, scaleY = 1;
+            if (transform && transform !== 'none') {
+                const matrix = transform.split('(')[1].split(')')[0].split(',');
+                scaleX = parseFloat(matrix[0]) || 1;
+                scaleY = parseFloat(matrix[3]) || 1;
+            }
+            
+            // Calculate corrected pointer position
+            let clientX, clientY;
+            if (e.e.touches && e.e.touches.length > 0) {
+                clientX = e.e.touches[0].clientX;
+                clientY = e.e.touches[0].clientY;
+            } else {
+                clientX = e.e.clientX;
+                clientY = e.e.clientY;
+            }
+            
+            const pointer = {
+                x: (clientX - canvasBounds.left) / scaleX,
+                y: (clientY - canvasBounds.top) / scaleY
+            };
+            
+            if (isEraserMode) {
+                // Eraser mode - find and remove the clicked line
+                if (target && (target.type === 'line' || target.stroke) && target !== cropRect && target !== currentImage) {
+                    canvas.remove(target);
+                    canvas.renderAll();
+                }
+            } else {
+                // Only start drawing if we didn't click on an existing object
+                if (!target || target === cropRect || target === currentImage) {
+                    // Deselect any currently selected objects
+                    canvas.discardActiveObject();
+                    
+                    // Drawing mode - start drawing a straight line
+                    isDrawing = true;
+                    startPoint = { x: pointer.x, y: pointer.y };
+                    
+                    // Create a temporary line for live preview
+                    currentLine = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+                        stroke: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
+                        strokeWidth: 3,
+                        strokeDashArray: [8, 4],
+                        selectable: false,
+                        evented: false
+                    });
+                    canvas.add(currentLine);
+                }
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!isDrawMode || !isDrawing || isEraserMode) return;
+            
+            // Get corrected pointer position (same logic as mouseDown)
+            const canvasElement = canvas.getElement();
+            const canvasBounds = canvasElement.getBoundingClientRect();
+            const transform = getComputedStyle(canvasElement).transform;
+            
+            let scaleX = 1, scaleY = 1;
+            if (transform && transform !== 'none') {
+                const matrix = transform.split('(')[1].split(')')[0].split(',');
+                scaleX = parseFloat(matrix[0]) || 1;
+                scaleY = parseFloat(matrix[3]) || 1;
+            }
+            
+            let clientX, clientY;
+            if (e.e.touches && e.e.touches.length > 0) {
+                clientX = e.e.touches[0].clientX;
+                clientY = e.e.touches[0].clientY;
+            } else {
+                clientX = e.e.clientX;
+                clientY = e.e.clientY;
+            }
+            
+            const pointer = {
+                x: (clientX - canvasBounds.left) / scaleX,
+                y: (clientY - canvasBounds.top) / scaleY
+            };
+            
+            // Update the line endpoint for live preview
+            if (currentLine) {
+                currentLine.set({
+                    x2: pointer.x,
+                    y2: pointer.y
+                });
+                canvas.renderAll();
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (!isDrawMode || !isDrawing || isEraserMode) return;
+            
+            // Get corrected pointer position (same logic as mouseDown)
+            const canvasElement = canvas.getElement();
+            const canvasBounds = canvasElement.getBoundingClientRect();
+            const transform = getComputedStyle(canvasElement).transform;
+            
+            let scaleX = 1, scaleY = 1;
+            if (transform && transform !== 'none') {
+                const matrix = transform.split('(')[1].split(')')[0].split(',');
+                scaleX = parseFloat(matrix[0]) || 1;
+                scaleY = parseFloat(matrix[3]) || 1;
+            }
+            
+            let clientX, clientY;
+            if (e.e.touches && e.e.touches.length > 0) {
+                clientX = e.e.changedTouches[0].clientX;
+                clientY = e.e.changedTouches[0].clientY;
+            } else {
+                clientX = e.e.clientX;
+                clientY = e.e.clientY;
+            }
+            
+            const pointer = {
+                x: (clientX - canvasBounds.left) / scaleX,
+                y: (clientY - canvasBounds.top) / scaleY
+            };
+            
+            isDrawing = false;
+            
+            if (currentLine && startPoint) {
+                // Calculate distance to ensure we have a meaningful line
+                const distance = Math.sqrt(
+                    Math.pow(pointer.x - startPoint.x, 2) + 
+                    Math.pow(pointer.y - startPoint.y, 2)
+                );
+                
+                if (distance > 5) { // Minimum line length
+                    // Remove temporary line and add final line
+                    canvas.remove(currentLine);
+                    
+                    const finalLine = new fabric.Line([startPoint.x, startPoint.y, pointer.x, pointer.y], {
+                        stroke: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
+                        strokeWidth: 3,
+                        strokeDashArray: [8, 4],
+                        selectable: true,
+                        evented: true,
+                        hasControls: true,
+                        hasBorders: true,
+                        cornerColor: '#fff',
+                        cornerStrokeColor: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
+                        borderColor: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
+                        cornerSize: 8
+                    });
+                    
+                    canvas.add(finalLine);
+                    canvas.bringToFront(finalLine);
+                    console.log('Final line added:', finalLine);
+                    canvas.renderAll();
+                } else {
+                    // Remove temporary line if too short
+                    console.log('Line too short, distance:', distance);
+                    canvas.remove(currentLine);
+                    canvas.renderAll();
+                }
+            }
+            
+            currentLine = null;
+            startPoint = null;
+        }
+
+        function handlePathCreated(e) {
+            // This function can be used for additional path processing if needed
+            if (isDrawMode) {
+                canvas.bringToFront(e.path);
+            }
+        }
+
+        // Clear drawing
+        document.getElementById('clearDrawing').addEventListener('click', function() {
+            const objects = canvas.getObjects();
+            const toRemove = objects.filter(obj => 
+                (obj.type === 'line' || obj.type === 'path' || obj.type === 'Path') && obj !== cropRect && obj !== currentImage
+            );
+            toRemove.forEach(obj => canvas.remove(obj));
+            canvas.renderAll();
+        });
+
+        // Export functionality
+        document.getElementById('exportImage').addEventListener('click', function() {
+            if (!currentImage) return;
+            
+            // Temporarily hide crop rectangle
+            cropRect.visible = false;
+            canvas.renderAll();
+            
+            // Export the canvas
+            const exportData = {
+                imageData: canvas.toDataURL('image/png'),
+                cropDimensions: {
+                    width: CROP_WIDTH,
+                    height: CROP_HEIGHT
+                },
+                originalImage: originalImageData,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Show crop rectangle again
+            cropRect.visible = true;
+            canvas.renderAll();
+            
+            // For now, just log the export data (later will be sent to backend)
+            console.log('Export data ready for backend:', exportData);
+            
+            // Create download link for testing
+            const link = document.createElement('a');
+            link.download = 'edited-image.png';
+            link.href = exportData.imageData;
+            link.click();
+            
+            alert('Image exported! Check console for backend data and download should start.');
+        });
+
+        // Reset canvas
+        document.getElementById('resetCanvas').addEventListener('click', function() {
+            canvas.clear();
+            currentImage = null;
+            originalImageData = null;
+            
+            // Re-add crop rectangle
+            cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: CROP_WIDTH,
+                height: CROP_HEIGHT,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            canvas.add(cropRect);
+            canvas.setBackgroundColor('#f8f9fa', canvas.renderAll.bind(canvas));
+            
+            // Hide toolbar
+            document.getElementById('toolbar').classList.add('hidden');
+            document.getElementById('infoPanel').classList.add('hidden');
+            
+            // Reset form
+            document.getElementById('imageInput').value = '';
+        });
+
+        // Mobile touch optimization
+        function preventDefaultTouch(e) {
+            if (e.target.tagName === 'CANVAS') {
+                e.preventDefault();
+            }
+        }
+        
+        // Keyboard event handling for delete key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                if (isDrawMode) {
+                    const activeObject = canvas.getActiveObject();
+                    if (activeObject && activeObject.type === 'line' && activeObject !== cropRect && activeObject !== currentImage) {
+                        canvas.remove(activeObject);
+                        canvas.discardActiveObject();
+                        canvas.renderAll();
+                    }
+                }
+            }
+        });
+
+        // Initialize canvas on page load
+        window.addEventListener('load', function() {
+            initCanvas();
+            
+            // Prevent default touch behavior on canvas
+            document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
+            document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+            document.addEventListener('touchend', preventDefaultTouch, { passive: false });
+            
+            // Make canvas responsive
+            function resizeCanvas() {
+                const container = document.getElementById('canvasContainer');
+                const canvas = document.getElementById('fabricCanvas');
+                const containerWidth = container.offsetWidth;
+                const scale = Math.min(1, containerWidth / CROP_WIDTH);
+                
+                if (scale < 1) {
+                    canvas.style.transform = `scale(${scale})`;
+                    canvas.style.transformOrigin = 'top left';
+                    container.style.height = (CROP_HEIGHT * scale) + 'px';
+                }
+            }
+            
+            // Resize on load and window resize
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        });
+
+        // Add some CSS for active tool styling
+        const style = document.createElement('style');
+        style.textContent = `
+            .active-tool {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
