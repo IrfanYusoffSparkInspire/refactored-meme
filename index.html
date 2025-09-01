@@ -71,6 +71,7 @@
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4">
                 <button id="exportImage" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm sm:text-base">Export for Backend</button>
+                <button id="generateProposal" class="px-4 sm:px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base">Generate Proposal</button>
                 <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm sm:text-base">Reset</button>
             </div>
         </div>
@@ -88,6 +89,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Info Panel -->
         <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 mt-6 hidden">
@@ -773,6 +775,210 @@
             
             // Reset form
             document.getElementById('imageInput').value = '';
+        });
+        
+        // Function to combine canvas with legend overlay
+        async function getCanvasWithLegend() {
+            return new Promise((resolve) => {
+                // Create a temporary canvas to combine canvas + legend
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                // Set same dimensions as original canvas
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                
+                // First, draw the original canvas content
+                const canvasImage = new Image();
+                canvasImage.onload = function() {
+                    tempCtx.drawImage(canvasImage, 0, 0);
+                    
+                    // Check if legend is visible
+                    const legendBox = document.getElementById('legendBox');
+                    if (!legendBox.classList.contains('hidden')) {
+                        console.log('📋 Adding legend to canvas image...');
+                        
+                        // Get legend content and styling
+                        const legendContent = document.getElementById('legendContent');
+                        const legendItems = legendContent.children;
+                        
+                        // Position for legend (bottom right with padding)
+                        const legendX = tempCanvas.width - 120; // 120px from right
+                        const legendY = tempCanvas.height - (legendItems.length * 25 + 40); // Dynamic height
+                        
+                        // Draw legend background (white box with border)
+                        tempCtx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                        tempCtx.strokeStyle = '#d1d5db';
+                        tempCtx.lineWidth = 1;
+                        
+                        const legendWidth = 110;
+                        const legendHeight = legendItems.length * 25 + 30;
+                        
+                        tempCtx.fillRect(legendX, legendY, legendWidth, legendHeight);
+                        tempCtx.strokeRect(legendX, legendY, legendWidth, legendHeight);
+                        
+                        // Draw legend title
+                        tempCtx.fillStyle = '#374151';
+                        tempCtx.font = 'bold 12px Arial';
+                        tempCtx.textAlign = 'center';
+                        tempCtx.fillText('Legend', legendX + legendWidth/2, legendY + 18);
+                        
+                        // Draw legend items
+                        tempCtx.font = '10px Arial';
+                        tempCtx.textAlign = 'left';
+                        
+                        for (let i = 0; i < legendItems.length; i++) {
+                            const item = legendItems[i];
+                            const itemY = legendY + 35 + (i * 22);
+                            
+                            // Get the color indicator element
+                            const colorDiv = item.querySelector('div');
+                            const textSpan = item.querySelector('span');
+                            
+                            if (colorDiv && textSpan) {
+                                const text = textSpan.textContent;
+                                const bgColor = colorDiv.style.backgroundColor;
+                                
+                                // Parse color from style (handle different formats)
+                                let color = '#000000';
+                                if (bgColor) {
+                                    if (bgColor.startsWith('rgb')) {
+                                        // Convert rgb to hex if needed
+                                        const matches = bgColor.match(/\d+/g);
+                                        if (matches && matches.length >= 3) {
+                                            const r = parseInt(matches[0]).toString(16).padStart(2, '0');
+                                            const g = parseInt(matches[1]).toString(16).padStart(2, '0');
+                                            const b = parseInt(matches[2]).toString(16).padStart(2, '0');
+                                            color = `#${r}${g}${b}`;
+                                        }
+                                    } else if (bgColor.startsWith('#')) {
+                                        color = bgColor;
+                                    }
+                                }
+                                
+                                // Special handling for logo (pattern)
+                                if (text === 'Logo') {
+                                    // Draw checkered pattern for logo
+                                    tempCtx.fillStyle = '#3b82f6';
+                                    for (let x = 0; x < 12; x += 3) {
+                                        for (let y = 0; y < 8; y += 3) {
+                                            if ((x + y) % 6 === 0) {
+                                                tempCtx.fillRect(legendX + 8 + x, itemY - 6 + y, 2, 2);
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    // Draw colored line for other items
+                                    tempCtx.strokeStyle = color;
+                                    tempCtx.lineWidth = 2;
+                                    tempCtx.setLineDash([3, 2]); // Dashed line
+                                    tempCtx.beginPath();
+                                    tempCtx.moveTo(legendX + 8, itemY - 2);
+                                    tempCtx.lineTo(legendX + 20, itemY - 2);
+                                    tempCtx.stroke();
+                                    tempCtx.setLineDash([]); // Reset dash
+                                }
+                                
+                                // Draw text
+                                tempCtx.fillStyle = '#374151';
+                                tempCtx.fillText(text, legendX + 25, itemY);
+                            }
+                        }
+                        
+                        console.log('✅ Legend added to canvas');
+                    } else {
+                        console.log('ℹ️ No legend to add to canvas');
+                    }
+                    
+                    // Return the combined image
+                    resolve(tempCanvas.toDataURL('image/png'));
+                };
+                
+                // Start the process by loading the canvas image
+                canvasImage.src = canvas.toDataURL('image/png');
+            });
+        }
+        
+        // Generate Proposal button click handler
+        document.getElementById('generateProposal').addEventListener('click', async function() {
+            if (!currentImage) {
+                alert('Please upload and position an image first before generating a proposal.');
+                return;
+            }
+            
+            // Get canvas image data including legend
+            console.log('🖼️ Getting canvas image data with legend...');
+            const imageDataURL = await getCanvasWithLegend();
+            console.log('📊 Image data size:', Math.round(imageDataURL.length / 1024), 'KB');
+            
+            // Simple form data with just the image
+            const formData = {
+                building_name: 'Test Building',
+                address: 'Test Address',
+                imageData: imageDataURL
+            };
+            
+            // Disable button and show loading state
+            const btn = document.getElementById('generateProposal');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Generating Proposal...';
+            
+            try {
+                console.log('🚀 Sending request to backend...');
+                // Send request to backend
+                const response = await fetch('/api/generate-proposal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                console.log('📨 Response status:', response.status);
+                
+                if (response.ok) {
+                    console.log('✅ Response OK, handling file download...');
+                    // Handle file download
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    
+                    // Extract filename from response headers or use default
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'proposal.pptx';
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                        if (filenameMatch) {
+                            filename = filenameMatch[1];
+                        }
+                    }
+                    console.log('📁 Filename:', filename);
+                    a.download = filename;
+                    
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    alert('Proposal generated successfully! Download should start automatically.');
+                    
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Backend error:', errorText);
+                    throw new Error(`Backend error: ${response.status} - ${errorText}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error generating proposal:', error);
+                alert(`Error generating proposal: ${error.message}`);
+            } finally {
+                // Re-enable button
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
         });
 
         // Mobile touch optimization
