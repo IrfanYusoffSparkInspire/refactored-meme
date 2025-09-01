@@ -56,8 +56,9 @@
             <div id="drawControls" class="hidden">
                 <div class="flex flex-wrap items-center gap-2 mb-4">
                     <label class="text-sm text-gray-600 w-full sm:w-auto">Drawing Tool:</label>
-                    <button id="redDashTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 active-tool flex-1 sm:flex-none">Red Line</button>
-                    <button id="purpleDashTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none">Purple Line</button>
+                    <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 active-tool flex-1 sm:flex-none">Tray</button>
+                    <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none">MS Trunking</button>
+                    <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none">HDG Trunking</button>
                     <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none">Eraser</button>
                     <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
                 </div>
@@ -110,7 +111,7 @@
         let currentImage = null;
         let cropRect = null;
         let isDrawMode = false;
-        let currentDrawTool = 'red';
+        let currentDrawTool = 'tray';
         let originalImageData = null;
         let isEraserMode = false;
         
@@ -123,7 +124,8 @@
             canvas = new fabric.Canvas('fabricCanvas', {
                 width: CROP_WIDTH,
                 height: CROP_HEIGHT,
-                backgroundColor: '#f8f9fa'
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false // Disable retina scaling to prevent offset issues
             });
 
             // Add crop rectangle (visual guide)
@@ -160,6 +162,11 @@
                 }
             });
             canvas.on('path:created', handlePathCreated);
+            
+            // Ensure canvas offset is calculated correctly
+            setTimeout(() => {
+                canvas.calcOffset();
+            }, 100);
         }
 
         // Handle file upload
@@ -212,6 +219,11 @@
                 // Update zoom slider
                 document.getElementById('zoomSlider').value = scale;
                 document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
+                
+                // Recalculate canvas offset after image load
+                setTimeout(() => {
+                    canvas.calcOffset();
+                }, 100);
             });
         }
 
@@ -234,8 +246,8 @@
                     });
                 }
                 
-                // Enable drawing mode
-                canvas.isDrawingMode = false; // We'll handle drawing manually
+                // Enable custom drawing mode for straight lines
+                canvas.isDrawingMode = false; // Disable fabric.js freeform drawing
                 canvas.selection = true; // Allow selection of drawn lines
             } else {
                 document.getElementById('cropControls').classList.remove('hidden');
@@ -290,33 +302,51 @@
         });
 
         // Drawing tool selection
-        document.getElementById('redDashTool').addEventListener('click', function() {
-            currentDrawTool = 'red';
+        document.getElementById('trayTool').addEventListener('click', function() {
+            currentDrawTool = 'tray';
             isEraserMode = false;
             updateDrawToolUI();
         });
 
-        document.getElementById('purpleDashTool').addEventListener('click', function() {
-            currentDrawTool = 'purple';
+        document.getElementById('msTrunkingTool').addEventListener('click', function() {
+            currentDrawTool = 'msTrunking';
+            isEraserMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('hdgTrunkingTool').addEventListener('click', function() {
+            currentDrawTool = 'hdgTrunking';
             isEraserMode = false;
             updateDrawToolUI();
         });
 
         document.getElementById('eraserTool').addEventListener('click', function() {
             isEraserMode = true;
+            canvas.isDrawingMode = false; // Disable drawing mode for eraser
             updateDrawToolUI();
         });
 
+        function getToolColor(tool) {
+            switch(tool) {
+                case 'tray': return '#ef4444'; // red
+                case 'msTrunking': return '#8b5cf6'; // purple
+                case 'hdgTrunking': return '#059669'; // green
+                default: return '#ef4444';
+            }
+        }
+
         function updateDrawToolUI() {
-            document.querySelectorAll('#redDashTool, #purpleDashTool, #eraserTool').forEach(btn => {
+            document.querySelectorAll('#trayTool, #msTrunkingTool, #hdgTrunkingTool, #eraserTool').forEach(btn => {
                 btn.classList.remove('active-tool', 'ring-2', 'ring-white');
             });
             
             if (isEraserMode) {
                 document.getElementById('eraserTool').classList.add('active-tool', 'ring-2', 'ring-white');
+                canvas.isDrawingMode = false;
                 canvas.defaultCursor = 'crosshair';
             } else {
-                document.getElementById(currentDrawTool + 'DashTool').classList.add('active-tool', 'ring-2', 'ring-white');
+                document.getElementById(currentDrawTool + 'Tool').classList.add('active-tool', 'ring-2', 'ring-white');
+                canvas.isDrawingMode = false; // We handle drawing manually for straight lines
                 canvas.defaultCursor = 'crosshair';
             }
         }
@@ -329,176 +359,95 @@
         function handleMouseDown(e) {
             if (!isDrawMode) return;
             
-            // Check if we're clicking on an existing object (for editing)
+            const pointer = canvas.getPointer(e.e);
+            
+            if (isEraserMode) {
+                // Eraser mode - find and remove clicked line
+                const target = canvas.findTarget(e.e, false);
+                if (target && target.type === 'line' && target !== cropRect && target !== currentImage) {
+                    canvas.remove(target);
+                    canvas.renderAll();
+                }
+                return;
+            }
+            
+            // Check if clicking on existing object for selection
             const target = canvas.findTarget(e.e, false);
-            if (target && target !== cropRect && target !== currentImage && !isEraserMode) {
-                // If clicking on an existing line, select it for editing
+            if (target && target !== cropRect && target !== currentImage) {
                 canvas.setActiveObject(target);
                 canvas.renderAll();
                 return;
             }
             
-            // Get canvas bounds and calculate proper pointer position
-            const canvasElement = canvas.getElement();
-            const canvasBounds = canvasElement.getBoundingClientRect();
-            const transform = getComputedStyle(canvasElement).transform;
+            // Start drawing new line
+            canvas.discardActiveObject();
+            isDrawing = true;
+            startPoint = { x: pointer.x, y: pointer.y };
             
-            let scaleX = 1, scaleY = 1;
-            if (transform && transform !== 'none') {
-                const matrix = transform.split('(')[1].split(')')[0].split(',');
-                scaleX = parseFloat(matrix[0]) || 1;
-                scaleY = parseFloat(matrix[3]) || 1;
-            }
-            
-            // Calculate corrected pointer position
-            let clientX, clientY;
-            if (e.e.touches && e.e.touches.length > 0) {
-                clientX = e.e.touches[0].clientX;
-                clientY = e.e.touches[0].clientY;
-            } else {
-                clientX = e.e.clientX;
-                clientY = e.e.clientY;
-            }
-            
-            const pointer = {
-                x: (clientX - canvasBounds.left) / scaleX,
-                y: (clientY - canvasBounds.top) / scaleY
-            };
-            
-            if (isEraserMode) {
-                // Eraser mode - find and remove the clicked line
-                if (target && (target.type === 'line' || target.stroke) && target !== cropRect && target !== currentImage) {
-                    canvas.remove(target);
-                    canvas.renderAll();
-                }
-            } else {
-                // Only start drawing if we didn't click on an existing object
-                if (!target || target === cropRect || target === currentImage) {
-                    // Deselect any currently selected objects
-                    canvas.discardActiveObject();
-                    
-                    // Drawing mode - start drawing a straight line
-                    isDrawing = true;
-                    startPoint = { x: pointer.x, y: pointer.y };
-                    
-                    // Create a temporary line for live preview
-                    currentLine = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
-                        stroke: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
-                        strokeWidth: 3,
-                        strokeDashArray: [8, 4],
-                        selectable: false,
-                        evented: false
-                    });
-                    canvas.add(currentLine);
-                }
-            }
+            // Create temporary line for preview
+            currentLine = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+                stroke: getToolColor(currentDrawTool),
+                strokeWidth: 9,
+                strokeDashArray: [8, 4],
+                selectable: false,
+                evented: false,
+                opacity: 0.7
+            });
+            canvas.add(currentLine);
         }
 
         function handleMouseMove(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || !currentLine) return;
             
-            // Get corrected pointer position (same logic as mouseDown)
-            const canvasElement = canvas.getElement();
-            const canvasBounds = canvasElement.getBoundingClientRect();
-            const transform = getComputedStyle(canvasElement).transform;
+            const pointer = canvas.getPointer(e.e);
             
-            let scaleX = 1, scaleY = 1;
-            if (transform && transform !== 'none') {
-                const matrix = transform.split('(')[1].split(')')[0].split(',');
-                scaleX = parseFloat(matrix[0]) || 1;
-                scaleY = parseFloat(matrix[3]) || 1;
-            }
-            
-            let clientX, clientY;
-            if (e.e.touches && e.e.touches.length > 0) {
-                clientX = e.e.touches[0].clientX;
-                clientY = e.e.touches[0].clientY;
-            } else {
-                clientX = e.e.clientX;
-                clientY = e.e.clientY;
-            }
-            
-            const pointer = {
-                x: (clientX - canvasBounds.left) / scaleX,
-                y: (clientY - canvasBounds.top) / scaleY
-            };
-            
-            // Update the line endpoint for live preview
-            if (currentLine) {
-                currentLine.set({
-                    x2: pointer.x,
-                    y2: pointer.y
-                });
-                canvas.renderAll();
-            }
+            // Update preview line
+            currentLine.set({
+                x2: pointer.x,
+                y2: pointer.y
+            });
+            canvas.renderAll();
         }
 
         function handleMouseUp(e) {
             if (!isDrawMode || !isDrawing || isEraserMode) return;
             
-            // Get corrected pointer position (same logic as mouseDown)
-            const canvasElement = canvas.getElement();
-            const canvasBounds = canvasElement.getBoundingClientRect();
-            const transform = getComputedStyle(canvasElement).transform;
-            
-            let scaleX = 1, scaleY = 1;
-            if (transform && transform !== 'none') {
-                const matrix = transform.split('(')[1].split(')')[0].split(',');
-                scaleX = parseFloat(matrix[0]) || 1;
-                scaleY = parseFloat(matrix[3]) || 1;
-            }
-            
-            let clientX, clientY;
-            if (e.e.touches && e.e.touches.length > 0) {
-                clientX = e.e.changedTouches[0].clientX;
-                clientY = e.e.changedTouches[0].clientY;
-            } else {
-                clientX = e.e.clientX;
-                clientY = e.e.clientY;
-            }
-            
-            const pointer = {
-                x: (clientX - canvasBounds.left) / scaleX,
-                y: (clientY - canvasBounds.top) / scaleY
-            };
-            
+            const pointer = canvas.getPointer(e.e);
             isDrawing = false;
             
             if (currentLine && startPoint) {
-                // Calculate distance to ensure we have a meaningful line
+                // Calculate minimum line length
                 const distance = Math.sqrt(
                     Math.pow(pointer.x - startPoint.x, 2) + 
                     Math.pow(pointer.y - startPoint.y, 2)
                 );
                 
-                if (distance > 5) { // Minimum line length
-                    // Remove temporary line and add final line
-                    canvas.remove(currentLine);
-                    
+                // Remove preview line
+                canvas.remove(currentLine);
+                
+                if (distance > 10) { // Minimum line length
+                    // Create final dashed line
+                    const toolColor = getToolColor(currentDrawTool);
                     const finalLine = new fabric.Line([startPoint.x, startPoint.y, pointer.x, pointer.y], {
-                        stroke: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
-                        strokeWidth: 3,
+                        stroke: toolColor,
+                        strokeWidth: 9,
                         strokeDashArray: [8, 4],
                         selectable: true,
                         evented: true,
                         hasControls: true,
                         hasBorders: true,
                         cornerColor: '#fff',
-                        cornerStrokeColor: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
-                        borderColor: currentDrawTool === 'red' ? '#ef4444' : '#8b5cf6',
+                        cornerStrokeColor: toolColor,
+                        borderColor: toolColor,
                         cornerSize: 8
                     });
                     
                     canvas.add(finalLine);
                     canvas.bringToFront(finalLine);
-                    console.log('Final line added:', finalLine);
-                    canvas.renderAll();
-                } else {
-                    // Remove temporary line if too short
-                    console.log('Line too short, distance:', distance);
-                    canvas.remove(currentLine);
-                    canvas.renderAll();
+                    canvas.bringToFront(cropRect);
                 }
+                
+                canvas.renderAll();
             }
             
             currentLine = null;
@@ -506,10 +455,7 @@
         }
 
         function handlePathCreated(e) {
-            // This function can be used for additional path processing if needed
-            if (isDrawMode) {
-                canvas.bringToFront(e.path);
-            }
+            // No longer needed since we're creating straight lines manually
         }
 
         // Clear drawing
@@ -621,14 +567,33 @@
             // Make canvas responsive
             function resizeCanvas() {
                 const container = document.getElementById('canvasContainer');
-                const canvas = document.getElementById('fabricCanvas');
-                const containerWidth = container.offsetWidth;
+                const canvasElement = document.getElementById('fabricCanvas');
+                const containerWidth = container.offsetWidth - 4; // Account for border
                 const scale = Math.min(1, containerWidth / CROP_WIDTH);
                 
-                if (scale < 1) {
-                    canvas.style.transform = `scale(${scale})`;
-                    canvas.style.transformOrigin = 'top left';
-                    container.style.height = (CROP_HEIGHT * scale) + 'px';
+                if (canvas) {
+                    if (scale < 1) {
+                        // Scale both the visual display and the fabric canvas
+                        canvas.setDimensions({
+                            width: CROP_WIDTH * scale,
+                            height: CROP_HEIGHT * scale
+                        });
+                        canvas.setZoom(scale);
+                        container.style.height = (CROP_HEIGHT * scale + 4) + 'px';
+                        
+                        // Remove CSS transform since we're using fabric scaling
+                        canvasElement.style.transform = 'none';
+                    } else {
+                        canvas.setDimensions({
+                            width: CROP_WIDTH,
+                            height: CROP_HEIGHT
+                        });
+                        canvas.setZoom(1);
+                        container.style.height = CROP_HEIGHT + 'px';
+                        canvasElement.style.transform = 'none';
+                    }
+                    
+                    canvas.calcOffset();
                 }
             }
             
