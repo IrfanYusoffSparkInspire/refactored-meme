@@ -79,11 +79,11 @@
         <!-- Canvas Container -->
         <div class="bg-white rounded-lg shadow-md p-2 sm:p-6">
             <div class="flex justify-center">
-                <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 600px; height: 400px;">
-                    <canvas id="fabricCanvas" width="600" height="400" style="max-width: 100%; height: auto;"></canvas>
+                <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
+                    <canvas id="fabricCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
                     <!-- Legend Box -->
-                    <div id="legendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden" style="min-width: 100px;">
-                        <div class="font-semibold text-gray-700 mb-1 text-center">Legend</div>
+                    <div id="legendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
+                        <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
                         <div id="legendContent"></div>
                     </div>
                 </div>
@@ -129,9 +129,10 @@
         let isLogoMode = false;
         let isSelectMode = true;
         
-        // Fixed crop dimensions
-        const CROP_WIDTH = 600;
-        const CROP_HEIGHT = 400;
+        // Fixed crop dimensions matching PowerPoint placeholder (9.05cm x 9.25cm)
+        // At 96 DPI: 9.05cm ≈ 342px, 9.25cm ≈ 350px
+        const CROP_WIDTH = 342;
+        const CROP_HEIGHT = 350;
 
         // Initialize Fabric.js canvas
         function initCanvas() {
@@ -454,15 +455,15 @@
             legendItems.forEach((item, name) => {
                 if (name === 'Logo') {
                     legendHTML += `
-                        <div class="flex items-center mb-1">
-                            <div class="w-3 h-3 rounded-sm mr-2 border border-gray-400" style="background: linear-gradient(45deg, #3b82f6 25%, transparent 25%), linear-gradient(-45deg, #3b82f6 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #3b82f6 75%), linear-gradient(-45deg, transparent 75%, #3b82f6 75%); background-size: 4px 4px; background-position: 0 0, 0 2px, 2px -2px, -2px 0px;"></div>
-                            <span class="text-gray-700">${name}</span>
+                        <div class="flex items-center mb-0.5">
+                            <div class="w-2.5 h-2.5 rounded-sm mr-1.5 border border-gray-400" style="background: linear-gradient(45deg, #3b82f6 25%, transparent 25%), linear-gradient(-45deg, #3b82f6 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #3b82f6 75%), linear-gradient(-45deg, transparent 75%, #3b82f6 75%); background-size: 3px 3px; background-position: 0 0, 0 1px, 1px -1px, -1px 0px;"></div>
+                            <span class="text-gray-700 text-xs">${name}</span>
                         </div>`;
                 } else {
                     legendHTML += `
-                        <div class="flex items-center mb-1">
-                            <div class="w-3 h-1 mr-2 border-dashed" style="background-color: ${item.color}; border: 1px dashed ${item.color};"></div>
-                            <span class="text-gray-700">${name}</span>
+                        <div class="flex items-center mb-0.5">
+                            <div class="w-2.5 h-0.5 mr-1.5 border-dashed" style="background-color: ${item.color}; border: 1px dashed ${item.color};"></div>
+                            <span class="text-gray-700 text-xs">${name}</span>
                         </div>`;
                 }
             });
@@ -802,34 +803,46 @@
                         const legendContent = document.getElementById('legendContent');
                         const legendItems = legendContent.children;
                         
-                        // Position for legend (bottom right with padding)
-                        const legendX = tempCanvas.width - 120; // 120px from right
-                        const legendY = tempCanvas.height - (legendItems.length * 25 + 40); // Dynamic height
+                        // Position for legend (bottom right with padding) - more compact
+                        const legendWidth = 85; // Reduced from 110
+                        const legendHeight = legendItems.length * 18 + 22; // Reduced spacing
+                        const legendX = tempCanvas.width - legendWidth - 8; // 8px from right
+                        const legendY = tempCanvas.height - legendHeight - 8; // 8px from bottom
                         
-                        // Draw legend background (white box with border)
+                        // Draw legend background (white rounded box with border)
                         tempCtx.fillStyle = 'rgba(255, 255, 255, 0.95)';
                         tempCtx.strokeStyle = '#d1d5db';
                         tempCtx.lineWidth = 1;
                         
-                        const legendWidth = 110;
-                        const legendHeight = legendItems.length * 25 + 30;
-                        
-                        tempCtx.fillRect(legendX, legendY, legendWidth, legendHeight);
-                        tempCtx.strokeRect(legendX, legendY, legendWidth, legendHeight);
+                        // Draw rounded rectangle
+                        const cornerRadius = 6;
+                        tempCtx.beginPath();
+                        tempCtx.moveTo(legendX + cornerRadius, legendY);
+                        tempCtx.lineTo(legendX + legendWidth - cornerRadius, legendY);
+                        tempCtx.quadraticCurveTo(legendX + legendWidth, legendY, legendX + legendWidth, legendY + cornerRadius);
+                        tempCtx.lineTo(legendX + legendWidth, legendY + legendHeight - cornerRadius);
+                        tempCtx.quadraticCurveTo(legendX + legendWidth, legendY + legendHeight, legendX + legendWidth - cornerRadius, legendY + legendHeight);
+                        tempCtx.lineTo(legendX + cornerRadius, legendY + legendHeight);
+                        tempCtx.quadraticCurveTo(legendX, legendY + legendHeight, legendX, legendY + legendHeight - cornerRadius);
+                        tempCtx.lineTo(legendX, legendY + cornerRadius);
+                        tempCtx.quadraticCurveTo(legendX, legendY, legendX + cornerRadius, legendY);
+                        tempCtx.closePath();
+                        tempCtx.fill();
+                        tempCtx.stroke();
                         
                         // Draw legend title
                         tempCtx.fillStyle = '#374151';
-                        tempCtx.font = 'bold 12px Arial';
+                        tempCtx.font = 'bold 10px Arial';
                         tempCtx.textAlign = 'center';
-                        tempCtx.fillText('Legend', legendX + legendWidth/2, legendY + 18);
+                        tempCtx.fillText('Legend', legendX + legendWidth/2, legendY + 14);
                         
                         // Draw legend items
-                        tempCtx.font = '10px Arial';
+                        tempCtx.font = '9px Arial';
                         tempCtx.textAlign = 'left';
                         
                         for (let i = 0; i < legendItems.length; i++) {
                             const item = legendItems[i];
-                            const itemY = legendY + 35 + (i * 22);
+                            const itemY = legendY + 26 + (i * 16); // More compact spacing
                             
                             // Get the color indicator element
                             const colorDiv = item.querySelector('div');
@@ -858,30 +871,30 @@
                                 
                                 // Special handling for logo (pattern)
                                 if (text === 'Logo') {
-                                    // Draw checkered pattern for logo
+                                    // Draw checkered pattern for logo (smaller)
                                     tempCtx.fillStyle = '#3b82f6';
-                                    for (let x = 0; x < 12; x += 3) {
-                                        for (let y = 0; y < 8; y += 3) {
-                                            if ((x + y) % 6 === 0) {
-                                                tempCtx.fillRect(legendX + 8 + x, itemY - 6 + y, 2, 2);
+                                    for (let x = 0; x < 8; x += 2) {
+                                        for (let y = 0; y < 6; y += 2) {
+                                            if ((x + y) % 4 === 0) {
+                                                tempCtx.fillRect(legendX + 6 + x, itemY - 4 + y, 1, 1);
                                             }
                                         }
                                     }
                                 } else {
-                                    // Draw colored line for other items
+                                    // Draw colored line for other items (smaller)
                                     tempCtx.strokeStyle = color;
-                                    tempCtx.lineWidth = 2;
-                                    tempCtx.setLineDash([3, 2]); // Dashed line
+                                    tempCtx.lineWidth = 1.5;
+                                    tempCtx.setLineDash([2, 1]); // Smaller dashed line
                                     tempCtx.beginPath();
-                                    tempCtx.moveTo(legendX + 8, itemY - 2);
-                                    tempCtx.lineTo(legendX + 20, itemY - 2);
+                                    tempCtx.moveTo(legendX + 6, itemY - 1);
+                                    tempCtx.lineTo(legendX + 16, itemY - 1);
                                     tempCtx.stroke();
                                     tempCtx.setLineDash([]); // Reset dash
                                 }
                                 
                                 // Draw text
                                 tempCtx.fillStyle = '#374151';
-                                tempCtx.fillText(text, legendX + 25, itemY);
+                                tempCtx.fillText(text, legendX + 20, itemY);
                             }
                         }
                         
