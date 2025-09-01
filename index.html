@@ -60,6 +60,8 @@
                     <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex-1 sm:flex-none transition-all duration-200">Tray</button>
                     <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none transition-all duration-200">MS Trunking</button>
                     <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none transition-all duration-200">HDG Trunking</button>
+                    <button id="giPipeTool" class="px-3 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600 flex-1 sm:flex-none transition-all duration-200">GI Pipe</button>
+                    <button id="corrugatedPipeTool" class="px-3 py-2 bg-cyan-500 text-white rounded-md text-sm hover:bg-cyan-600 flex-1 sm:flex-none transition-all duration-200">Corrugated Pipe</button>
                     <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 flex-1 sm:flex-none transition-all duration-200">Add Logo</button>
                     <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none transition-all duration-200">Eraser</button>
                     <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
@@ -78,6 +80,11 @@
             <div class="flex justify-center">
                 <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 600px; height: 400px;">
                     <canvas id="fabricCanvas" width="600" height="400" style="max-width: 100%; height: auto;"></canvas>
+                    <!-- Legend Box -->
+                    <div id="legendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden" style="min-width: 100px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center">Legend</div>
+                        <div id="legendContent"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,7 +104,7 @@
                 <p><strong>Draw Mode:</strong></p>
                 <ul class="list-disc list-inside mt-1">
                     <li><strong>Select/Edit:</strong> Default mode for selecting and editing existing objects safely</li>
-                    <li><strong>Drawing Tools:</strong> Select Tray (red), MS Trunking (purple), or HDG Trunking (green) to draw straight dashed lines</li>
+                    <li><strong>Drawing Tools:</strong> Select Tray (red), MS Trunking (purple), HDG Trunking (green), GI Pipe (orange), or Corrugated Pipe (cyan) to draw straight dashed lines</li>
                     <li><strong>Add Logo:</strong> Click anywhere to place the company logo</li>
                     <li><strong>Eraser:</strong> Click on objects to delete them</li>
                     <li>Click on existing objects to select and edit them (move/resize)</li>
@@ -339,6 +346,22 @@
             updateDrawToolUI();
         });
 
+        document.getElementById('giPipeTool').addEventListener('click', function() {
+            currentDrawTool = 'giPipe';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
+        document.getElementById('corrugatedPipeTool').addEventListener('click', function() {
+            currentDrawTool = 'corrugatedPipe';
+            isEraserMode = false;
+            isLogoMode = false;
+            isSelectMode = false;
+            updateDrawToolUI();
+        });
+
         document.getElementById('logoTool').addEventListener('click', function() {
             isLogoMode = true;
             isEraserMode = false;
@@ -361,13 +384,94 @@
                 case 'tray': return '#ef4444'; // red
                 case 'msTrunking': return '#8b5cf6'; // purple
                 case 'hdgTrunking': return '#059669'; // green
+                case 'giPipe': return '#f97316'; // orange
+                case 'corrugatedPipe': return '#06b6d4'; // cyan
                 default: return '#ef4444';
             }
         }
 
+        function getToolName(tool) {
+            switch(tool) {
+                case 'tray': return 'Tray';
+                case 'msTrunking': return 'MS Trunking';
+                case 'hdgTrunking': return 'HDG Trunking';
+                case 'giPipe': return 'GI Pipe';
+                case 'corrugatedPipe': return 'Corrugated Pipe';
+                default: return 'Unknown';
+            }
+        }
+
+        function updateLegend() {
+            const legendBox = document.getElementById('legendBox');
+            const legendContent = document.getElementById('legendContent');
+            
+            if (!canvas) return;
+            
+            // Get all objects except background image and crop rectangle
+            const objects = canvas.getObjects();
+            const drawnObjects = objects.filter(obj => 
+                obj !== cropRect && obj !== currentImage && 
+                (obj.type === 'line' || obj.type === 'image')
+            );
+            
+            if (drawnObjects.length === 0) {
+                legendBox.classList.add('hidden');
+                return;
+            }
+            
+            // Group objects by type/color
+            const legendItems = new Map();
+            
+            drawnObjects.forEach(obj => {
+                if (obj.type === 'line') {
+                    const color = obj.stroke;
+                    let toolName = 'Unknown';
+                    
+                    // Match color to tool name
+                    if (color === '#ef4444') toolName = 'Tray';
+                    else if (color === '#8b5cf6') toolName = 'MS Trunking';
+                    else if (color === '#059669') toolName = 'HDG Trunking';
+                    else if (color === '#f97316') toolName = 'GI Pipe';
+                    else if (color === '#06b6d4') toolName = 'Corrugated Pipe';
+                    
+                    if (!legendItems.has(toolName)) {
+                        legendItems.set(toolName, { color, count: 0 });
+                    }
+                    legendItems.get(toolName).count++;
+                } else if (obj.type === 'image' && obj !== currentImage) {
+                    // This is a logo
+                    if (!legendItems.has('Logo')) {
+                        legendItems.set('Logo', { color: '#3b82f6', count: 0 });
+                    }
+                    legendItems.get('Logo').count++;
+                }
+            });
+            
+            // Build legend HTML
+            let legendHTML = '';
+            legendItems.forEach((item, name) => {
+                if (name === 'Logo') {
+                    legendHTML += `
+                        <div class="flex items-center mb-1">
+                            <div class="w-3 h-3 rounded-sm mr-2 border border-gray-400" style="background: linear-gradient(45deg, #3b82f6 25%, transparent 25%), linear-gradient(-45deg, #3b82f6 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #3b82f6 75%), linear-gradient(-45deg, transparent 75%, #3b82f6 75%); background-size: 4px 4px; background-position: 0 0, 0 2px, 2px -2px, -2px 0px;"></div>
+                            <span class="text-gray-700">${name}</span>
+                        </div>`;
+                } else {
+                    legendHTML += `
+                        <div class="flex items-center mb-1">
+                            <div class="w-3 h-1 mr-2 border-dashed" style="background-color: ${item.color}; border: 1px dashed ${item.color};"></div>
+                            <span class="text-gray-700">${name}</span>
+                        </div>`;
+                }
+            });
+            
+            legendContent.innerHTML = legendHTML;
+            legendBox.classList.remove('hidden');
+        }
+
         function updateDrawToolUI() {
             // Remove active styling from all tools
-            document.querySelectorAll('#selectTool, #trayTool, #msTrunkingTool, #hdgTrunkingTool, #logoTool, #eraserTool').forEach(btn => {
+            document.querySelectorAll('#selectTool, #trayTool, #msTrunkingTool, #hdgTrunkingTool, #giPipeTool, #corrugatedPipeTool, #logoTool, #eraserTool').forEach(btn => {
                 btn.classList.remove('active-tool', 'border-2', 'shadow-lg');
                 btn.classList.add('transition-all', 'duration-200');
             });
@@ -389,7 +493,10 @@
                 if (toolButton) {
                     const borderColor = currentDrawTool === 'tray' ? 'border-red-300' : 
                                       currentDrawTool === 'msTrunking' ? 'border-purple-300' : 
-                                      'border-green-300';
+                                      currentDrawTool === 'hdgTrunking' ? 'border-green-300' :
+                                      currentDrawTool === 'giPipe' ? 'border-orange-300' :
+                                      currentDrawTool === 'corrugatedPipe' ? 'border-cyan-300' :
+                                      'border-gray-300';
                     toolButton.classList.add('active-tool', 'border-2', borderColor, 'shadow-lg');
                 }
                 canvas.isDrawingMode = false; // We handle drawing manually for straight lines
@@ -426,6 +533,7 @@
                 if (target && (target.type === 'line' || target.type === 'image') && target !== cropRect && target !== currentImage) {
                     canvas.remove(target);
                     canvas.renderAll();
+                    updateLegend(); // Update legend when object is removed
                 }
                 return;
             }
@@ -523,6 +631,7 @@
             canvas.bringToFront(cropRect);
             canvas.setActiveObject(logoImg);
             canvas.renderAll();
+            updateLegend(); // Update legend when logo is added
         }
 
         function handleMouseMove(e) {
@@ -574,6 +683,7 @@
                     canvas.add(finalLine);
                     canvas.bringToFront(finalLine);
                     canvas.bringToFront(cropRect);
+                    updateLegend(); // Update legend when line is added
                 }
                 
                 canvas.renderAll();
@@ -595,6 +705,7 @@
             );
             toRemove.forEach(obj => canvas.remove(obj));
             canvas.renderAll();
+            updateLegend(); // Update legend when all objects are cleared
         });
 
         // Export functionality
@@ -655,9 +766,10 @@
             canvas.add(cropRect);
             canvas.setBackgroundColor('#f8f9fa', canvas.renderAll.bind(canvas));
             
-            // Hide toolbar
+            // Hide toolbar and legend
             document.getElementById('toolbar').classList.add('hidden');
             document.getElementById('infoPanel').classList.add('hidden');
+            document.getElementById('legendBox').classList.add('hidden');
             
             // Reset form
             document.getElementById('imageInput').value = '';
@@ -679,6 +791,7 @@
                         canvas.remove(activeObject);
                         canvas.discardActiveObject();
                         canvas.renderAll();
+                        updateLegend(); // Update legend when object is deleted
                     }
                 }
             }
