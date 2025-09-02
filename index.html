@@ -604,9 +604,11 @@
                     });
                 }
                 
-                // Enable custom drawing mode for straight lines
-                canvas.isDrawingMode = false; // Disable fabric.js freeform drawing
-                canvas.selection = true; // Allow selection of drawn lines
+                // Enable custom drawing mode for straight lines on current canvas
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false; // Disable fabric.js freeform drawing
+                    currentCanvas.selection = true; // Allow selection of drawn lines
+                }
             } else {
                 document.getElementById('cropControls').classList.remove('hidden');
                 document.getElementById('drawControls').classList.add('hidden');
@@ -817,16 +819,22 @@
             
             if (isSelectMode) {
                 document.getElementById('selectTool').classList.add('active-tool', 'border-2', 'border-gray-600', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'default';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'default';
+                }
             } else if (isEraserMode) {
                 document.getElementById('eraserTool').classList.add('active-tool', 'border-2', 'border-yellow-300', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'crosshair';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
             } else if (isLogoMode) {
                 document.getElementById('logoTool').classList.add('active-tool', 'border-2', 'border-blue-300', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'crosshair';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
             } else if (currentDrawTool) {
                 const toolButton = document.getElementById(currentDrawTool + 'Tool');
                 if (toolButton) {
@@ -838,8 +846,10 @@
                                       'border-gray-300';
                     toolButton.classList.add('active-tool', 'border-2', borderColor, 'shadow-lg');
                 }
-                canvas.isDrawingMode = false; // We handle drawing manually for straight lines
-                canvas.defaultCursor = 'crosshair';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false; // We handle drawing manually for straight lines
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
             }
         }
 
@@ -1558,42 +1568,7 @@
             document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
             document.addEventListener('touchend', preventDefaultTouch, { passive: false });
             
-            // Make canvas responsive
-            function resizeCanvas() {
-                const container = document.getElementById('canvasContainer');
-                const canvasElement = document.getElementById('fabricCanvas');
-                const containerWidth = container.offsetWidth - 4; // Account for border
-                const scale = Math.min(1, containerWidth / CROP_WIDTH);
-                
-                if (canvas) {
-                    if (scale < 1) {
-                        // Scale both the visual display and the fabric canvas
-                        canvas.setDimensions({
-                            width: CROP_WIDTH * scale,
-                            height: CROP_HEIGHT * scale
-                        });
-                        canvas.setZoom(scale);
-                        container.style.height = (CROP_HEIGHT * scale + 4) + 'px';
-                        
-                        // Remove CSS transform since we're using fabric scaling
-                        canvasElement.style.transform = 'none';
-                    } else {
-                        canvas.setDimensions({
-                            width: CROP_WIDTH,
-                            height: CROP_HEIGHT
-                        });
-                        canvas.setZoom(1);
-                        container.style.height = CROP_HEIGHT + 'px';
-                        canvasElement.style.transform = 'none';
-                    }
-                    
-                    canvas.calcOffset();
-                }
-            }
-            
-            // Resize on load and window resize
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            // Canvas responsive sizing is handled by CSS and separate canvas system
         });
 
         // Add some CSS for active tool styling
