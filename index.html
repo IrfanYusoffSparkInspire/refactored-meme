@@ -623,10 +623,14 @@
                     });
                 }
                 
-                canvas.isDrawingMode = false;
-                canvas.selection = true;
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.selection = true;
+                }
             }
-            canvas.renderAll();
+            if (currentCanvas) {
+                currentCanvas.renderAll();
+            }
         });
 
         // Zoom controls
@@ -1158,36 +1162,6 @@
             document.getElementById('imageGallery').classList.add('hidden');
         }
         
-        // Add logo to canvas function
-        function addLogoToCanvas(logoImg, x, y) {
-            // Scale the logo to a reasonable size
-            const maxSize = 60; // Maximum width/height in pixels
-            const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
-            
-            logoImg.set({
-                left: x,
-                top: y,
-                originX: 'center',
-                originY: 'center',
-                scaleX: scale,
-                scaleY: scale,
-                selectable: true,
-                evented: true,
-                hasControls: true,
-                hasBorders: true,
-                cornerColor: '#fff',
-                cornerStrokeColor: '#2563eb',
-                borderColor: '#2563eb',
-                cornerSize: 6
-            });
-            
-            canvas.add(logoImg);
-            canvas.bringToFront(logoImg);
-            canvas.bringToFront(cropRect);
-            canvas.setActiveObject(logoImg);
-            canvas.renderAll();
-            updateLegend(); // Update legend when logo is added
-        }
         
         // Function to combine specific canvas with legend overlay
         async function getCanvasWithLegend(canvasType = null) {
