@@ -78,7 +78,8 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
             ev_charger_model = '',
             network_strength = '',
             imageData = '', // Base64 image data from canvas (MSB)
-            mccbImageData = '' // Base64 image data for MCCB
+            mccbImageData = '', // Base64 image data for MCCB
+            tpsldImageData = '' // Base64 image data for TP_SLD
         } = req.body;
 
         console.log('📋 Form data received:', { building_name, address: address.substring(0, 50) });
@@ -124,6 +125,7 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         // Save image data if provided
         let msbImagePath = null;
         let mccbImagePath = null;
+        let tpsldImagePath = null;
         
         // Process MSB image
         if (imageData && imageData.startsWith('data:image/')) {
@@ -190,6 +192,39 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         } else {
             console.log('⚠️ No valid MCCB image data provided');
         }
+        
+        // Process TP_SLD image
+        if (tpsldImageData && tpsldImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_SLD image data...');
+                console.log('📊 TP_SLD Image data length:', tpsldImageData.length);
+                console.log('📊 TP_SLD Image data prefix:', tpsldImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tpsldImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_SLD Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tpsldImagePath = path.join(__dirname, 'temp_images', `tpsld_image_${timestamp}.png`);
+                await fs.writeFile(tpsldImagePath, imageBuffer);
+                console.log('✅ TP_SLD Image saved to:', tpsldImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tpsldImagePath);
+                console.log('📁 Saved TP_SLD image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_SLD image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_SLD image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_SLD image data provided');
+        }
 
         // Generate unique output filename
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -213,6 +248,10 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         
         if (mccbImagePath) {
             pythonArgs.push('--mccb-image', mccbImagePath);
+        }
+        
+        if (tpsldImagePath) {
+            pythonArgs.push('--tpsld-image', tpsldImagePath);
         }
 
         const pythonProcess = spawn('python3', pythonArgs, {
@@ -257,6 +296,15 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
                         console.log('🗑️ Cleaned up temporary MCCB image file');
                     } catch (cleanupError) {
                         console.warn('⚠️ Could not clean up temporary MCCB image:', cleanupError);
+                    }
+                }
+                
+                if (tpsldImagePath) {
+                    try {
+                        await fs.unlink(tpsldImagePath);
+                        console.log('🗑️ Cleaned up temporary TP_SLD image file');
+                    } catch (cleanupError) {
+                        console.warn('⚠️ Could not clean up temporary TP_SLD image:', cleanupError);
                     }
                 }
 

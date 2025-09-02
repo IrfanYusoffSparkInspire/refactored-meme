@@ -72,7 +72,7 @@ def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm, suffi
         print(f"❌ Error resizing image: {str(e)}")
         return None
 
-def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_image_path, output_path):
+def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_image_path, tpsld_image_path, output_path):
     """
     Replace placeholders in PowerPoint template and insert images
     Args:
@@ -80,6 +80,7 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
         form_data: Dictionary containing form data
         msb_image_path: Path to the MSB image file (can be None)
         mccb_image_path: Path to the MCCB image file (can be None)
+        tpsld_image_path: Path to the TP_SLD image file (can be None)
         output_path: Path where to save the output file
     """
     try:
@@ -87,6 +88,7 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
         print(f"📁 Template path: {template_path}")
         print(f"🖼️ MSB Image path: {msb_image_path}")
         print(f"🖼️ MCCB Image path: {mccb_image_path}")
+        print(f"🖼️ TP_SLD Image path: {tpsld_image_path}")
         print(f"📊 Form data: {form_data}")
         
         prs = Presentation(template_path)
@@ -113,6 +115,10 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                         print(f"    *** FOUND {{TP_MCCB}} PLACEHOLDER! ***")
                         print(f"    Position: left={shape.left}, top={shape.top}")
                         print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_SLD}}' or shape.name == 'TP_SLD':
+                        print(f"    *** FOUND {{TP_SLD}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
                 
                 if hasattr(shape, 'text_frame') and shape.text_frame:
                     print(f"    Has text_frame: True")
@@ -126,6 +132,8 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                             print(f"    *** CONTAINS {{TP_MSB}} TEXT! ***")
                         elif '{{TP_MCCB}}' in all_text or 'TP_MCCB' in all_text:
                             print(f"    *** CONTAINS {{TP_MCCB}} TEXT! ***")
+                        elif '{{TP_SLD}}' in all_text or 'TP_SLD' in all_text:
+                            print(f"    *** CONTAINS {{TP_SLD}} TEXT! ***")
                 
                 if hasattr(shape, 'text') and shape.text:
                     print(f"    Direct text: '{shape.text[:100]}{'...' if len(shape.text) > 100 else ''}'")
@@ -133,6 +141,8 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                         print(f"    *** CONTAINS {{TP_MSB}} TEXT! ***")
                     elif '{{TP_MCCB}}' in shape.text or 'TP_MCCB' in shape.text:
                         print(f"    *** CONTAINS {{TP_MCCB}} TEXT! ***")
+                    elif '{{TP_SLD}}' in shape.text or 'TP_SLD' in shape.text:
+                        print(f"    *** CONTAINS {{TP_SLD}} TEXT! ***")
         
         # Prepare replacement mappings
         replacements = {
@@ -159,6 +169,14 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                 'width_cm': 4.22,
                 'height_cm': 4.57,
                 'suffix': 'mccb'
+            },
+            {
+                'placeholder': '{{TP_SLD}}',
+                'alt_placeholder': 'TP_SLD',
+                'image_path': tpsld_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tpsld'
             }
         ]
         
@@ -405,6 +423,7 @@ def main():
     parser.add_argument('--data', required=True, help='JSON string containing form data')
     parser.add_argument('--msb-image', help='Path to MSB image file (optional)', dest='msb_image')
     parser.add_argument('--mccb-image', help='Path to MCCB image file (optional)', dest='mccb_image')
+    parser.add_argument('--tpsld-image', help='Path to TP_SLD image file (optional)', dest='tpsld_image')
     # Keep legacy --image argument for backward compatibility
     parser.add_argument('--image', help='Path to image file (legacy, maps to MSB image)', dest='legacy_image')
     
@@ -423,6 +442,7 @@ def main():
         # Handle legacy image argument (backward compatibility)
         msb_image_path = args.msb_image or args.legacy_image
         mccb_image_path = args.mccb_image
+        tpsld_image_path = args.tpsld_image
         
         # Validate image files if provided
         if msb_image_path and not os.path.exists(msb_image_path):
@@ -432,6 +452,10 @@ def main():
         if mccb_image_path and not os.path.exists(mccb_image_path):
             print(f"⚠️ MCCB image file not found: {mccb_image_path}")
             mccb_image_path = None
+            
+        if tpsld_image_path and not os.path.exists(tpsld_image_path):
+            print(f"⚠️ TP_SLD image file not found: {tpsld_image_path}")
+            tpsld_image_path = None
         
         # Create output directory if it doesn't exist
         output_dir = os.path.dirname(args.output)
@@ -444,6 +468,7 @@ def main():
             form_data,
             msb_image_path,
             mccb_image_path,
+            tpsld_image_path,
             args.output
         )
         

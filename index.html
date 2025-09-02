@@ -140,7 +140,7 @@
             <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:space-x-4 mb-3 sm:mb-4 bg-gray-50 p-3 rounded-lg">
                 <div class="flex items-center space-x-3 w-full sm:w-auto">
                     <label class="text-sm font-medium text-gray-600 whitespace-nowrap">Zoom:</label>
-                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.1" value="1" class="flex-1 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.01" value="1" class="flex-1 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
                     <span id="zoomValue" class="text-sm font-medium text-gray-600 min-w-[32px]">1x</span>
                 </div>
                 <button id="resetZoom" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 transition-colors duration-200 min-h-[40px] w-full sm:w-auto">Reset</button>
@@ -200,22 +200,14 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:space-x-4 pt-2 border-t border-gray-200">
-                <button id="generateProposal" class="px-4 sm:px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 text-sm sm:text-base font-semibold transition-all duration-200 min-h-[48px] shadow-sm hover:shadow-md">
-                    <span class="flex items-center justify-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Generate Proposal
-                    </span>
-                </button>
-                <button id="resetCanvas" class="px-4 sm:px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm sm:text-base font-semibold transition-all duration-200 min-h-[48px] shadow-sm hover:shadow-md">
+            <!-- Toolbar Action Button (Reset only) -->
+            <div class="flex justify-center pt-3 border-t border-gray-200">
+                <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-semibold transition-all duration-200 min-h-[40px] shadow-sm hover:shadow-md">
                     <span class="flex items-center justify-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
-                        Reset
+                        Reset All
                     </span>
                 </button>
             </div>
@@ -350,6 +342,21 @@
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Action Bar -->
+    <div id="bottomActionBar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-lg z-50 p-3 sm:p-4">
+        <div class="container mx-auto max-w-7xl">
+            <button id="generateProposal" class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 text-base font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                <span class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Generate Proposal
+                    <span class="ml-2 bg-white bg-opacity-20 px-2 py-1 rounded text-sm">PowerPoint</span>
+                </span>
+            </button>
         </div>
     </div>
 
@@ -1998,6 +2005,24 @@
                 box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             }
             
+            /* Desktop bottom action bar styles */
+            @media (min-width: 769px) {
+                #bottomActionBar {
+                    position: relative !important;
+                    box-shadow: none !important;
+                    border-top: 1px solid #e5e7eb !important;
+                    margin-top: 2rem;
+                }
+                
+                body {
+                    padding-bottom: 0;
+                }
+                
+                .canvas-full-mobile {
+                    margin-bottom: 0 !important;
+                }
+            }
+
             /* Enhanced touch targets for mobile */
             @media (max-width: 768px) {
                 button, input[type="file"], select {
@@ -2013,27 +2038,34 @@
                     padding-top: 8px !important;
                 }
                 
+                /* Logo gallery spacing adjustment */
+                #imageGallery {
+                    margin-bottom: 100px !important;
+                }
+                
                 /* Mobile floating toolbar */
                 .mobile-floating-toolbar {
                     position: fixed !important;
-                    top: 0;
+                    top: 48px;
                     left: 0;
                     right: 0;
                     margin: 0 !important;
-                    border-radius: 0 0 16px 16px !important;
+                    border-radius: 16px !important;
                     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
                     backdrop-filter: blur(12px);
                     background-color: rgba(255, 255, 255, 0.98) !important;
                     transform: translateY(0);
                     transition: transform 0.3s ease-in-out;
-                    max-height: 80vh;
+                    max-height: 75vh;
                     overflow-y: auto;
-                    padding: 8px 16px 12px 16px !important;
+                    padding: 12px 16px 16px 16px !important;
                     z-index: 100;
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    margin: 0 8px !important;
                 }
                 
                 .mobile-floating-toolbar.hidden-mobile {
-                    transform: translateY(calc(-100% + 50px));
+                    transform: translateY(calc(-100% + 52px));
                 }
                 
                 .mobile-floating-toolbar h3 {
@@ -2063,14 +2095,25 @@
                 
                 /* Canvas gets full screen on mobile */
                 .canvas-full-mobile {
-                    margin-top: 60px !important;
-                    margin-bottom: 0 !important;
+                    margin-top: 108px !important;
+                    margin-bottom: 80px !important;
                     padding-bottom: 20px !important;
                 }
                 
                 .mobile-canvas-height {
-                    min-height: calc(100vh - 140px) !important;
-                    max-height: calc(100vh - 120px) !important;
+                    min-height: calc(100vh - 240px) !important;
+                    max-height: calc(100vh - 220px) !important;
+                }
+                
+                /* Bottom action bar mobile styles */
+                #bottomActionBar {
+                    backdrop-filter: blur(8px);
+                    background-color: rgba(255, 255, 255, 0.98) !important;
+                }
+                
+                /* Ensure body has bottom padding for fixed action bar */
+                body {
+                    padding-bottom: 80px;
                 }
                 
                 /* Collapsible tools animation */
