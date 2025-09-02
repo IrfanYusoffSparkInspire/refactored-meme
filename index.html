@@ -2,19 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Image Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Image Editor</h1>
+<body class="bg-gray-100 min-h-screen overflow-x-hidden">
+    <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Image Editor</h1>
         
         <!-- Upload Sections -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
             <!-- MSB Image Upload -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MSB Image Upload</h3>
                 <div class="flex items-center justify-center w-full">
                     <label for="msbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -39,7 +41,7 @@
             </div>
 
             <!-- MCCB Image Upload -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MCCB Image Upload</h3>
                 <div class="flex items-center justify-center w-full">
                     <label for="mccbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -65,140 +67,246 @@
         </div>
 
         <!-- Image Selection for Editing -->
-        <div id="imageSelectionPanel" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+        <div id="imageSelectionPanel" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6 hidden">
             <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Select Image to Edit</h3>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <button id="editMsbImage" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                <button id="editMsbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
                     Edit MSB Image
-                    <span class="block text-sm opacity-75">(9.05cm × 9.25cm)</span>
+                    <span class="block text-xs sm:text-sm opacity-75">(9.05cm × 9.25cm)</span>
                 </button>
-                <button id="editMccbImage" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                <button id="editMccbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
                     Edit MCCB Image  
-                    <span class="block text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
                 </button>
             </div>
-            <div id="currentlyEditing" class="text-center mt-4 text-sm text-gray-600"></div>
+            <div id="currentlyEditing" class="text-center mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600 font-medium"></div>
         </div>
 
         <!-- Toolbar -->
-        <div id="toolbar" class="bg-white rounded-lg shadow-md p-2 sm:p-4 mb-6 hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
-                <h3 class="text-lg font-semibold text-gray-800">Tools</h3>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4">
-                    <label class="text-sm text-gray-600">Mode:</label>
-                    <select id="editMode" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
-                        <option value="crop">Crop Mode</option>
-                        <option value="draw">Draw Mode</option>
-                    </select>
-                </div>
+        <div id="toolbar" class="bg-white rounded-lg shadow-md p-3 sm:p-4 mb-4 sm:mb-6 hidden md:sticky md:top-2 z-20 border border-gray-200 mobile-floating-toolbar">
+            <!-- Mobile minimize button -->
+            <div id="mobileMinimizeBtn" class="md:hidden flex justify-center mb-2">
+                <button id="toolbarToggle" class="px-4 py-1 bg-gray-300 text-gray-700 rounded-full text-xs hover:bg-gray-400 transition-colors duration-200 flex items-center">
+                    <svg id="toolbarToggleIcon" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                    </svg>
+                    <span id="toolbarToggleText">Minimize</span>
+                </button>
             </div>
             
-            <!-- Crop Controls -->
-            <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4 mb-4">
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm text-gray-600">Zoom:</label>
-                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.1" value="1" class="w-24">
-                    <span id="zoomValue" class="text-sm text-gray-600">1x</span>
+            <div id="toolbarContent">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2">
+                    <h3 class="text-lg font-semibold text-gray-800 md:block hidden">Tools</h3>
+                    <h3 class="text-base font-semibold text-gray-800 md:hidden block">Tools</h3>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4 w-full sm:w-auto">
+                        <label class="text-sm font-medium text-gray-600">Mode:</label>
+                        <select id="editMode" class="px-3 py-2 border border-gray-300 rounded-md text-sm min-h-[40px] flex-1 sm:flex-none bg-white">
+                            <option value="crop">Crop Mode</option>
+                            <option value="draw">Draw Mode</option>
+                        </select>
+                    </div>
                 </div>
-                <button id="resetZoom" class="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600">Reset</button>
+            
+            <!-- Crop Controls -->
+            <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:space-x-4 mb-3 sm:mb-4 bg-gray-50 p-3 rounded-lg">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <label class="text-sm font-medium text-gray-600 whitespace-nowrap">Zoom:</label>
+                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.1" value="1" class="flex-1 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="zoomValue" class="text-sm font-medium text-gray-600 min-w-[32px]">1x</span>
+                </div>
+                <button id="resetZoom" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 transition-colors duration-200 min-h-[40px] w-full sm:w-auto">Reset</button>
             </div>
 
             <!-- Drawing Controls -->
-            <div id="drawControls" class="hidden">
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <label class="text-sm text-gray-600 w-full sm:w-auto">Drawing Tool:</label>
-                    <button id="selectTool" class="px-3 py-2 bg-gray-400 text-white rounded-md text-sm hover:bg-gray-500 active-tool flex-1 sm:flex-none border-2 border-gray-600 shadow-lg">Select/Edit</button>
-                    <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex-1 sm:flex-none transition-all duration-200">Tray</button>
-                    <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none transition-all duration-200">MS Trunking</button>
-                    <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none transition-all duration-200">HDG Trunking</button>
-                    <button id="giPipeTool" class="px-3 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600 flex-1 sm:flex-none transition-all duration-200">GI Pipe</button>
-                    <button id="corrugatedPipeTool" class="px-3 py-2 bg-cyan-500 text-white rounded-md text-sm hover:bg-cyan-600 flex-1 sm:flex-none transition-all duration-200">Corrugated Pipe</button>
-                    <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 flex-1 sm:flex-none transition-all duration-200">Add Logo</button>
-                    <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none transition-all duration-200">Eraser</button>
-                    <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
+            <div id="drawControls" class="hidden bg-gray-50 p-3 rounded-lg">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center">
+                        <label class="text-sm font-medium text-gray-700">Drawing Tools:</label>
+                        <span id="currentToolIndicator" class="ml-2 px-2 py-1 bg-gray-200 text-xs rounded text-gray-600 sm:hidden">Select</span>
+                    </div>
+                    <button id="toggleToolsBtn" class="sm:hidden px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors duration-200 flex items-center">
+                        <svg id="toggleIcon" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                        <span id="toggleText">Hide</span>
+                    </button>
+                </div>
+                <div id="toolsGrid" class="mb-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+                        <button id="selectTool" class="px-3 py-2 bg-gray-400 text-white rounded-md text-xs sm:text-sm hover:bg-gray-500 active-tool flex-1 border-2 border-gray-600 shadow-lg min-h-[44px] font-medium transition-all duration-200">
+                            <span class="block">Select</span>
+                            <span class="block text-xs opacity-75">Edit</span>
+                        </button>
+                        <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-xs sm:text-sm hover:bg-red-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Tray</span>
+                        </button>
+                        <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-xs sm:text-sm hover:bg-purple-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">MS</span>
+                            <span class="block text-xs opacity-75">Trunking</span>
+                        </button>
+                        <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-xs sm:text-sm hover:bg-green-700 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">HDG</span>
+                            <span class="block text-xs opacity-75">Trunking</span>
+                        </button>
+                        <button id="giPipeTool" class="px-3 py-2 bg-orange-500 text-white rounded-md text-xs sm:text-sm hover:bg-orange-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">GI</span>
+                            <span class="block text-xs opacity-75">Pipe</span>
+                        </button>
+                        <button id="corrugatedPipeTool" class="px-3 py-2 bg-cyan-500 text-white rounded-md text-xs sm:text-sm hover:bg-cyan-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Corrugated</span>
+                            <span class="block text-xs opacity-75">Pipe</span>
+                        </button>
+                        <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-xs sm:text-sm hover:bg-blue-700 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Add</span>
+                            <span class="block text-xs opacity-75">Logo</span>
+                        </button>
+                        <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-xs sm:text-sm hover:bg-yellow-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Eraser</span>
+                        </button>
+                        <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-xs sm:text-sm hover:bg-gray-600 flex-1 min-h-[44px] font-medium transition-all duration-200">
+                            <span class="block">Clear</span>
+                            <span class="block text-xs opacity-75">All</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4">
-                <button id="generateProposal" class="px-4 sm:px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base">Generate Proposal</button>
-                <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm sm:text-base">Reset</button>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:space-x-4 pt-2 border-t border-gray-200">
+                <button id="generateProposal" class="px-4 sm:px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 text-sm sm:text-base font-semibold transition-all duration-200 min-h-[48px] shadow-sm hover:shadow-md">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Generate Proposal
+                    </span>
+                </button>
+                <button id="resetCanvas" class="px-4 sm:px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm sm:text-base font-semibold transition-all duration-200 min-h-[48px] shadow-sm hover:shadow-md">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Reset
+                    </span>
+                </button>
             </div>
+            </div> <!-- Close toolbarContent div -->
         </div>
 
         <!-- Canvas Container -->
-        <div class="bg-white rounded-lg shadow-md p-2 sm:p-6">
-            <div class="flex justify-center">
+        <div class="bg-white rounded-lg shadow-md p-3 sm:p-6 border border-gray-200 canvas-full-mobile">
+            <div class="flex justify-center items-center min-h-[200px] sm:min-h-[350px] mobile-canvas-height">
                 <!-- MSB Canvas -->
-                <div id="msbCanvasContainer" class="relative border-2 border-blue-300 rounded-lg overflow-hidden touch-none hidden" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
-                    <canvas id="msbCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
-                    <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">MSB Canvas</div>
+                <div id="msbCanvasContainer" class="relative border-2 border-blue-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
+                    <canvas id="msbCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">MSB Canvas</div>
                     <!-- Legend Box for MSB -->
-                    <div id="msbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
-                        <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
+                    <div id="msbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
                         <div id="msbLegendContent"></div>
                     </div>
                 </div>
                 
                 <!-- MCCB Canvas -->
-                <div id="mccbCanvasContainer" class="relative border-2 border-green-300 rounded-lg overflow-hidden touch-none hidden" style="max-width: 100%; width: 160px; height: 173px; min-width: 160px;">
-                    <canvas id="mccbCanvas" width="160" height="173" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
-                    <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">MCCB Canvas</div>
+                <div id="mccbCanvasContainer" class="relative border-2 border-green-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="mccbCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">MCCB Canvas</div>
                     <!-- Legend Box for MCCB -->
-                    <div id="mccbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
-                        <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
+                    <div id="mccbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
                         <div id="mccbLegendContent"></div>
                     </div>
                 </div>
                 
                 <!-- Default empty state -->
-                <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center" style="width: 342px; height: 350px;">
-                    <div class="text-center text-gray-500">
+                <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center w-full max-w-md mx-auto" style="min-height: 250px;">
+                    <div class="text-center text-gray-500 p-6">
                         <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
-                        <p class="text-sm font-medium">Upload and select an image to start editing</p>
-                        <p class="text-xs mt-1">MSB (9.05×9.25cm) or MCCB (4.22×4.57cm)</p>
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Upload and select an image to start editing</p>
+                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm) or MCCB (4.22×4.57cm)</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Image Gallery Selector (initially hidden) -->
-        <div id="imageGallery" class="bg-white rounded-lg shadow-lg border-2 border-blue-300 p-6 mt-6 hidden relative z-50">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800 text-blue-600">🖼️ Select a Logo to Add</h3>
-                <button id="closeGallery" class="text-gray-500 hover:text-red-500 text-2xl font-bold bg-gray-100 hover:bg-red-100 rounded-full w-8 h-8 flex items-center justify-center">&times;</button>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="galleryGrid">
-                <!-- Images will be loaded here dynamically -->
-            </div>
-            <div class="mt-4 text-center">
-                <p class="text-sm text-gray-600">Click on any logo above to add it to your image</p>
+        <div id="imageGallery" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 text-blue-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        Select a Logo to Add
+                    </h3>
+                    <button id="closeGallery" class="text-gray-500 hover:text-red-500 text-2xl font-bold bg-white hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 shadow-sm hover:shadow-md">&times;</button>
+                </div>
+                <div class="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-120px)] gallery-scroll">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" id="galleryGrid">
+                        <!-- Images will be loaded here dynamically -->
+                    </div>
+                    <div class="mt-6 text-center bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm font-medium text-blue-800">👆 Tap on any logo above to add it to your canvas</p>
+                        <p class="text-xs text-blue-600 mt-1">You can resize and move the logo after adding it</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Info Panel -->
-        <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 mt-6 hidden">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">Instructions</h3>
-            <div id="cropInstructions" class="text-sm text-gray-600">
-                <p><strong>Crop Mode:</strong></p>
-                <ul class="list-disc list-inside mt-1">
-                    <li>Use the zoom slider to scale the image</li>
-                    <li>Drag the image to position it within the crop area</li>
-                    <li>The final crop will be 600x400 pixels</li>
+        <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6 hidden border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Instructions
+            </h3>
+            <div id="cropInstructions" class="text-sm text-gray-700 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                <p class="font-semibold text-blue-800 mb-2">📏 Crop Mode:</p>
+                <ul class="space-y-1 ml-4">
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>Use the zoom slider to scale the image</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>Drag the image to position it within the crop area</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>The final crop maintains original dimensions</span>
+                    </li>
                 </ul>
             </div>
-            <div id="drawInstructions" class="hidden text-sm text-gray-600">
-                <p><strong>Draw Mode:</strong></p>
-                <ul class="list-disc list-inside mt-1">
-                    <li><strong>Select/Edit:</strong> Default mode for selecting and editing existing objects safely</li>
-                    <li><strong>Drawing Tools:</strong> Select Tray (red), MS Trunking (purple), HDG Trunking (green), GI Pipe (orange), or Corrugated Pipe (cyan) to draw straight dashed lines</li>
-                    <li><strong>Add Logo:</strong> Click anywhere to place the company logo</li>
-                    <li><strong>Eraser:</strong> Click on objects to delete them</li>
-                    <li>Click on existing objects to select and edit them (move/resize)</li>
-                    <li>Press Delete key to remove selected objects</li>
-                    <li>Use "Clear All" to remove all drawings</li>
+            <div id="drawInstructions" class="hidden text-sm text-gray-700 bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                <p class="font-semibold text-green-800 mb-2">✏️ Draw Mode:</p>
+                <ul class="space-y-2 ml-4">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Select/Edit:</strong> Default mode for selecting and editing objects</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Drawing Tools:</strong> Draw colored dashed lines for different components</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Add Logo:</strong> Place logos from the gallery</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Eraser:</strong> Tap on objects to delete them</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span>Tap existing objects to select and edit them</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span>Press Delete key to remove selected objects</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -237,7 +345,7 @@
         
         // Dimension constants
         const MSB_DIMENSIONS = { width: 342, height: 350 }; // 9.05cm × 9.25cm at 96 DPI
-        const MCCB_DIMENSIONS = { width: 160, height: 173 }; // 4.22cm × 4.57cm at 96 DPI
+        const MCCB_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
 
         // Initialize separate canvases
         function initCanvases() {
@@ -609,6 +717,11 @@
                     currentCanvas.isDrawingMode = false; // Disable fabric.js freeform drawing
                     currentCanvas.selection = true; // Allow selection of drawn lines
                 }
+                
+                // Show helpful hint on mobile when entering draw mode
+                if (window.innerWidth <= 768) {
+                    showCollapseHint();
+                }
             } else {
                 document.getElementById('cropControls').classList.remove('hidden');
                 document.getElementById('drawControls').classList.add('hidden');
@@ -821,20 +934,28 @@
                 btn.classList.add('transition-all', 'duration-200');
             });
             
+            const indicator = document.getElementById('currentToolIndicator');
+            
             if (isSelectMode) {
                 document.getElementById('selectTool').classList.add('active-tool', 'border-2', 'border-gray-600', 'shadow-lg');
+                indicator.textContent = 'Select';
+                indicator.className = 'ml-2 px-2 py-1 bg-gray-200 text-xs rounded text-gray-600 sm:hidden';
                 if (currentCanvas) {
                     currentCanvas.isDrawingMode = false;
                     currentCanvas.defaultCursor = 'default';
                 }
             } else if (isEraserMode) {
                 document.getElementById('eraserTool').classList.add('active-tool', 'border-2', 'border-yellow-300', 'shadow-lg');
+                indicator.textContent = 'Eraser';
+                indicator.className = 'ml-2 px-2 py-1 bg-yellow-200 text-xs rounded text-yellow-700 sm:hidden';
                 if (currentCanvas) {
                     currentCanvas.isDrawingMode = false;
                     currentCanvas.defaultCursor = 'crosshair';
                 }
             } else if (isLogoMode) {
                 document.getElementById('logoTool').classList.add('active-tool', 'border-2', 'border-blue-300', 'shadow-lg');
+                indicator.textContent = 'Logo';
+                indicator.className = 'ml-2 px-2 py-1 bg-blue-200 text-xs rounded text-blue-700 sm:hidden';
                 if (currentCanvas) {
                     currentCanvas.isDrawingMode = false;
                     currentCanvas.defaultCursor = 'crosshair';
@@ -849,6 +970,24 @@
                                       currentDrawTool === 'corrugatedPipe' ? 'border-cyan-300' :
                                       'border-gray-300';
                     toolButton.classList.add('active-tool', 'border-2', borderColor, 'shadow-lg');
+                    
+                    // Update indicator
+                    const toolNames = {
+                        'tray': 'Tray',
+                        'msTrunking': 'MS Trunking',
+                        'hdgTrunking': 'HDG Trunking',
+                        'giPipe': 'GI Pipe',
+                        'corrugatedPipe': 'Corrugated'
+                    };
+                    const toolColors = {
+                        'tray': 'bg-red-200 text-red-700',
+                        'msTrunking': 'bg-purple-200 text-purple-700',
+                        'hdgTrunking': 'bg-green-200 text-green-700',
+                        'giPipe': 'bg-orange-200 text-orange-700',
+                        'corrugatedPipe': 'bg-cyan-200 text-cyan-700'
+                    };
+                    indicator.textContent = toolNames[currentDrawTool] || currentDrawTool;
+                    indicator.className = `ml-2 px-2 py-1 text-xs rounded sm:hidden ${toolColors[currentDrawTool] || 'bg-gray-200 text-gray-700'}`;
                 }
                 if (currentCanvas) {
                     currentCanvas.isDrawingMode = false; // We handle drawing manually for straight lines
@@ -1118,10 +1257,10 @@
             // Add each image to the gallery
             availableImages.forEach((imageInfo) => {
                 const imageCard = document.createElement('div');
-                imageCard.className = 'border border-gray-300 rounded-lg p-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-200';
+                imageCard.className = 'gallery-item border border-gray-300 rounded-lg p-3 hover:border-blue-500 cursor-pointer transition-all duration-200 bg-white hover:bg-blue-50';
                 imageCard.innerHTML = `
-                    <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-20 object-contain mb-2 rounded">
-                    <p class="text-xs text-gray-700 text-center truncate">${imageInfo.displayName}</p>
+                    <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-16 sm:h-20 object-contain mb-2 rounded">
+                    <p class="text-xs font-medium text-gray-700 text-center truncate">${imageInfo.displayName}</p>
                 `;
                 
                 imageCard.addEventListener('click', () => {
@@ -1507,9 +1646,109 @@
             updateDrawToolUI();
         });
 
-        // Gallery close button
+        // Gallery close button and outside click handling
         document.getElementById('closeGallery').addEventListener('click', function() {
             document.getElementById('imageGallery').classList.add('hidden');
+        });
+        
+        // Close gallery when clicking outside the modal
+        document.getElementById('imageGallery').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+
+        // Collapsible toolbar functionality for mobile
+        let toolsCollapsed = false;
+        document.getElementById('toggleToolsBtn').addEventListener('click', function() {
+            const toolsGrid = document.getElementById('toolsGrid');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const toggleText = document.getElementById('toggleText');
+            
+            toolsCollapsed = !toolsCollapsed;
+            
+            if (toolsCollapsed) {
+                // Hide tools
+                toolsGrid.style.maxHeight = '0px';
+                toolsGrid.style.overflow = 'hidden';
+                toolsGrid.style.opacity = '0';
+                toolsGrid.style.marginBottom = '0px';
+                
+                // Update button
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
+                toggleText.textContent = 'Show';
+                this.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                this.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else {
+                // Show tools
+                toolsGrid.style.maxHeight = 'none';
+                toolsGrid.style.overflow = 'visible';
+                toolsGrid.style.opacity = '1';
+                toolsGrid.style.marginBottom = '12px';
+                
+                // Update button
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
+                toggleText.textContent = 'Hide';
+                this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                this.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            }
+        });
+        
+        // Auto-collapse tools on mobile when canvas is active (optional enhancement)
+        function autoCollapseOnMobile() {
+            if (window.innerWidth <= 768 && isDrawMode && !toolsCollapsed) {
+                // Auto-collapse after 3 seconds of inactivity on mobile
+                setTimeout(() => {
+                    if (window.innerWidth <= 768 && isDrawMode && !toolsCollapsed) {
+                        document.getElementById('toggleToolsBtn').click();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Show helpful hint about collapsing tools on mobile
+        function showCollapseHint() {
+            if (window.innerWidth <= 768 && !toolsCollapsed) {
+                const hint = document.createElement('div');
+                hint.className = 'collapse-hint';
+                hint.textContent = '💡 Tap "Minimize" to hide toolbar and see more canvas';
+                document.body.appendChild(hint);
+                
+                setTimeout(() => {
+                    if (document.body.contains(hint)) {
+                        document.body.removeChild(hint);
+                    }
+                }, 3000);
+            }
+        }
+
+        // Mobile toolbar toggle functionality
+        let toolbarMinimized = false;
+        document.getElementById('toolbarToggle').addEventListener('click', function() {
+            const toolbar = document.getElementById('toolbar');
+            const toolbarContent = document.getElementById('toolbarContent');
+            const toggleIcon = document.getElementById('toolbarToggleIcon');
+            const toggleText = document.getElementById('toolbarToggleText');
+            
+            toolbarMinimized = !toolbarMinimized;
+            
+            if (toolbarMinimized) {
+                // Minimize toolbar - only show the toggle button
+                toolbar.classList.add('hidden-mobile');
+                toolbarContent.style.display = 'none';
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 15l-7-7-7 7"></path>';
+                toggleText.textContent = 'Show Tools';
+                this.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+                this.classList.add('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+            } else {
+                // Show full toolbar
+                toolbar.classList.remove('hidden-mobile');
+                toolbarContent.style.display = 'block';
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>';
+                toggleText.textContent = 'Minimize';
+                this.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+                this.classList.add('bg-gray-300', 'hover:bg-gray-400');
+            }
         });
 
         // Place logo function for click placement
@@ -1545,9 +1784,10 @@
             // Canvas responsive sizing is handled by CSS and separate canvas system
         });
 
-        // Add some CSS for active tool styling
+        // Add enhanced CSS for mobile-friendly styling
         const style = document.createElement('style');
         style.textContent = `
+            /* Enhanced active tool styling */
             .active-tool {
                 transform: scale(1.05);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -1561,6 +1801,181 @@
                 border-radius: inherit;
                 background: linear-gradient(45deg, rgba(255,255,255,0.3), transparent);
                 z-index: -1;
+            }
+            
+            /* Custom range slider styling */
+            input[type="range"] {
+                -webkit-appearance: none;
+                background: transparent;
+            }
+            input[type="range"]::-webkit-slider-track {
+                background: #e5e7eb;
+                height: 8px;
+                border-radius: 4px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3b82f6;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            input[type="range"]::-moz-range-track {
+                background: #e5e7eb;
+                height: 8px;
+                border-radius: 4px;
+                border: none;
+            }
+            input[type="range"]::-moz-range-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3b82f6;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            
+            /* Enhanced touch targets for mobile */
+            @media (max-width: 768px) {
+                button, input[type="file"], select {
+                    min-height: 44px;
+                }
+                
+                .canvas-container {
+                    touch-action: manipulation;
+                }
+                
+                /* Adjust main container for top toolbar */
+                .container.mx-auto {
+                    padding-top: 8px !important;
+                }
+                
+                /* Mobile floating toolbar */
+                .mobile-floating-toolbar {
+                    position: fixed !important;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    margin: 0 !important;
+                    border-radius: 0 0 16px 16px !important;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+                    backdrop-filter: blur(12px);
+                    background-color: rgba(255, 255, 255, 0.98) !important;
+                    transform: translateY(0);
+                    transition: transform 0.3s ease-in-out;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    padding: 8px 16px 12px 16px !important;
+                    z-index: 100;
+                }
+                
+                .mobile-floating-toolbar.hidden-mobile {
+                    transform: translateY(calc(-100% + 50px));
+                }
+                
+                .mobile-floating-toolbar h3 {
+                    font-size: 16px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                /* Compact toolbar sections */
+                .mobile-floating-toolbar .flex.flex-col.sm\\:flex-row {
+                    gap: 8px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                .mobile-floating-toolbar #cropControls {
+                    padding: 8px 12px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                .mobile-floating-toolbar #drawControls {
+                    padding: 8px 12px !important;
+                }
+                
+                /* Better spacing for mobile */
+                .mobile-spacing {
+                    margin-bottom: 1rem;
+                }
+                
+                /* Canvas gets full screen on mobile */
+                .canvas-full-mobile {
+                    margin-top: 60px !important;
+                    margin-bottom: 0 !important;
+                    padding-bottom: 20px !important;
+                }
+                
+                .mobile-canvas-height {
+                    min-height: calc(100vh - 140px) !important;
+                    max-height: calc(100vh - 120px) !important;
+                }
+                
+                /* Collapsible tools animation */
+                #toolsGrid {
+                    transition: all 0.3s ease-in-out;
+                }
+                
+                /* Auto-collapse message */
+                .collapse-hint {
+                    position: fixed;
+                    top: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    z-index: 1000;
+                    animation: fadeInOut 3s ease-in-out;
+                }
+                
+                @keyframes fadeInOut {
+                    0%, 100% { opacity: 0; }
+                    50% { opacity: 1; }
+                }
+                
+                /* Hide info panel on mobile to save space */
+                #infoPanel {
+                    display: none !important;
+                }
+            }
+            
+            /* Gallery image hover effects */
+            .gallery-item {
+                transition: all 0.2s ease;
+            }
+            .gallery-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+            .gallery-item:active {
+                transform: translateY(0px);
+            }
+            
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
+            }
+            
+            /* Custom scrollbar for gallery */
+            .gallery-scroll::-webkit-scrollbar {
+                width: 8px;
+            }
+            .gallery-scroll::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 4px;
+            }
+            .gallery-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            .gallery-scroll::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
             }
         `;
         document.head.appendChild(style);
