@@ -11,22 +11,73 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Image Editor</h1>
         
-        <!-- Upload Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div class="flex items-center justify-center w-full">
-                <label for="imageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg class="w-8 h-8 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                        <p class="mb-2 text-sm text-gray-500">
-                            <span class="font-semibold">Click to upload</span> or drag and drop
-                        </p>
-                        <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
-                    </div>
-                    <input id="imageInput" type="file" class="hidden" accept="image/*" />
-                </label>
+        <!-- Upload Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- MSB Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MSB Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="msbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload MSB</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-blue-600 mt-1">Dimensions: 9.05cm × 9.25cm</p>
+                        </div>
+                        <input id="msbImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="msbImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="msbPreviewImg" src="" alt="MSB Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeMsbImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
             </div>
+
+            <!-- MCCB Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MCCB Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="mccbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload MCCB</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-green-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="mccbImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="mccbImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="mccbPreviewImg" src="" alt="MCCB Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeMccbImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Selection for Editing -->
+        <div id="imageSelectionPanel" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Select Image to Edit</h3>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="editMsbImage" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Edit MSB Image
+                    <span class="block text-sm opacity-75">(9.05cm × 9.25cm)</span>
+                </button>
+                <button id="editMccbImage" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    Edit MCCB Image  
+                    <span class="block text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+            </div>
+            <div id="currentlyEditing" class="text-center mt-4 text-sm text-gray-600"></div>
         </div>
 
         <!-- Toolbar -->
@@ -70,7 +121,6 @@
 
             <!-- Action Buttons -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4">
-                <button id="exportImage" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm sm:text-base">Export for Backend</button>
                 <button id="generateProposal" class="px-4 sm:px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base">Generate Proposal</button>
                 <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm sm:text-base">Reset</button>
             </div>
@@ -79,25 +129,52 @@
         <!-- Canvas Container -->
         <div class="bg-white rounded-lg shadow-md p-2 sm:p-6">
             <div class="flex justify-center">
-                <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
-                    <canvas id="fabricCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
-                    <!-- Legend Box -->
-                    <div id="legendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
+                <!-- MSB Canvas -->
+                <div id="msbCanvasContainer" class="relative border-2 border-blue-300 rounded-lg overflow-hidden touch-none hidden" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
+                    <canvas id="msbCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
+                    <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">MSB Canvas</div>
+                    <!-- Legend Box for MSB -->
+                    <div id="msbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
                         <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
-                        <div id="legendContent"></div>
+                        <div id="msbLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- MCCB Canvas -->
+                <div id="mccbCanvasContainer" class="relative border-2 border-green-300 rounded-lg overflow-hidden touch-none hidden" style="max-width: 100%; width: 160px; height: 173px; min-width: 160px;">
+                    <canvas id="mccbCanvas" width="160" height="173" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
+                    <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">MCCB Canvas</div>
+                    <!-- Legend Box for MCCB -->
+                    <div id="mccbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
+                        <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
+                        <div id="mccbLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- Default empty state -->
+                <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center" style="width: 342px; height: 350px;">
+                    <div class="text-center text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm font-medium">Upload and select an image to start editing</p>
+                        <p class="text-xs mt-1">MSB (9.05×9.25cm) or MCCB (4.22×4.57cm)</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Image Gallery Selector (initially hidden) -->
-        <div id="imageGallery" class="bg-white rounded-lg shadow-md p-6 mt-6 hidden">
+        <div id="imageGallery" class="bg-white rounded-lg shadow-lg border-2 border-blue-300 p-6 mt-6 hidden relative z-50">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Select an Image</h3>
-                <button id="closeGallery" class="text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+                <h3 class="text-lg font-semibold text-gray-800 text-blue-600">🖼️ Select a Logo to Add</h3>
+                <button id="closeGallery" class="text-gray-500 hover:text-red-500 text-2xl font-bold bg-gray-100 hover:bg-red-100 rounded-full w-8 h-8 flex items-center justify-center">&times;</button>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="galleryGrid">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="galleryGrid">
                 <!-- Images will be loaded here dynamically -->
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">Click on any logo above to add it to your image</p>
             </div>
         </div>
 
@@ -129,9 +206,11 @@
 
     <script>
         // Global variables
-        let canvas;
+        let msbCanvas = null;
+        let mccbCanvas = null;
+        let currentCanvas = null;
         let currentImage = null;
-        let cropRect = null;
+        let currentCropRect = null;
         let isDrawMode = false;
         let currentDrawTool = null;
         let originalImageData = null;
@@ -139,26 +218,51 @@
         let isLogoMode = false;
         let isSelectMode = true;
         
-        // Fixed crop dimensions matching PowerPoint placeholder (9.05cm x 9.25cm)
-        // At 96 DPI: 9.05cm ≈ 342px, 9.25cm ≈ 350px
-        const CROP_WIDTH = 342;
-        const CROP_HEIGHT = 350;
+        // Image storage and canvas state
+        let msbImageData = null;
+        let mccbImageData = null;
+        let currentEditingType = null; // 'msb' or 'mccb'
+        
+        // Canvas state storage
+        let msbCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let mccbCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        
+        // Dimension constants
+        const MSB_DIMENSIONS = { width: 342, height: 350 }; // 9.05cm × 9.25cm at 96 DPI
+        const MCCB_DIMENSIONS = { width: 160, height: 173 }; // 4.22cm × 4.57cm at 96 DPI
 
-        // Initialize Fabric.js canvas
-        function initCanvas() {
-            canvas = new fabric.Canvas('fabricCanvas', {
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
+        // Initialize separate canvases
+        function initCanvases() {
+            // Initialize MSB Canvas
+            msbCanvas = new fabric.Canvas('msbCanvas', {
+                width: MSB_DIMENSIONS.width,
+                height: MSB_DIMENSIONS.height,
                 backgroundColor: '#f8f9fa',
-                enableRetinaScaling: false // Disable retina scaling to prevent offset issues
+                enableRetinaScaling: false
             });
 
-            // Add crop rectangle (visual guide)
-            cropRect = new fabric.Rect({
+            // Initialize MCCB Canvas
+            mccbCanvas = new fabric.Canvas('mccbCanvas', {
+                width: MCCB_DIMENSIONS.width,
+                height: MCCB_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Add crop rectangles to both canvases
+            msbCanvasState.cropRect = new fabric.Rect({
                 left: 0,
                 top: 0,
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
+                width: MSB_DIMENSIONS.width,
+                height: MSB_DIMENSIONS.height,
                 fill: 'transparent',
                 stroke: '#3b82f6',
                 strokeWidth: 2,
@@ -167,9 +271,30 @@
                 evented: false,
                 excludeFromExport: true
             });
-            canvas.add(cropRect);
+            msbCanvas.add(msbCanvasState.cropRect);
 
-            // Canvas event listeners
+            mccbCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: MCCB_DIMENSIONS.width,
+                height: MCCB_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            mccbCanvas.add(mccbCanvasState.cropRect);
+
+            // Add event listeners to both canvases
+            setupCanvasEventListeners(msbCanvas);
+            setupCanvasEventListeners(mccbCanvas);
+        }
+
+        // Setup event listeners for a canvas
+        function setupCanvasEventListeners(canvas) {
             // Mouse and touch events
             canvas.on('mouse:down', handleMouseDown);
             canvas.on('mouse:move', handleMouseMove);
@@ -187,69 +312,277 @@
                 }
             });
             canvas.on('path:created', handlePathCreated);
-            
-            // Ensure canvas offset is calculated correctly
-            setTimeout(() => {
-                canvas.calcOffset();
-            }, 100);
         }
 
-        // Handle file upload
-        document.getElementById('imageInput').addEventListener('change', function(e) {
+        // Handle MSB image upload
+        document.getElementById('msbImageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    loadImage(event.target.result);
+                    msbImageData = event.target.result;
+                    showImagePreview('msb', event.target.result);
+                    updateImageSelectionPanel();
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Load image onto canvas
-        function loadImage(imageSrc) {
+        // Handle MCCB image upload
+        document.getElementById('mccbImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    mccbImageData = event.target.result;
+                    showImagePreview('mccb', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Show image preview
+        function showImagePreview(type, imageSrc) {
+            const previewContainer = document.getElementById(`${type}ImagePreview`);
+            const previewImg = document.getElementById(`${type}PreviewImg`);
+            
+            previewImg.src = imageSrc;
+            previewContainer.classList.remove('hidden');
+        }
+
+        // Update image selection panel visibility
+        function updateImageSelectionPanel() {
+            const panel = document.getElementById('imageSelectionPanel');
+            const msbButton = document.getElementById('editMsbImage');
+            const mccbButton = document.getElementById('editMccbImage');
+            
+            if (msbImageData || mccbImageData) {
+                panel.classList.remove('hidden');
+                msbButton.disabled = !msbImageData;
+                mccbButton.disabled = !mccbImageData;
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        // Switch between canvas types
+        function switchToImageType(type) {
+            currentEditingType = type;
+            
+            // Hide empty state
+            document.getElementById('emptyCanvasState').classList.add('hidden');
+            
+            if (type === 'msb') {
+                // Show MSB canvas, hide MCCB canvas
+                document.getElementById('msbCanvasContainer').classList.remove('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = msbCanvas;
+                currentImage = msbCanvasState.image;
+                currentCropRect = msbCanvasState.cropRect;
+                originalImageData = msbCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (msbImageData && !msbCanvasState.image) {
+                    loadImageToCanvas(type, msbImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: MSB Image (9.05cm × 9.25cm)';
+                
+            } else if (type === 'mccb') {
+                // Show MCCB canvas, hide MSB canvas
+                document.getElementById('mccbCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = mccbCanvas;
+                currentImage = mccbCanvasState.image;
+                currentCropRect = mccbCanvasState.cropRect;
+                originalImageData = mccbCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (mccbImageData && !mccbCanvasState.image) {
+                    loadImageToCanvas(type, mccbImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: MCCB Image (4.22cm × 4.57cm)';
+            }
+            
+            // Show toolbar and info panel
+            document.getElementById('toolbar').classList.remove('hidden');
+            document.getElementById('infoPanel').classList.remove('hidden');
+            
+            // Update zoom slider if we have an image
+            if (currentImage) {
+                document.getElementById('zoomSlider').value = currentImage.scaleX;
+                document.getElementById('zoomValue').textContent = currentImage.scaleX.toFixed(1) + 'x';
+            }
+            
+            // Recalculate canvas offset
+            setTimeout(() => {
+                if (currentCanvas) {
+                    currentCanvas.calcOffset();
+                }
+            }, 100);
+        }
+
+        // Load image onto specific canvas
+        function loadImageToCanvas(canvasType, imageSrc) {
+            if (!imageSrc || !canvasType) return;
+            
+            const targetCanvas = canvasType === 'msb' ? msbCanvas : mccbCanvas;
+            const canvasState = canvasType === 'msb' ? msbCanvasState : mccbCanvasState;
+            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+            
             fabric.Image.fromURL(imageSrc, function(img) {
                 // Store original image data
-                originalImageData = imageSrc;
+                canvasState.originalImageData = imageSrc;
                 
                 // Remove existing image if any
-                if (currentImage) {
-                    canvas.remove(currentImage);
+                if (canvasState.image) {
+                    targetCanvas.remove(canvasState.image);
                 }
 
                 // Scale image to fit within crop area initially
-                const scaleX = CROP_WIDTH / img.width;
-                const scaleY = CROP_HEIGHT / img.height;
+                const scaleX = dimensions.width / img.width;
+                const scaleY = dimensions.height / img.height;
                 const scale = Math.min(scaleX, scaleY);
                 
                 img.set({
-                    left: CROP_WIDTH / 2,
-                    top: CROP_HEIGHT / 2,
+                    left: dimensions.width / 2,
+                    top: dimensions.height / 2,
                     originX: 'center',
                     originY: 'center',
                     scaleX: scale,
                     scaleY: scale
                 });
 
-                currentImage = img;
-                canvas.add(img);
-                canvas.sendToBack(img);
-                canvas.bringToFront(cropRect);
-                canvas.renderAll();
+                // Store image reference
+                canvasState.image = img;
+                targetCanvas.add(img);
+                targetCanvas.sendToBack(img);
+                targetCanvas.bringToFront(canvasState.cropRect);
+                targetCanvas.renderAll();
 
-                // Show toolbar and info panel
-                document.getElementById('toolbar').classList.remove('hidden');
-                document.getElementById('infoPanel').classList.remove('hidden');
+                // Update current references if this is the active canvas
+                if (currentEditingType === canvasType) {
+                    currentImage = img;
+                    originalImageData = imageSrc;
+                    
+                    // Update zoom slider
+                    document.getElementById('zoomSlider').value = scale;
+                    document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
+                }
                 
-                // Update zoom slider
-                document.getElementById('zoomSlider').value = scale;
-                document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
-                
-                // Recalculate canvas offset after image load
+                // Recalculate canvas offset
                 setTimeout(() => {
-                    canvas.calcOffset();
+                    targetCanvas.calcOffset();
                 }, 100);
             });
+        }
+
+        // Legacy function kept for compatibility
+        function loadImage(imageSrc) {
+            // This is now just an alias that defaults to MSB
+            msbImageData = imageSrc;
+            showImagePreview('msb', imageSrc);
+            updateImageSelectionPanel();
+            switchToImageType('msb');
+        }
+
+        // Image selection buttons
+        document.getElementById('editMsbImage').addEventListener('click', function() {
+            switchToImageType('msb');
+        });
+
+        document.getElementById('editMccbImage').addEventListener('click', function() {
+            switchToImageType('mccb');
+        });
+
+        // Remove image buttons
+        document.getElementById('removeMsbImage').addEventListener('click', function() {
+            msbImageData = null;
+            document.getElementById('msbImagePreview').classList.add('hidden');
+            document.getElementById('msbImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear MSB canvas
+            clearSpecificCanvas('msb');
+            
+            // If currently editing MSB, hide the editor
+            if (currentEditingType === 'msb') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeMccbImage').addEventListener('click', function() {
+            mccbImageData = null;
+            document.getElementById('mccbImagePreview').classList.add('hidden');
+            document.getElementById('mccbImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear MCCB canvas
+            clearSpecificCanvas('mccb');
+            
+            // If currently editing MCCB, hide the editor
+            if (currentEditingType === 'mccb') {
+                showEmptyState();
+            }
+        });
+
+        function clearSpecificCanvas(canvasType) {
+            const targetCanvas = canvasType === 'msb' ? msbCanvas : mccbCanvas;
+            const canvasState = canvasType === 'msb' ? msbCanvasState : mccbCanvasState;
+            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+            
+            if (targetCanvas) {
+                // Clear all objects except keep a fresh crop rectangle
+                targetCanvas.clear();
+                
+                // Re-add crop rectangle
+                canvasState.cropRect = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    fill: 'transparent',
+                    stroke: '#3b82f6',
+                    strokeWidth: 2,
+                    strokeDashArray: [5, 5],
+                    selectable: false,
+                    evented: false,
+                    excludeFromExport: true
+                });
+                targetCanvas.add(canvasState.cropRect);
+                targetCanvas.setBackgroundColor('#f8f9fa', targetCanvas.renderAll.bind(targetCanvas));
+                
+                // Clear state
+                canvasState.image = null;
+                canvasState.originalImageData = null;
+            }
+        }
+
+        function showEmptyState() {
+            // Hide all canvases
+            document.getElementById('msbCanvasContainer').classList.add('hidden');
+            document.getElementById('mccbCanvasContainer').classList.add('hidden');
+            
+            // Show empty state
+            document.getElementById('emptyCanvasState').classList.remove('hidden');
+            
+            // Hide toolbar and info panel
+            document.getElementById('toolbar').classList.add('hidden');
+            document.getElementById('infoPanel').classList.add('hidden');
+            document.getElementById('currentlyEditing').textContent = '';
+            
+            // Clear current references
+            currentCanvas = null;
+            currentImage = null;
+            currentCropRect = null;
+            originalImageData = null;
+            currentEditingType = null;
         }
 
         // Mode switching
@@ -297,29 +630,30 @@
         // Zoom controls
         document.getElementById('zoomSlider').addEventListener('input', function(e) {
             const zoom = parseFloat(e.target.value);
-            if (currentImage) {
+            if (currentImage && currentCanvas) {
                 currentImage.set({
                     scaleX: zoom,
                     scaleY: zoom
                 });
-                canvas.renderAll();
+                currentCanvas.renderAll();
                 document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
             }
         });
 
         document.getElementById('resetZoom').addEventListener('click', function() {
-            if (currentImage) {
-                const scaleX = CROP_WIDTH / (currentImage.width * currentImage.scaleX);
-                const scaleY = CROP_HEIGHT / (currentImage.height * currentImage.scaleY);
+            if (currentImage && currentCanvas) {
+                const dimensions = currentEditingType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+                const scaleX = dimensions.width / (currentImage.width * currentImage.scaleX);
+                const scaleY = dimensions.height / (currentImage.height * currentImage.scaleY);
                 const scale = Math.min(scaleX, scaleY);
                 
                 currentImage.set({
                     scaleX: scale,
                     scaleY: scale,
-                    left: CROP_WIDTH / 2,
-                    top: CROP_HEIGHT / 2
+                    left: dimensions.width / 2,
+                    top: dimensions.height / 2
                 });
-                canvas.renderAll();
+                currentCanvas.renderAll();
                 
                 document.getElementById('zoomSlider').value = scale;
                 document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
@@ -415,15 +749,17 @@
         }
 
         function updateLegend() {
-            const legendBox = document.getElementById('legendBox');
-            const legendContent = document.getElementById('legendContent');
+            if (!currentCanvas || !currentEditingType) return;
             
-            if (!canvas) return;
+            const legendBox = document.getElementById(`${currentEditingType}LegendBox`);
+            const legendContent = document.getElementById(`${currentEditingType}LegendContent`);
+            
+            if (!legendBox || !legendContent) return;
             
             // Get all objects except background image and crop rectangle
-            const objects = canvas.getObjects();
+            const objects = currentCanvas.getObjects();
             const drawnObjects = objects.filter(obj => 
-                obj !== cropRect && obj !== currentImage && 
+                obj !== currentCropRect && obj !== currentImage && 
                 (obj.type === 'line' || obj.type === 'image')
             );
             
@@ -513,29 +849,29 @@
         let currentLine = null;
 
         function handleMouseDown(e) {
-            if (!isDrawMode) return;
+            if (!isDrawMode || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             
             if (isSelectMode) {
                 // Select mode - only allow selecting existing objects
-                const target = canvas.findTarget(e.e, false);
-                if (target && target !== cropRect && target !== currentImage) {
-                    canvas.setActiveObject(target);
-                    canvas.renderAll();
+                const target = currentCanvas.findTarget(e.e, false);
+                if (target && target !== currentCropRect && target !== currentImage) {
+                    currentCanvas.setActiveObject(target);
+                    currentCanvas.renderAll();
                 } else {
-                    canvas.discardActiveObject();
-                    canvas.renderAll();
+                    currentCanvas.discardActiveObject();
+                    currentCanvas.renderAll();
                 }
                 return;
             }
             
             if (isEraserMode) {
                 // Eraser mode - find and remove clicked object
-                const target = canvas.findTarget(e.e, false);
-                if (target && (target.type === 'line' || target.type === 'image') && target !== cropRect && target !== currentImage) {
-                    canvas.remove(target);
-                    canvas.renderAll();
+                const target = currentCanvas.findTarget(e.e, false);
+                if (target && (target.type === 'line' || target.type === 'image') && target !== currentCropRect && target !== currentImage) {
+                    currentCanvas.remove(target);
+                    currentCanvas.renderAll();
                     updateLegend(); // Update legend when object is removed
                 }
                 return;
@@ -548,16 +884,16 @@
             }
             
             // Drawing mode - check if clicking on existing object first
-            const target = canvas.findTarget(e.e, false);
-            if (target && target !== cropRect && target !== currentImage) {
-                canvas.setActiveObject(target);
-                canvas.renderAll();
+            const target = currentCanvas.findTarget(e.e, false);
+            if (target && target !== currentCropRect && target !== currentImage) {
+                currentCanvas.setActiveObject(target);
+                currentCanvas.renderAll();
                 return;
             }
             
             // Start drawing new line only if we have a drawing tool selected
             if (currentDrawTool) {
-                canvas.discardActiveObject();
+                currentCanvas.discardActiveObject();
                 isDrawing = true;
                 startPoint = { x: pointer.x, y: pointer.y };
                 
@@ -570,7 +906,7 @@
                     evented: false,
                     opacity: 0.7
                 });
-                canvas.add(currentLine);
+                currentCanvas.add(currentLine);
             }
         }
 
@@ -608,6 +944,8 @@
         }
         
         function addLogoToCanvas(logoImg, x, y) {
+            if (!currentCanvas) return;
+            
             // Scale the logo to a reasonable size (adjust as needed)
             const maxSize = 80; // Maximum width/height in pixels
             const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
@@ -629,31 +967,31 @@
                 cornerSize: 8
             });
             
-            canvas.add(logoImg);
-            canvas.bringToFront(logoImg);
-            canvas.bringToFront(cropRect);
-            canvas.setActiveObject(logoImg);
-            canvas.renderAll();
+            currentCanvas.add(logoImg);
+            currentCanvas.bringToFront(logoImg);
+            currentCanvas.bringToFront(currentCropRect);
+            currentCanvas.setActiveObject(logoImg);
+            currentCanvas.renderAll();
             updateLegend(); // Update legend when logo is added
         }
 
         function handleMouseMove(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentLine) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentLine || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             
             // Update preview line
             currentLine.set({
                 x2: pointer.x,
                 y2: pointer.y
             });
-            canvas.renderAll();
+            currentCanvas.renderAll();
         }
 
         function handleMouseUp(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             isDrawing = false;
             
             if (currentLine && startPoint) {
@@ -664,7 +1002,7 @@
                 );
                 
                 // Remove preview line
-                canvas.remove(currentLine);
+                currentCanvas.remove(currentLine);
                 
                 if (distance > 10) { // Minimum line length
                     // Create final dashed line
@@ -683,13 +1021,13 @@
                         cornerSize: 8
                     });
                     
-                    canvas.add(finalLine);
-                    canvas.bringToFront(finalLine);
-                    canvas.bringToFront(cropRect);
+                    currentCanvas.add(finalLine);
+                    currentCanvas.bringToFront(finalLine);
+                    currentCanvas.bringToFront(currentCropRect);
                     updateLegend(); // Update legend when line is added
                 }
                 
-                canvas.renderAll();
+                currentCanvas.renderAll();
             }
             
             currentLine = null;
@@ -702,80 +1040,41 @@
 
         // Clear drawing
         document.getElementById('clearDrawing').addEventListener('click', function() {
-            const objects = canvas.getObjects();
+            if (!currentCanvas) return;
+            
+            const objects = currentCanvas.getObjects();
             const toRemove = objects.filter(obj => 
-                (obj.type === 'line' || obj.type === 'path' || obj.type === 'Path') && obj !== cropRect && obj !== currentImage
+                (obj.type === 'line' || obj.type === 'path' || obj.type === 'Path') && obj !== currentCropRect && obj !== currentImage
             );
-            toRemove.forEach(obj => canvas.remove(obj));
-            canvas.renderAll();
+            toRemove.forEach(obj => currentCanvas.remove(obj));
+            currentCanvas.renderAll();
             updateLegend(); // Update legend when all objects are cleared
         });
 
-        // Export functionality
-        document.getElementById('exportImage').addEventListener('click', function() {
-            if (!currentImage) return;
-            
-            // Temporarily hide crop rectangle
-            cropRect.visible = false;
-            canvas.renderAll();
-            
-            // Export the canvas
-            const exportData = {
-                imageData: canvas.toDataURL('image/png'),
-                cropDimensions: {
-                    width: CROP_WIDTH,
-                    height: CROP_HEIGHT
-                },
-                originalImage: originalImageData,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Show crop rectangle again
-            cropRect.visible = true;
-            canvas.renderAll();
-            
-            // For now, just log the export data (later will be sent to backend)
-            console.log('Export data ready for backend:', exportData);
-            
-            // Create download link for testing
-            const link = document.createElement('a');
-            link.download = 'edited-image.png';
-            link.href = exportData.imageData;
-            link.click();
-            
-            alert('Image exported! Check console for backend data and download should start.');
-        });
 
         // Reset canvas
         document.getElementById('resetCanvas').addEventListener('click', function() {
-            canvas.clear();
-            currentImage = null;
-            originalImageData = null;
+            // Clear all image data
+            msbImageData = null;
+            mccbImageData = null;
             
-            // Re-add crop rectangle
-            cropRect = new fabric.Rect({
-                left: 0,
-                top: 0,
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
-                fill: 'transparent',
-                stroke: '#3b82f6',
-                strokeWidth: 2,
-                strokeDashArray: [5, 5],
-                selectable: false,
-                evented: false,
-                excludeFromExport: true
-            });
-            canvas.add(cropRect);
-            canvas.setBackgroundColor('#f8f9fa', canvas.renderAll.bind(canvas));
+            // Clear both canvases completely
+            clearSpecificCanvas('msb');
+            clearSpecificCanvas('mccb');
             
-            // Hide toolbar and legend
-            document.getElementById('toolbar').classList.add('hidden');
-            document.getElementById('infoPanel').classList.add('hidden');
-            document.getElementById('legendBox').classList.add('hidden');
+            // Show empty state
+            showEmptyState();
             
-            // Reset form
-            document.getElementById('imageInput').value = '';
+            // Hide all UI elements
+            document.getElementById('imageSelectionPanel').classList.add('hidden');
+            document.getElementById('msbImagePreview').classList.add('hidden');
+            document.getElementById('mccbImagePreview').classList.add('hidden');
+            document.getElementById('msbLegendBox').classList.add('hidden');
+            document.getElementById('mccbLegendBox').classList.add('hidden');
+            
+            // Reset form inputs
+            document.getElementById('msbImageInput').value = '';
+            document.getElementById('mccbImageInput').value = '';
         });
         
         // Available images in the images folder
@@ -794,11 +1093,16 @@
             const gallery = document.getElementById('imageGallery');
             const galleryGrid = document.getElementById('galleryGrid');
             
+            if (!gallery || !galleryGrid) {
+                alert('Error: Gallery elements not found. Please refresh the page.');
+                return;
+            }
+            
             // Clear existing content
             galleryGrid.innerHTML = '';
             
             // Add each image to the gallery
-            availableImages.forEach(imageInfo => {
+            availableImages.forEach((imageInfo) => {
                 const imageCard = document.createElement('div');
                 imageCard.className = 'border border-gray-300 rounded-lg p-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-200';
                 imageCard.innerHTML = `
@@ -815,17 +1119,28 @@
             
             // Show the gallery
             gallery.classList.remove('hidden');
-            gallery.scrollIntoView({ behavior: 'smooth' });
+            gallery.style.display = 'block';
+            gallery.style.visibility = 'visible';
+            
+            // Scroll to gallery
+            setTimeout(() => {
+                gallery.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         }
         
         // Select and add image to canvas
         function selectImage(imageInfo) {
+            if (!currentCanvas) {
+                alert('Please select a canvas first before adding logos.');
+                return;
+            }
+            
             const imagePath = `images/${imageInfo.filename}`;
             
             fabric.Image.fromURL(imagePath, function(logoImg) {
-                // Add logo to center of canvas
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
+                // Add logo to center of current canvas
+                const centerX = currentCanvas.width / 2;
+                const centerY = currentCanvas.height / 2;
                 addLogoToCanvas(logoImg, centerX, centerY);
             });
             
@@ -864,29 +1179,37 @@
             updateLegend(); // Update legend when logo is added
         }
         
-        // Function to combine canvas with legend overlay
-        async function getCanvasWithLegend() {
+        // Function to combine specific canvas with legend overlay
+        async function getCanvasWithLegend(canvasType = null) {
+            // If no specific canvas type provided, use current canvas
+            const targetCanvasType = canvasType || currentEditingType;
+            const targetCanvas = targetCanvasType === 'msb' ? msbCanvas : mccbCanvas;
+            
+            if (!targetCanvas || !targetCanvasType) {
+                return null;
+            }
+            
             return new Promise((resolve) => {
                 // Create a temporary canvas to combine canvas + legend
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 
-                // Set same dimensions as original canvas
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
+                // Set same dimensions as target canvas
+                tempCanvas.width = targetCanvas.width;
+                tempCanvas.height = targetCanvas.height;
                 
                 // First, draw the original canvas content
                 const canvasImage = new Image();
                 canvasImage.onload = function() {
                     tempCtx.drawImage(canvasImage, 0, 0);
                     
-                    // Check if legend is visible
-                    const legendBox = document.getElementById('legendBox');
+                    // Check if legend is visible for target canvas type
+                    const legendBox = document.getElementById(`${targetCanvasType}LegendBox`);
                     if (!legendBox.classList.contains('hidden')) {
-                        console.log('📋 Adding legend to canvas image...');
+                        console.log(`📋 Adding legend to ${targetCanvasType.toUpperCase()} canvas image...`);
                         
                         // Get legend content and styling
-                        const legendContent = document.getElementById('legendContent');
+                        const legendContent = document.getElementById(`${targetCanvasType}LegendContent`);
                         const legendItems = legendContent.children;
                         
                         // Position for legend (bottom right with padding) - more compact
@@ -981,28 +1304,68 @@
                 };
                 
                 // Start the process by loading the canvas image
-                canvasImage.src = canvas.toDataURL('image/png');
+                canvasImage.src = targetCanvas.toDataURL('image/png');
             });
         }
         
         // Generate Proposal button click handler
         document.getElementById('generateProposal').addEventListener('click', async function() {
-            if (!currentImage) {
-                alert('Please upload and position an image first before generating a proposal.');
+            if (!msbImageData && !mccbImageData) {
+                alert('Please upload at least one image (MSB or MCCB) before generating a proposal.');
                 return;
             }
             
-            // Get canvas image data including legend
-            console.log('🖼️ Getting canvas image data with legend...');
-            const imageDataURL = await getCanvasWithLegend();
-            console.log('📊 Image data size:', Math.round(imageDataURL.length / 1024), 'KB');
-            
-            // Simple form data with just the image
+            // Prepare form data object
             const formData = {
                 building_name: 'Test Building',
-                address: 'Test Address',
-                imageData: imageDataURL
+                address: 'Test Address'
             };
+            
+            // Get MSB image data if available
+            if (msbImageData) {
+                console.log('🖼️ Processing MSB image data...');
+                
+                // Check if MSB canvas has any content (image loaded)
+                if (msbCanvasState.image) {
+                    // Get the edited MSB version with any drawings and legend
+                    console.log('📝 Getting MSB canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('msb');
+                    if (editedImageDataURL) {
+                        console.log('📊 MSB Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.imageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get MSB canvas data, using original image');
+                        formData.imageData = msbImageData;
+                    }
+                } else {
+                    // Use original MSB image (no edits made)
+                    console.log('📋 Using original MSB image data (no edits)...');
+                    formData.imageData = msbImageData;
+                }
+            }
+            
+            // Get MCCB image data if available
+            if (mccbImageData) {
+                console.log('🖼️ Processing MCCB image data...');
+                
+                // Check if MCCB canvas has any content (image loaded)
+                if (mccbCanvasState.image) {
+                    // Get the edited MCCB version with any drawings and legend
+                    console.log('📝 Getting MCCB canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('mccb');
+                    if (editedImageDataURL) {
+                        console.log('📊 MCCB Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.mccbImageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get MCCB canvas data, using original image');
+                        formData.mccbImageData = mccbImageData;
+                    }
+                } else {
+                    // Use original MCCB image (no edits made)
+                    console.log('📋 Using original MCCB image data (no edits)...');
+                    formData.mccbImageData = mccbImageData;
+                }
+            }
             
             // Disable button and show loading state
             const btn = document.getElementById('generateProposal');
@@ -1125,8 +1488,18 @@
         });
 
         document.getElementById('logoTool').addEventListener('click', function() {
-            if (!currentImage) {
-                alert('Please upload and position an image first before adding logos.');
+            // Simple check - just need to have at least one image uploaded
+            if (!msbImageData && !mccbImageData) {
+                alert('Please upload at least one image (MSB or MCCB) before adding logos.');
+                return;
+            }
+            
+            // If no canvas is currently selected, but we have images, prompt user
+            if (!currentEditingType) {
+                let message = 'Please select an image to edit first:\n\n';
+                if (msbImageData) message += '• Click "Edit MSB Image" to edit the MSB image\n';
+                if (mccbImageData) message += '• Click "Edit MCCB Image" to edit the MCCB image\n';
+                alert(message);
                 return;
             }
             
@@ -1164,12 +1537,12 @@
         // Keyboard event handling for delete key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Delete' || e.key === 'Backspace') {
-                if (isDrawMode) {
-                    const activeObject = canvas.getActiveObject();
-                    if (activeObject && activeObject.type === 'line' && activeObject !== cropRect && activeObject !== currentImage) {
-                        canvas.remove(activeObject);
-                        canvas.discardActiveObject();
-                        canvas.renderAll();
+                if (isDrawMode && currentCanvas) {
+                    const activeObject = currentCanvas.getActiveObject();
+                    if (activeObject && activeObject.type === 'line' && activeObject !== currentCropRect && activeObject !== currentImage) {
+                        currentCanvas.remove(activeObject);
+                        currentCanvas.discardActiveObject();
+                        currentCanvas.renderAll();
                         updateLegend(); // Update legend when object is deleted
                     }
                 }
@@ -1178,7 +1551,7 @@
 
         // Initialize canvas on page load
         window.addEventListener('load', function() {
-            initCanvas();
+            initCanvases();
             
             // Prevent default touch behavior on canvas
             document.addEventListener('touchstart', preventDefaultTouch, { passive: false });

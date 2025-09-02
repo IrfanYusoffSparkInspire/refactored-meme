@@ -77,7 +77,8 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
             parking_location = '',
             ev_charger_model = '',
             network_strength = '',
-            imageData = '' // Base64 image data from canvas
+            imageData = '', // Base64 image data from canvas (MSB)
+            mccbImageData = '' // Base64 image data for MCCB
         } = req.body;
 
         console.log('📋 Form data received:', { building_name, address: address.substring(0, 50) });
@@ -121,37 +122,73 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         };
 
         // Save image data if provided
-        let imagePath = null;
+        let msbImagePath = null;
+        let mccbImagePath = null;
+        
+        // Process MSB image
         if (imageData && imageData.startsWith('data:image/')) {
             try {
-                console.log('🖼️ Processing image data...');
-                console.log('📊 Image data length:', imageData.length);
-                console.log('📊 Image data prefix:', imageData.substring(0, 50));
+                console.log('🖼️ Processing MSB image data...');
+                console.log('📊 MSB Image data length:', imageData.length);
+                console.log('📊 MSB Image data prefix:', imageData.substring(0, 50));
                 
                 // Extract base64 data
                 const base64Data = imageData.split(',')[1];
                 const imageBuffer = Buffer.from(base64Data, 'base64');
-                console.log('📊 Image buffer size:', imageBuffer.length, 'bytes');
+                console.log('📊 MSB Image buffer size:', imageBuffer.length, 'bytes');
                 
                 // Save to temp file
                 const timestamp = Date.now();
-                imagePath = path.join(__dirname, 'temp_images', `proposal_image_${timestamp}.png`);
-                await fs.writeFile(imagePath, imageBuffer);
-                console.log('✅ Image saved to:', imagePath);
+                msbImagePath = path.join(__dirname, 'temp_images', `msb_image_${timestamp}.png`);
+                await fs.writeFile(msbImagePath, imageBuffer);
+                console.log('✅ MSB Image saved to:', msbImagePath);
                 
                 // Verify file was saved
-                const stats = await fs.stat(imagePath);
-                console.log('📁 Saved image file size:', stats.size, 'bytes');
+                const stats = await fs.stat(msbImagePath);
+                console.log('📁 Saved MSB image file size:', stats.size, 'bytes');
                 
             } catch (error) {
-                console.error('❌ Error processing image:', error);
+                console.error('❌ Error processing MSB image:', error);
                 return res.status(400).json({
                     success: false,
-                    message: 'Error processing image data'
+                    message: 'Error processing MSB image data'
                 });
             }
         } else {
-            console.log('⚠️ No valid image data provided');
+            console.log('⚠️ No valid MSB image data provided');
+        }
+        
+        // Process MCCB image
+        if (mccbImageData && mccbImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing MCCB image data...');
+                console.log('📊 MCCB Image data length:', mccbImageData.length);
+                console.log('📊 MCCB Image data prefix:', mccbImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = mccbImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 MCCB Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                mccbImagePath = path.join(__dirname, 'temp_images', `mccb_image_${timestamp}.png`);
+                await fs.writeFile(mccbImagePath, imageBuffer);
+                console.log('✅ MCCB Image saved to:', mccbImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(mccbImagePath);
+                console.log('📁 Saved MCCB image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing MCCB image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing MCCB image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid MCCB image data provided');
         }
 
         // Generate unique output filename
@@ -170,8 +207,12 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
             '--data', JSON.stringify(proposalData)
         ];
 
-        if (imagePath) {
-            pythonArgs.push('--image', imagePath);
+        if (msbImagePath) {
+            pythonArgs.push('--msb-image', msbImagePath);
+        }
+        
+        if (mccbImagePath) {
+            pythonArgs.push('--mccb-image', mccbImagePath);
         }
 
         const pythonProcess = spawn('python3', pythonArgs, {
@@ -200,13 +241,22 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
             }
             
             try {
-                // Clean up temporary image file
-                if (imagePath) {
+                // Clean up temporary image files
+                if (msbImagePath) {
                     try {
-                        await fs.unlink(imagePath);
-                        console.log('🗑️ Cleaned up temporary image file');
+                        await fs.unlink(msbImagePath);
+                        console.log('🗑️ Cleaned up temporary MSB image file');
                     } catch (cleanupError) {
-                        console.warn('⚠️ Could not clean up temporary image:', cleanupError);
+                        console.warn('⚠️ Could not clean up temporary MSB image:', cleanupError);
+                    }
+                }
+                
+                if (mccbImagePath) {
+                    try {
+                        await fs.unlink(mccbImagePath);
+                        console.log('🗑️ Cleaned up temporary MCCB image file');
+                    } catch (cleanupError) {
+                        console.warn('⚠️ Could not clean up temporary MCCB image:', cleanupError);
                     }
                 }
 
