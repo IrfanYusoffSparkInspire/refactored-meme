@@ -14,7 +14,7 @@
         <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Image Editor</h1>
         
         <!-- Upload Sections -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
             <!-- MSB Image Upload -->
             <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MSB Image Upload</h3>
@@ -64,6 +64,31 @@
                     <button id="removeMccbImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
                 </div>
             </div>
+
+            <!-- TP_SLD Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_SLD Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tpsldImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_SLD</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-purple-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tpsldImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tpsldImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tpsldPreviewImg" src="" alt="TP_SLD Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTpsldImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
         </div>
 
         <!-- Image Selection for Editing -->
@@ -76,6 +101,10 @@
                 </button>
                 <button id="editMccbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
                     Edit MCCB Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTpsldImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_SLD Image  
                     <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
                 </button>
             </div>
@@ -218,6 +247,17 @@
                     </div>
                 </div>
                 
+                <!-- TP_SLD Canvas -->
+                <div id="tpsldCanvasContainer" class="relative border-2 border-purple-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tpsldCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_SLD Canvas</div>
+                    <!-- Legend Box for TP_SLD -->
+                    <div id="tpsldLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tpsldLegendContent"></div>
+                    </div>
+                </div>
+                
                 <!-- Default empty state -->
                 <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center w-full max-w-md mx-auto" style="min-height: 250px;">
                     <div class="text-center text-gray-500 p-6">
@@ -225,33 +265,34 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
                         <p class="text-sm font-semibold text-gray-700 mb-2">Upload and select an image to start editing</p>
-                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm) or MCCB (4.22×4.57cm)</p>
+                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm), MCCB (4.22×4.57cm), or TP_SLD (4.22×4.57cm)</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Image Gallery Selector (initially hidden) -->
-        <div id="imageGallery" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                <div class="flex justify-between items-center p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100">
-                    <h3 class="text-lg sm:text-xl font-bold text-gray-800 text-blue-700 flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        Select a Logo to Add
-                    </h3>
-                    <button id="closeGallery" class="text-gray-500 hover:text-red-500 text-2xl font-bold bg-white hover:bg-red-50 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 shadow-sm hover:shadow-md">&times;</button>
+        <!-- Logo Gallery Section (initially hidden) -->
+        <div id="imageGallery" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6 hidden border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800 text-blue-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    Select a Logo to Add
+                </h3>
+                <div class="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+                    Logo Tool Active
                 </div>
-                <div class="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-120px)] gallery-scroll">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" id="galleryGrid">
-                        <!-- Images will be loaded here dynamically -->
-                    </div>
-                    <div class="mt-6 text-center bg-blue-50 p-4 rounded-lg">
-                        <p class="text-sm font-medium text-blue-800">👆 Tap on any logo above to add it to your canvas</p>
-                        <p class="text-xs text-blue-600 mt-1">You can resize and move the logo after adding it</p>
-                    </div>
-                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" id="galleryGrid">
+                <!-- Images will be loaded here dynamically -->
+            </div>
+            <div class="mt-4 text-center bg-blue-50 p-4 rounded-lg">
+                <p class="text-sm font-medium text-blue-800">👆 Tap on any logo above to add it to your canvas</p>
+                <p class="text-xs text-blue-600 mt-1">You can resize and move the logo after adding it</p>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-xs text-gray-500">💡 Scroll back up to continue editing your image</p>
             </div>
         </div>
 
@@ -316,6 +357,7 @@
         // Global variables
         let msbCanvas = null;
         let mccbCanvas = null;
+        let tpsldCanvas = null;
         let currentCanvas = null;
         let currentImage = null;
         let currentCropRect = null;
@@ -329,7 +371,8 @@
         // Image storage and canvas state
         let msbImageData = null;
         let mccbImageData = null;
-        let currentEditingType = null; // 'msb' or 'mccb'
+        let tpsldImageData = null;
+        let currentEditingType = null; // 'msb', 'mccb', or 'tpsld'
         
         // Canvas state storage
         let msbCanvasState = {
@@ -342,10 +385,16 @@
             cropRect: null,
             originalImageData: null
         };
+        let tpsldCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
         
         // Dimension constants
         const MSB_DIMENSIONS = { width: 342, height: 350 }; // 9.05cm × 9.25cm at 96 DPI
         const MCCB_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPSLD_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
 
         // Initialize separate canvases
         function initCanvases() {
@@ -361,6 +410,14 @@
             mccbCanvas = new fabric.Canvas('mccbCanvas', {
                 width: MCCB_DIMENSIONS.width,
                 height: MCCB_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_SLD Canvas
+            tpsldCanvas = new fabric.Canvas('tpsldCanvas', {
+                width: TPSLD_DIMENSIONS.width,
+                height: TPSLD_DIMENSIONS.height,
                 backgroundColor: '#f8f9fa',
                 enableRetinaScaling: false
             });
@@ -396,9 +453,25 @@
             });
             mccbCanvas.add(mccbCanvasState.cropRect);
 
-            // Add event listeners to both canvases
+            tpsldCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPSLD_DIMENSIONS.width,
+                height: TPSLD_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tpsldCanvas.add(tpsldCanvasState.cropRect);
+
+            // Add event listeners to all canvases
             setupCanvasEventListeners(msbCanvas);
             setupCanvasEventListeners(mccbCanvas);
+            setupCanvasEventListeners(tpsldCanvas);
         }
 
         // Setup event listeners for a canvas
@@ -450,6 +523,20 @@
             }
         });
 
+        // Handle TP_SLD image upload
+        document.getElementById('tpsldImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tpsldImageData = event.target.result;
+                    showImagePreview('tpsld', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // Show image preview
         function showImagePreview(type, imageSrc) {
             const previewContainer = document.getElementById(`${type}ImagePreview`);
@@ -464,11 +551,13 @@
             const panel = document.getElementById('imageSelectionPanel');
             const msbButton = document.getElementById('editMsbImage');
             const mccbButton = document.getElementById('editMccbImage');
+            const tpsldButton = document.getElementById('editTpsldImage');
             
-            if (msbImageData || mccbImageData) {
+            if (msbImageData || mccbImageData || tpsldImageData) {
                 panel.classList.remove('hidden');
                 msbButton.disabled = !msbImageData;
                 mccbButton.disabled = !mccbImageData;
+                tpsldButton.disabled = !tpsldImageData;
             } else {
                 panel.classList.add('hidden');
             }
@@ -482,9 +571,10 @@
             document.getElementById('emptyCanvasState').classList.add('hidden');
             
             if (type === 'msb') {
-                // Show MSB canvas, hide MCCB canvas
+                // Show MSB canvas, hide others
                 document.getElementById('msbCanvasContainer').classList.remove('hidden');
                 document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
                 
                 // Set current canvas reference
                 currentCanvas = msbCanvas;
@@ -500,9 +590,10 @@
                 document.getElementById('currentlyEditing').textContent = 'Currently editing: MSB Image (9.05cm × 9.25cm)';
                 
             } else if (type === 'mccb') {
-                // Show MCCB canvas, hide MSB canvas
+                // Show MCCB canvas, hide others
                 document.getElementById('mccbCanvasContainer').classList.remove('hidden');
                 document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
                 
                 // Set current canvas reference
                 currentCanvas = mccbCanvas;
@@ -516,6 +607,25 @@
                 }
                 
                 document.getElementById('currentlyEditing').textContent = 'Currently editing: MCCB Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tpsld') {
+                // Show TP_SLD canvas, hide others
+                document.getElementById('tpsldCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tpsldCanvas;
+                currentImage = tpsldCanvasState.image;
+                currentCropRect = tpsldCanvasState.cropRect;
+                originalImageData = tpsldCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tpsldImageData && !tpsldCanvasState.image) {
+                    loadImageToCanvas(type, tpsldImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_SLD Image (4.22cm × 4.57cm)';
             }
             
             // Show toolbar and info panel
@@ -540,9 +650,9 @@
         function loadImageToCanvas(canvasType, imageSrc) {
             if (!imageSrc || !canvasType) return;
             
-            const targetCanvas = canvasType === 'msb' ? msbCanvas : mccbCanvas;
-            const canvasState = canvasType === 'msb' ? msbCanvasState : mccbCanvasState;
-            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+            const targetCanvas = canvasType === 'msb' ? msbCanvas : canvasType === 'mccb' ? mccbCanvas : tpsldCanvas;
+            const canvasState = canvasType === 'msb' ? msbCanvasState : canvasType === 'mccb' ? mccbCanvasState : tpsldCanvasState;
+            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : canvasType === 'mccb' ? MCCB_DIMENSIONS : TPSLD_DIMENSIONS;
             
             fabric.Image.fromURL(imageSrc, function(img) {
                 // Store original image data
@@ -609,6 +719,10 @@
             switchToImageType('mccb');
         });
 
+        document.getElementById('editTpsldImage').addEventListener('click', function() {
+            switchToImageType('tpsld');
+        });
+
         // Remove image buttons
         document.getElementById('removeMsbImage').addEventListener('click', function() {
             msbImageData = null;
@@ -640,10 +754,25 @@
             }
         });
 
+        document.getElementById('removeTpsldImage').addEventListener('click', function() {
+            tpsldImageData = null;
+            document.getElementById('tpsldImagePreview').classList.add('hidden');
+            document.getElementById('tpsldImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_SLD canvas
+            clearSpecificCanvas('tpsld');
+            
+            // If currently editing TP_SLD, hide the editor
+            if (currentEditingType === 'tpsld') {
+                showEmptyState();
+            }
+        });
+
         function clearSpecificCanvas(canvasType) {
-            const targetCanvas = canvasType === 'msb' ? msbCanvas : mccbCanvas;
-            const canvasState = canvasType === 'msb' ? msbCanvasState : mccbCanvasState;
-            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+            const targetCanvas = canvasType === 'msb' ? msbCanvas : canvasType === 'mccb' ? mccbCanvas : tpsldCanvas;
+            const canvasState = canvasType === 'msb' ? msbCanvasState : canvasType === 'mccb' ? mccbCanvasState : tpsldCanvasState;
+            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : canvasType === 'mccb' ? MCCB_DIMENSIONS : TPSLD_DIMENSIONS;
             
             if (targetCanvas) {
                 // Clear all objects except keep a fresh crop rectangle
@@ -676,6 +805,7 @@
             // Hide all canvases
             document.getElementById('msbCanvasContainer').classList.add('hidden');
             document.getElementById('mccbCanvasContainer').classList.add('hidden');
+            document.getElementById('tpsldCanvasContainer').classList.add('hidden');
             
             // Show empty state
             document.getElementById('emptyCanvasState').classList.remove('hidden');
@@ -936,6 +1066,9 @@
             
             const indicator = document.getElementById('currentToolIndicator');
             
+            // Hide logo gallery by default
+            hideLogoGallery();
+            
             if (isSelectMode) {
                 document.getElementById('selectTool').classList.add('active-tool', 'border-2', 'border-gray-600', 'shadow-lg');
                 indicator.textContent = 'Select';
@@ -960,6 +1093,8 @@
                     currentCanvas.isDrawingMode = false;
                     currentCanvas.defaultCursor = 'crosshair';
                 }
+                // Show logo gallery when logo tool is active
+                showLogoGallery();
             } else if (currentDrawTool) {
                 const toolButton = document.getElementById(currentDrawTool + 'Tool');
                 if (toolButton) {
@@ -1210,10 +1345,12 @@
             // Clear all image data
             msbImageData = null;
             mccbImageData = null;
+            tpsldImageData = null;
             
-            // Clear both canvases completely
+            // Clear all canvases completely
             clearSpecificCanvas('msb');
             clearSpecificCanvas('mccb');
+            clearSpecificCanvas('tpsld');
             
             // Show empty state
             showEmptyState();
@@ -1222,12 +1359,15 @@
             document.getElementById('imageSelectionPanel').classList.add('hidden');
             document.getElementById('msbImagePreview').classList.add('hidden');
             document.getElementById('mccbImagePreview').classList.add('hidden');
+            document.getElementById('tpsldImagePreview').classList.add('hidden');
             document.getElementById('msbLegendBox').classList.add('hidden');
             document.getElementById('mccbLegendBox').classList.add('hidden');
+            document.getElementById('tpsldLegendBox').classList.add('hidden');
             
             // Reset form inputs
             document.getElementById('msbImageInput').value = '';
             document.getElementById('mccbImageInput').value = '';
+            document.getElementById('tpsldImageInput').value = '';
         });
         
         // Available images in the images folder
@@ -1241,48 +1381,53 @@
             { name: 'wheel_stopper', filename: 'wheel_stopper.png', displayName: 'Wheel Stopper' }
         ];
         
-        // Show image gallery
-        function showImageGallery() {
+        // Show logo gallery section
+        function showLogoGallery() {
             const gallery = document.getElementById('imageGallery');
             const galleryGrid = document.getElementById('galleryGrid');
             
             if (!gallery || !galleryGrid) {
-                alert('Error: Gallery elements not found. Please refresh the page.');
                 return;
             }
             
-            // Clear existing content
-            galleryGrid.innerHTML = '';
-            
-            // Add each image to the gallery
-            availableImages.forEach((imageInfo) => {
-                const imageCard = document.createElement('div');
-                imageCard.className = 'gallery-item border border-gray-300 rounded-lg p-3 hover:border-blue-500 cursor-pointer transition-all duration-200 bg-white hover:bg-blue-50';
-                imageCard.innerHTML = `
-                    <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-16 sm:h-20 object-contain mb-2 rounded">
-                    <p class="text-xs font-medium text-gray-700 text-center truncate">${imageInfo.displayName}</p>
-                `;
-                
-                imageCard.addEventListener('click', () => {
-                    selectImage(imageInfo);
+            // Only populate if empty
+            if (galleryGrid.children.length === 0) {
+                // Add each image to the gallery
+                availableImages.forEach((imageInfo) => {
+                    const imageCard = document.createElement('div');
+                    imageCard.className = 'gallery-item border border-gray-300 rounded-lg p-3 hover:border-blue-500 cursor-pointer transition-all duration-200 bg-white hover:bg-blue-50';
+                    imageCard.innerHTML = `
+                        <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-16 sm:h-20 object-contain mb-2 rounded">
+                        <p class="text-xs font-medium text-gray-700 text-center truncate">${imageInfo.displayName}</p>
+                    `;
+                    
+                    imageCard.addEventListener('click', () => {
+                        selectLogoImage(imageInfo);
+                    });
+                    
+                    galleryGrid.appendChild(imageCard);
                 });
-                
-                galleryGrid.appendChild(imageCard);
-            });
+            }
             
             // Show the gallery
             gallery.classList.remove('hidden');
-            gallery.style.display = 'block';
-            gallery.style.visibility = 'visible';
             
-            // Scroll to gallery
+            // Smooth scroll to gallery after a short delay
             setTimeout(() => {
-                gallery.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+                gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
         }
         
-        // Select and add image to canvas
-        function selectImage(imageInfo) {
+        // Hide logo gallery section
+        function hideLogoGallery() {
+            const gallery = document.getElementById('imageGallery');
+            if (gallery) {
+                gallery.classList.add('hidden');
+            }
+        }
+        
+        // Select and add logo image to canvas
+        function selectLogoImage(imageInfo) {
             if (!currentCanvas) {
                 alert('Please select a canvas first before adding logos.');
                 return;
@@ -1297,8 +1442,8 @@
                 addLogoToCanvas(logoImg, centerX, centerY);
             });
             
-            // Hide the gallery
-            document.getElementById('imageGallery').classList.add('hidden');
+            // Keep gallery visible so users can add more logos if needed
+            // They can switch to another tool to hide the gallery
         }
         
         
@@ -1433,8 +1578,8 @@
         
         // Generate Proposal button click handler
         document.getElementById('generateProposal').addEventListener('click', async function() {
-            if (!msbImageData && !mccbImageData) {
-                alert('Please upload at least one image (MSB or MCCB) before generating a proposal.');
+            if (!msbImageData && !mccbImageData && !tpsldImageData) {
+                alert('Please upload at least one image (MSB, MCCB, or TP_SLD) before generating a proposal.');
                 return;
             }
             
@@ -1487,6 +1632,29 @@
                     // Use original MCCB image (no edits made)
                     console.log('📋 Using original MCCB image data (no edits)...');
                     formData.mccbImageData = mccbImageData;
+                }
+            }
+            
+            // Get TP_SLD image data if available
+            if (tpsldImageData) {
+                console.log('🖼️ Processing TP_SLD image data...');
+                
+                // Check if TP_SLD canvas has any content (image loaded)
+                if (tpsldCanvasState.image) {
+                    // Get the edited TP_SLD version with any drawings and legend
+                    console.log('📝 Getting TP_SLD canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tpsld');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_SLD Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tpsldImageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get TP_SLD canvas data, using original image');
+                        formData.tpsldImageData = tpsldImageData;
+                    }
+                } else {
+                    // Use original TP_SLD image (no edits made)
+                    console.log('📋 Using original TP_SLD image data (no edits)...');
+                    formData.tpsldImageData = tpsldImageData;
                 }
             }
             
@@ -1612,8 +1780,8 @@
 
         document.getElementById('logoTool').addEventListener('click', function() {
             // Simple check - just need to have at least one image uploaded
-            if (!msbImageData && !mccbImageData) {
-                alert('Please upload at least one image (MSB or MCCB) before adding logos.');
+            if (!msbImageData && !mccbImageData && !tpsldImageData) {
+                alert('Please upload at least one image (MSB, MCCB, or TP_SLD) before adding logos.');
                 return;
             }
             
@@ -1622,6 +1790,7 @@
                 let message = 'Please select an image to edit first:\n\n';
                 if (msbImageData) message += '• Click "Edit MSB Image" to edit the MSB image\n';
                 if (mccbImageData) message += '• Click "Edit MCCB Image" to edit the MCCB image\n';
+                if (tpsldImageData) message += '• Click "Edit TP_SLD Image" to edit the TP_SLD image\n';
                 alert(message);
                 return;
             }
@@ -1633,8 +1802,8 @@
             isDrawMode = true;
             updateDrawToolUI();
             
-            // Show image gallery
-            showImageGallery();
+            // Show logo gallery section
+            showLogoGallery();
         });
 
         document.getElementById('eraserTool').addEventListener('click', function() {
@@ -1646,17 +1815,7 @@
             updateDrawToolUI();
         });
 
-        // Gallery close button and outside click handling
-        document.getElementById('closeGallery').addEventListener('click', function() {
-            document.getElementById('imageGallery').classList.add('hidden');
-        });
-        
-        // Close gallery when clicking outside the modal
-        document.getElementById('imageGallery').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-            }
-        });
+        // Logo gallery is now managed by tool selection - no close button needed
 
         // Collapsible toolbar functionality for mobile
         let toolsCollapsed = false;
