@@ -72,7 +72,7 @@ def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm, suffi
         print(f"❌ Error resizing image: {str(e)}")
         return None
 
-def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_image_path, tpsld_image_path, output_path):
+def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_image_path, tpsld_image_path, tpmccbcompartment_image_path, tptappingloc_image_path, tprouting1_image_path, tprouting2_image_path, tprouting3_image_path, output_path):
     """
     Replace placeholders in PowerPoint template and insert images
     Args:
@@ -81,6 +81,8 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
         msb_image_path: Path to the MSB image file (can be None)
         mccb_image_path: Path to the MCCB image file (can be None)
         tpsld_image_path: Path to the TP_SLD image file (can be None)
+        tpmccbcompartment_image_path: Path to the TP_MCCB_COMPARTMENT image file (can be None)
+        tptappingloc_image_path: Path to the TP_TAPPING_LOC image file (can be None)
         output_path: Path where to save the output file
     """
     try:
@@ -89,6 +91,8 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
         print(f"🖼️ MSB Image path: {msb_image_path}")
         print(f"🖼️ MCCB Image path: {mccb_image_path}")
         print(f"🖼️ TP_SLD Image path: {tpsld_image_path}")
+        print(f"🖼️ TP_MCCB_COMPARTMENT Image path: {tpmccbcompartment_image_path}")
+        print(f"🖼️ TP_TAPPING_LOC Image path: {tptappingloc_image_path}")
         print(f"📊 Form data: {form_data}")
         
         prs = Presentation(template_path)
@@ -117,6 +121,14 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                         print(f"    Size: width={shape.width}, height={shape.height}")
                     elif shape.name == '{{TP_SLD}}' or shape.name == 'TP_SLD':
                         print(f"    *** FOUND {{TP_SLD}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_MCCB_COMPARTMENT}}' or shape.name == 'TP_MCCB_COMPARTMENT':
+                        print(f"    *** FOUND {{TP_MCCB_COMPARTMENT}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_TAPPING_LOC}}' or shape.name == 'TP_TAPPING_LOC':
+                        print(f"    *** FOUND {{TP_TAPPING_LOC}} PLACEHOLDER! ***")
                         print(f"    Position: left={shape.left}, top={shape.top}")
                         print(f"    Size: width={shape.width}, height={shape.height}")
                 
@@ -177,6 +189,46 @@ def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_
                 'width_cm': 4.22,
                 'height_cm': 4.57,
                 'suffix': 'tpsld'
+            },
+            {
+                'placeholder': '{{TP_MCCB_COMPARTMENT}}',
+                'alt_placeholder': 'TP_MCCB_COMPARTMENT',
+                'image_path': tpmccbcompartment_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tpmccbcompartment'
+            },
+            {
+                'placeholder': '{{TP_TAPPING_LOC}}',
+                'alt_placeholder': 'TP_TAPPING_LOC',
+                'image_path': tptappingloc_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tptappingloc'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_1}}',
+                'alt_placeholder': 'TP_ROUTING_1',
+                'image_path': tprouting1_image_path, 
+                'width_cm': 8.85,
+                'height_cm': 10.45,
+                'suffix': 'tprouting1'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_2}}',
+                'alt_placeholder': 'TP_ROUTING_2',
+                'image_path': tprouting2_image_path, 
+                'width_cm': 8.85,
+                'height_cm': 10.45,
+                'suffix': 'tprouting2'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_3}}',
+                'alt_placeholder': 'TP_ROUTING_3',
+                'image_path': tprouting3_image_path, 
+                'width_cm': 17.74,
+                'height_cm': 9.28,
+                'suffix': 'tprouting3'
             }
         ]
         
@@ -424,6 +476,11 @@ def main():
     parser.add_argument('--msb-image', help='Path to MSB image file (optional)', dest='msb_image')
     parser.add_argument('--mccb-image', help='Path to MCCB image file (optional)', dest='mccb_image')
     parser.add_argument('--tpsld-image', help='Path to TP_SLD image file (optional)', dest='tpsld_image')
+    parser.add_argument('--tpmccbcompartment-image', help='Path to TP_MCCB_COMPARTMENT image file (optional)', dest='tpmccbcompartment_image')
+    parser.add_argument('--tptappingloc-image', help='Path to TP_TAPPING_LOC image file (optional)', dest='tptappingloc_image')
+    parser.add_argument('--tprouting1-image', help='Path to TP_ROUTING_1 image file (optional)', dest='tprouting1_image')
+    parser.add_argument('--tprouting2-image', help='Path to TP_ROUTING_2 image file (optional)', dest='tprouting2_image')
+    parser.add_argument('--tprouting3-image', help='Path to TP_ROUTING_3 image file (optional)', dest='tprouting3_image')
     # Keep legacy --image argument for backward compatibility
     parser.add_argument('--image', help='Path to image file (legacy, maps to MSB image)', dest='legacy_image')
     
@@ -443,6 +500,11 @@ def main():
         msb_image_path = args.msb_image or args.legacy_image
         mccb_image_path = args.mccb_image
         tpsld_image_path = args.tpsld_image
+        tpmccbcompartment_image_path = args.tpmccbcompartment_image
+        tptappingloc_image_path = args.tptappingloc_image
+        tprouting1_image_path = args.tprouting1_image
+        tprouting2_image_path = args.tprouting2_image
+        tprouting3_image_path = args.tprouting3_image
         
         # Validate image files if provided
         if msb_image_path and not os.path.exists(msb_image_path):
@@ -456,6 +518,26 @@ def main():
         if tpsld_image_path and not os.path.exists(tpsld_image_path):
             print(f"⚠️ TP_SLD image file not found: {tpsld_image_path}")
             tpsld_image_path = None
+            
+        if tpmccbcompartment_image_path and not os.path.exists(tpmccbcompartment_image_path):
+            print(f"⚠️ TP_MCCB_COMPARTMENT image file not found: {tpmccbcompartment_image_path}")
+            tpmccbcompartment_image_path = None
+            
+        if tptappingloc_image_path and not os.path.exists(tptappingloc_image_path):
+            print(f"⚠️ TP_TAPPING_LOC image file not found: {tptappingloc_image_path}")
+            tptappingloc_image_path = None
+            
+        if tprouting1_image_path and not os.path.exists(tprouting1_image_path):
+            print(f"⚠️ TP_ROUTING_1 image file not found: {tprouting1_image_path}")
+            tprouting1_image_path = None
+            
+        if tprouting2_image_path and not os.path.exists(tprouting2_image_path):
+            print(f"⚠️ TP_ROUTING_2 image file not found: {tprouting2_image_path}")
+            tprouting2_image_path = None
+            
+        if tprouting3_image_path and not os.path.exists(tprouting3_image_path):
+            print(f"⚠️ TP_ROUTING_3 image file not found: {tprouting3_image_path}")
+            tprouting3_image_path = None
         
         # Create output directory if it doesn't exist
         output_dir = os.path.dirname(args.output)
@@ -469,6 +551,11 @@ def main():
             msb_image_path,
             mccb_image_path,
             tpsld_image_path,
+            tpmccbcompartment_image_path,
+            tptappingloc_image_path,
+            tprouting1_image_path,
+            tprouting2_image_path,
+            tprouting3_image_path,
             args.output
         )
         

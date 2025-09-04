@@ -79,7 +79,12 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
             network_strength = '',
             imageData = '', // Base64 image data from canvas (MSB)
             mccbImageData = '', // Base64 image data for MCCB
-            tpsldImageData = '' // Base64 image data for TP_SLD
+            tpsldImageData = '', // Base64 image data for TP_SLD
+            tpmccbcompartmentImageData = '', // Base64 image data for TP_MCCB_COMPARTMENT
+            tptappinglocImageData = '', // Base64 image data for TP_TAPPING_LOC
+            tprouting1ImageData = '', // Base64 image data for TP_ROUTING_1
+            tprouting2ImageData = '', // Base64 image data for TP_ROUTING_2
+            tprouting3ImageData = '' // Base64 image data for TP_ROUTING_3
         } = req.body;
 
         console.log('📋 Form data received:', { building_name, address: address.substring(0, 50) });
@@ -126,6 +131,11 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         let msbImagePath = null;
         let mccbImagePath = null;
         let tpsldImagePath = null;
+        let tpmccbcompartmentImagePath = null;
+        let tptappinglocImagePath = null;
+        let tprouting1ImagePath = null;
+        let tprouting2ImagePath = null;
+        let tprouting3ImagePath = null;
         
         // Process MSB image
         if (imageData && imageData.startsWith('data:image/')) {
@@ -225,6 +235,171 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         } else {
             console.log('⚠️ No valid TP_SLD image data provided');
         }
+        
+        // Process TP_MCCB_COMPARTMENT image
+        if (tpmccbcompartmentImageData && tpmccbcompartmentImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_MCCB_COMPARTMENT image data...');
+                console.log('📊 TP_MCCB_COMPARTMENT Image data length:', tpmccbcompartmentImageData.length);
+                console.log('📊 TP_MCCB_COMPARTMENT Image data prefix:', tpmccbcompartmentImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tpmccbcompartmentImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_MCCB_COMPARTMENT Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tpmccbcompartmentImagePath = path.join(__dirname, 'temp_images', `tpmccbcompartment_image_${timestamp}.png`);
+                await fs.writeFile(tpmccbcompartmentImagePath, imageBuffer);
+                console.log('✅ TP_MCCB_COMPARTMENT Image saved to:', tpmccbcompartmentImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tpmccbcompartmentImagePath);
+                console.log('📁 Saved TP_MCCB_COMPARTMENT image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_MCCB_COMPARTMENT image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_MCCB_COMPARTMENT image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_MCCB_COMPARTMENT image data provided');
+        }
+        
+        // Process TP_TAPPING_LOC image
+        if (tptappinglocImageData && tptappinglocImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_TAPPING_LOC image data...');
+                console.log('📊 TP_TAPPING_LOC Image data length:', tptappinglocImageData.length);
+                console.log('📊 TP_TAPPING_LOC Image data prefix:', tptappinglocImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tptappinglocImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_TAPPING_LOC Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tptappinglocImagePath = path.join(__dirname, 'temp_images', `tptappingloc_image_${timestamp}.png`);
+                await fs.writeFile(tptappinglocImagePath, imageBuffer);
+                console.log('✅ TP_TAPPING_LOC Image saved to:', tptappinglocImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tptappinglocImagePath);
+                console.log('📁 Saved TP_TAPPING_LOC image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_TAPPING_LOC image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_TAPPING_LOC image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_TAPPING_LOC image data provided');
+        }
+
+        // Process TP_ROUTING_1 image
+        if (tprouting1ImageData && tprouting1ImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_ROUTING_1 image data...');
+                console.log('📊 TP_ROUTING_1 Image data length:', tprouting1ImageData.length);
+                console.log('📊 TP_ROUTING_1 Image data prefix:', tprouting1ImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tprouting1ImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_ROUTING_1 Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tprouting1ImagePath = path.join(__dirname, 'temp_images', `tprouting1_image_${timestamp}.png`);
+                await fs.writeFile(tprouting1ImagePath, imageBuffer);
+                console.log('✅ TP_ROUTING_1 Image saved to:', tprouting1ImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tprouting1ImagePath);
+                console.log('📁 Saved TP_ROUTING_1 image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_ROUTING_1 image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_ROUTING_1 image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_ROUTING_1 image data provided');
+        }
+
+        // Process TP_ROUTING_2 image
+        if (tprouting2ImageData && tprouting2ImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_ROUTING_2 image data...');
+                console.log('📊 TP_ROUTING_2 Image data length:', tprouting2ImageData.length);
+                console.log('📊 TP_ROUTING_2 Image data prefix:', tprouting2ImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tprouting2ImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_ROUTING_2 Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tprouting2ImagePath = path.join(__dirname, 'temp_images', `tprouting2_image_${timestamp}.png`);
+                await fs.writeFile(tprouting2ImagePath, imageBuffer);
+                console.log('✅ TP_ROUTING_2 Image saved to:', tprouting2ImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tprouting2ImagePath);
+                console.log('📁 Saved TP_ROUTING_2 image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_ROUTING_2 image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_ROUTING_2 image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_ROUTING_2 image data provided');
+        }
+
+        // Process TP_ROUTING_3 image
+        if (tprouting3ImageData && tprouting3ImageData.startsWith('data:image/')) {
+            try {
+                console.log('🖼️ Processing TP_ROUTING_3 image data...');
+                console.log('📊 TP_ROUTING_3 Image data length:', tprouting3ImageData.length);
+                console.log('📊 TP_ROUTING_3 Image data prefix:', tprouting3ImageData.substring(0, 50));
+                
+                // Extract base64 data
+                const base64Data = tprouting3ImageData.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log('📊 TP_ROUTING_3 Image buffer size:', imageBuffer.length, 'bytes');
+                
+                // Save to temp file
+                const timestamp = Date.now();
+                tprouting3ImagePath = path.join(__dirname, 'temp_images', `tprouting3_image_${timestamp}.png`);
+                await fs.writeFile(tprouting3ImagePath, imageBuffer);
+                console.log('✅ TP_ROUTING_3 Image saved to:', tprouting3ImagePath);
+                
+                // Verify file was saved
+                const stats = await fs.stat(tprouting3ImagePath);
+                console.log('📁 Saved TP_ROUTING_3 image file size:', stats.size, 'bytes');
+                
+            } catch (error) {
+                console.error('❌ Error processing TP_ROUTING_3 image:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Error processing TP_ROUTING_3 image data'
+                });
+            }
+        } else {
+            console.log('⚠️ No valid TP_ROUTING_3 image data provided');
+        }
 
         // Generate unique output filename
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -252,6 +427,26 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
         
         if (tpsldImagePath) {
             pythonArgs.push('--tpsld-image', tpsldImagePath);
+        }
+        
+        if (tpmccbcompartmentImagePath) {
+            pythonArgs.push('--tpmccbcompartment-image', tpmccbcompartmentImagePath);
+        }
+        
+        if (tptappinglocImagePath) {
+            pythonArgs.push('--tptappingloc-image', tptappinglocImagePath);
+        }
+        
+        if (tprouting1ImagePath) {
+            pythonArgs.push('--tprouting1-image', tprouting1ImagePath);
+        }
+        
+        if (tprouting2ImagePath) {
+            pythonArgs.push('--tprouting2-image', tprouting2ImagePath);
+        }
+        
+        if (tprouting3ImagePath) {
+            pythonArgs.push('--tprouting3-image', tprouting3ImagePath);
         }
 
         const pythonProcess = spawn('python3', pythonArgs, {
@@ -305,6 +500,24 @@ app.post('/api/generate-proposal', upload.single('image'), async (req, res) => {
                         console.log('🗑️ Cleaned up temporary TP_SLD image file');
                     } catch (cleanupError) {
                         console.warn('⚠️ Could not clean up temporary TP_SLD image:', cleanupError);
+                    }
+                }
+                
+                if (tpmccbcompartmentImagePath) {
+                    try {
+                        await fs.unlink(tpmccbcompartmentImagePath);
+                        console.log('🗑️ Cleaned up temporary TP_MCCB_COMPARTMENT image file');
+                    } catch (cleanupError) {
+                        console.warn('⚠️ Could not clean up temporary TP_MCCB_COMPARTMENT image:', cleanupError);
+                    }
+                }
+                
+                if (tptappinglocImagePath) {
+                    try {
+                        await fs.unlink(tptappinglocImagePath);
+                        console.log('🗑️ Cleaned up temporary TP_TAPPING_LOC image file');
+                    } catch (cleanupError) {
+                        console.warn('⚠️ Could not clean up temporary TP_TAPPING_LOC image:', cleanupError);
                     }
                 }
 

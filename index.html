@@ -14,7 +14,7 @@
         <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Image Editor</h1>
         
         <!-- Upload Sections -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-4 sm:mb-6">
             <!-- MSB Image Upload -->
             <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MSB Image Upload</h3>
@@ -89,12 +89,137 @@
                     <button id="removeTpsldImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
                 </div>
             </div>
+
+            <!-- TP_MCCB_COMPARTMENT Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_MCCB_COMPARTMENT Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tpmccbcompartmentImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_MCCB_COMPARTMENT</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-indigo-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tpmccbcompartmentImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tpmccbcompartmentImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tpmccbcompartmentPreviewImg" src="" alt="TP_MCCB_COMPARTMENT Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTpmccbcompartmentImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_TAPPING_LOC Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_TAPPING_LOC Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tptappinglocImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_TAPPING_LOC</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-rose-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tptappinglocImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tptappinglocImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tptappinglocPreviewImg" src="" alt="TP_TAPPING_LOC Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTptappinglocImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_1 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_1 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting1ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_1</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-amber-600 mt-1">Dimensions: 8.85cm × 10.45cm</p>
+                        </div>
+                        <input id="tprouting1ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting1ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting1PreviewImg" src="" alt="TP_ROUTING_1 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting1Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_2 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_2 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting2ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_2</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-teal-600 mt-1">Dimensions: 8.85cm × 10.45cm</p>
+                        </div>
+                        <input id="tprouting2ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting2ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting2PreviewImg" src="" alt="TP_ROUTING_2 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting2Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_3 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_3 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting3ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-lime-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_3</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-lime-600 mt-1">Dimensions: 17.74cm × 9.28cm</p>
+                        </div>
+                        <input id="tprouting3ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting3ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting3PreviewImg" src="" alt="TP_ROUTING_3 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting3Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
         </div>
 
         <!-- Image Selection for Editing -->
         <div id="imageSelectionPanel" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6 hidden">
             <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Select Image to Edit</h3>
-            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
                 <button id="editMsbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
                     Edit MSB Image
                     <span class="block text-xs sm:text-sm opacity-75">(9.05cm × 9.25cm)</span>
@@ -106,6 +231,26 @@
                 <button id="editTpsldImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
                     Edit TP_SLD Image  
                     <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTpmccbcompartmentImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_MCCB_COMPARTMENT Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTptappinglocImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_TAPPING_LOC Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTprouting1Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_1 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(8.85cm × 10.45cm)</span>
+                </button>
+                <button id="editTprouting2Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_2 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(8.85cm × 10.45cm)</span>
+                </button>
+                <button id="editTprouting3Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-lime-500 text-white rounded-lg hover:bg-lime-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_3 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(17.74cm × 9.28cm)</span>
                 </button>
             </div>
             <div id="currentlyEditing" class="text-center mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600 font-medium"></div>
@@ -250,6 +395,61 @@
                     </div>
                 </div>
                 
+                <!-- TP_MCCB_COMPARTMENT Canvas -->
+                <div id="tpmccbcompartmentCanvasContainer" class="relative border-2 border-indigo-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tpmccbcompartmentCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-indigo-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_MCCB_COMPARTMENT Canvas</div>
+                    <!-- Legend Box for TP_MCCB_COMPARTMENT -->
+                    <div id="tpmccbcompartmentLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tpmccbcompartmentLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_TAPPING_LOC Canvas -->
+                <div id="tptappinglocCanvasContainer" class="relative border-2 border-rose-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tptappinglocCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-rose-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_TAPPING_LOC Canvas</div>
+                    <!-- Legend Box for TP_TAPPING_LOC -->
+                    <div id="tptappinglocLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tptappinglocLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_1 Canvas -->
+                <div id="tprouting1CanvasContainer" class="relative border-2 border-amber-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting1Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-amber-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_1 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_1 -->
+                    <div id="tprouting1LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting1LegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_2 Canvas -->
+                <div id="tprouting2CanvasContainer" class="relative border-2 border-teal-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting2Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-teal-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_2 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_2 -->
+                    <div id="tprouting2LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting2LegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_3 Canvas -->
+                <div id="tprouting3CanvasContainer" class="relative border-2 border-lime-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting3Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-lime-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_3 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_3 -->
+                    <div id="tprouting3LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting3LegendContent"></div>
+                    </div>
+                </div>
+                
                 <!-- Default empty state -->
                 <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center w-full max-w-md mx-auto" style="min-height: 250px;">
                     <div class="text-center text-gray-500 p-6">
@@ -257,7 +457,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                         </svg>
                         <p class="text-sm font-semibold text-gray-700 mb-2">Upload and select an image to start editing</p>
-                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm), MCCB (4.22×4.57cm), or TP_SLD (4.22×4.57cm)</p>
+                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm), MCCB/TP_SLD/TP_MCCB_COMPARTMENT/TP_TAPPING_LOC (4.22×4.57cm), TP_ROUTING_1&2 (8.85×10.45cm), or TP_ROUTING_3 (17.74×9.28cm)</p>
                     </div>
                 </div>
             </div>
@@ -365,6 +565,11 @@
         let msbCanvas = null;
         let mccbCanvas = null;
         let tpsldCanvas = null;
+        let tpmccbcompartmentCanvas = null;
+        let tptappinglocCanvas = null;
+        let tprouting1Canvas = null;
+        let tprouting2Canvas = null;
+        let tprouting3Canvas = null;
         let currentCanvas = null;
         let currentImage = null;
         let currentCropRect = null;
@@ -379,7 +584,12 @@
         let msbImageData = null;
         let mccbImageData = null;
         let tpsldImageData = null;
-        let currentEditingType = null; // 'msb', 'mccb', or 'tpsld'
+        let tpmccbcompartmentImageData = null;
+        let tptappinglocImageData = null;
+        let tprouting1ImageData = null;
+        let tprouting2ImageData = null;
+        let tprouting3ImageData = null;
+        let currentEditingType = null; // 'msb', 'mccb', 'tpsld', 'tpmccbcompartment', 'tptappingloc', 'tprouting1', 'tprouting2', or 'tprouting3'
         
         // Canvas state storage
         let msbCanvasState = {
@@ -397,11 +607,126 @@
             cropRect: null,
             originalImageData: null
         };
+        let tpmccbcompartmentCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tptappinglocCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting1CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting2CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting3CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
         
         // Dimension constants
         const MSB_DIMENSIONS = { width: 342, height: 350 }; // 9.05cm × 9.25cm at 96 DPI
         const MCCB_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
         const TPSLD_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPMCCBCOMPARTMENT_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPTAPPINGLOC_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        // Dynamic canvas sizing based on screen dimensions and CM ratios
+        function calculateResponsiveCanvasDimensions() {
+            const maxWidth = Math.min(window.innerWidth - 32, 800); // 32px for margins, max 800px
+            const maxHeight = Math.min(window.innerHeight * 0.6, 600); // 60% of viewport height, max 600px
+            
+            // Original CM dimensions and their ratios
+            const canvasSpecs = {
+                tprouting1: { widthCm: 8.85, heightCm: 10.45, ratio: 8.85 / 10.45 }, // 0.847 (portrait)
+                tprouting2: { widthCm: 8.85, heightCm: 10.45, ratio: 8.85 / 10.45 }, // 0.847 (portrait)  
+                tprouting3: { widthCm: 17.74, heightCm: 9.28, ratio: 17.74 / 9.28 }  // 1.911 (landscape)
+            };
+            
+            const responsiveDimensions = {};
+            
+            Object.keys(canvasSpecs).forEach(key => {
+                const spec = canvasSpecs[key];
+                let width, height;
+                
+                if (spec.ratio > 1) {
+                    // Landscape: width > height
+                    width = Math.min(maxWidth, maxHeight * spec.ratio);
+                    height = width / spec.ratio;
+                } else {
+                    // Portrait: height > width  
+                    height = Math.min(maxHeight, maxWidth / spec.ratio);
+                    width = height * spec.ratio;
+                }
+                
+                // Ensure minimum usable size
+                const minSize = 280;
+                if (width < minSize) {
+                    width = minSize;
+                    height = width / spec.ratio;
+                }
+                if (height < minSize * 0.8) {
+                    height = minSize * 0.8;
+                    width = height * spec.ratio;
+                }
+                
+                responsiveDimensions[key] = {
+                    width: Math.round(width),
+                    height: Math.round(height)
+                };
+            });
+            
+            return responsiveDimensions;
+        }
+        
+        // Calculate responsive dimensions
+        const RESPONSIVE_DIMENSIONS = calculateResponsiveCanvasDimensions();
+        
+        // Update the routing dimensions to use responsive values
+        const TPROUTING1_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting1;
+        const TPROUTING2_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting2;
+        const TPROUTING3_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting3;
+        
+        // Function to update HTML canvas containers with responsive dimensions
+        function updateCanvasContainers() {
+            // Update TP_ROUTING_1
+            const container1 = document.getElementById('tprouting1CanvasContainer');
+            const canvas1 = document.getElementById('tprouting1Canvas');
+            if (container1 && canvas1) {
+                container1.style.width = TPROUTING1_DIMENSIONS.width + 'px';
+                container1.style.height = TPROUTING1_DIMENSIONS.height + 'px';
+                canvas1.width = TPROUTING1_DIMENSIONS.width;
+                canvas1.height = TPROUTING1_DIMENSIONS.height;
+            }
+            
+            // Update TP_ROUTING_2  
+            const container2 = document.getElementById('tprouting2CanvasContainer');
+            const canvas2 = document.getElementById('tprouting2Canvas');
+            if (container2 && canvas2) {
+                container2.style.width = TPROUTING2_DIMENSIONS.width + 'px';
+                container2.style.height = TPROUTING2_DIMENSIONS.height + 'px';
+                canvas2.width = TPROUTING2_DIMENSIONS.width;
+                canvas2.height = TPROUTING2_DIMENSIONS.height;
+            }
+            
+            // Update TP_ROUTING_3
+            const container3 = document.getElementById('tprouting3CanvasContainer');
+            const canvas3 = document.getElementById('tprouting3Canvas');
+            if (container3 && canvas3) {
+                container3.style.width = TPROUTING3_DIMENSIONS.width + 'px';
+                container3.style.height = TPROUTING3_DIMENSIONS.height + 'px';
+                canvas3.width = TPROUTING3_DIMENSIONS.width;
+                canvas3.height = TPROUTING3_DIMENSIONS.height;
+            }
+        }
 
         // Initialize separate canvases
         function initCanvases() {
@@ -425,6 +750,46 @@
             tpsldCanvas = new fabric.Canvas('tpsldCanvas', {
                 width: TPSLD_DIMENSIONS.width,
                 height: TPSLD_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_MCCB_COMPARTMENT Canvas
+            tpmccbcompartmentCanvas = new fabric.Canvas('tpmccbcompartmentCanvas', {
+                width: TPMCCBCOMPARTMENT_DIMENSIONS.width,
+                height: TPMCCBCOMPARTMENT_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_TAPPING_LOC Canvas
+            tptappinglocCanvas = new fabric.Canvas('tptappinglocCanvas', {
+                width: TPTAPPINGLOC_DIMENSIONS.width,
+                height: TPTAPPINGLOC_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_1 Canvas
+            tprouting1Canvas = new fabric.Canvas('tprouting1Canvas', {
+                width: TPROUTING1_DIMENSIONS.width,
+                height: TPROUTING1_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_2 Canvas
+            tprouting2Canvas = new fabric.Canvas('tprouting2Canvas', {
+                width: TPROUTING2_DIMENSIONS.width,
+                height: TPROUTING2_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_3 Canvas
+            tprouting3Canvas = new fabric.Canvas('tprouting3Canvas', {
+                width: TPROUTING3_DIMENSIONS.width,
+                height: TPROUTING3_DIMENSIONS.height,
                 backgroundColor: '#f8f9fa',
                 enableRetinaScaling: false
             });
@@ -475,10 +840,90 @@
             });
             tpsldCanvas.add(tpsldCanvasState.cropRect);
 
+            tpmccbcompartmentCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPMCCBCOMPARTMENT_DIMENSIONS.width,
+                height: TPMCCBCOMPARTMENT_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tpmccbcompartmentCanvas.add(tpmccbcompartmentCanvasState.cropRect);
+
+            tptappinglocCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPTAPPINGLOC_DIMENSIONS.width,
+                height: TPTAPPINGLOC_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tptappinglocCanvas.add(tptappinglocCanvasState.cropRect);
+
+            tprouting1CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING1_DIMENSIONS.width,
+                height: TPROUTING1_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting1Canvas.add(tprouting1CanvasState.cropRect);
+
+            tprouting2CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING2_DIMENSIONS.width,
+                height: TPROUTING2_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting2Canvas.add(tprouting2CanvasState.cropRect);
+
+            tprouting3CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING3_DIMENSIONS.width,
+                height: TPROUTING3_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting3Canvas.add(tprouting3CanvasState.cropRect);
+
             // Add event listeners to all canvases
             setupCanvasEventListeners(msbCanvas);
             setupCanvasEventListeners(mccbCanvas);
             setupCanvasEventListeners(tpsldCanvas);
+            setupCanvasEventListeners(tpmccbcompartmentCanvas);
+            setupCanvasEventListeners(tptappinglocCanvas);
+            setupCanvasEventListeners(tprouting1Canvas);
+            setupCanvasEventListeners(tprouting2Canvas);
+            setupCanvasEventListeners(tprouting3Canvas);
         }
 
         // Setup event listeners for a canvas
@@ -544,6 +989,74 @@
             }
         });
 
+        document.getElementById('tpmccbcompartmentImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tpmccbcompartmentImageData = event.target.result;
+                    showImagePreview('tpmccbcompartment', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('tptappinglocImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tptappinglocImageData = event.target.result;
+                    showImagePreview('tptappingloc', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_1 image upload
+        document.getElementById('tprouting1ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting1ImageData = event.target.result;
+                    showImagePreview('tprouting1', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_2 image upload
+        document.getElementById('tprouting2ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting2ImageData = event.target.result;
+                    showImagePreview('tprouting2', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_3 image upload
+        document.getElementById('tprouting3ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting3ImageData = event.target.result;
+                    showImagePreview('tprouting3', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // Show image preview
         function showImagePreview(type, imageSrc) {
             const previewContainer = document.getElementById(`${type}ImagePreview`);
@@ -559,12 +1072,22 @@
             const msbButton = document.getElementById('editMsbImage');
             const mccbButton = document.getElementById('editMccbImage');
             const tpsldButton = document.getElementById('editTpsldImage');
+            const tpmccbcompartmentButton = document.getElementById('editTpmccbcompartmentImage');
+            const tptappinglocButton = document.getElementById('editTptappinglocImage');
+            const tprouting1Button = document.getElementById('editTprouting1Image');
+            const tprouting2Button = document.getElementById('editTprouting2Image');
+            const tprouting3Button = document.getElementById('editTprouting3Image');
             
-            if (msbImageData || mccbImageData || tpsldImageData) {
+            if (msbImageData || mccbImageData || tpsldImageData || tpmccbcompartmentImageData || tptappinglocImageData || tprouting1ImageData || tprouting2ImageData || tprouting3ImageData) {
                 panel.classList.remove('hidden');
                 msbButton.disabled = !msbImageData;
                 mccbButton.disabled = !mccbImageData;
                 tpsldButton.disabled = !tpsldImageData;
+                tpmccbcompartmentButton.disabled = !tpmccbcompartmentImageData;
+                tptappinglocButton.disabled = !tptappinglocImageData;
+                tprouting1Button.disabled = !tprouting1ImageData;
+                tprouting2Button.disabled = !tprouting2ImageData;
+                tprouting3Button.disabled = !tprouting3ImageData;
             } else {
                 panel.classList.add('hidden');
             }
@@ -582,6 +1105,11 @@
                 document.getElementById('msbCanvasContainer').classList.remove('hidden');
                 document.getElementById('mccbCanvasContainer').classList.add('hidden');
                 document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
                 
                 // Set current canvas reference
                 currentCanvas = msbCanvas;
@@ -601,6 +1129,11 @@
                 document.getElementById('mccbCanvasContainer').classList.remove('hidden');
                 document.getElementById('msbCanvasContainer').classList.add('hidden');
                 document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
                 
                 // Set current canvas reference
                 currentCanvas = mccbCanvas;
@@ -620,6 +1153,11 @@
                 document.getElementById('tpsldCanvasContainer').classList.remove('hidden');
                 document.getElementById('msbCanvasContainer').classList.add('hidden');
                 document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
                 
                 // Set current canvas reference
                 currentCanvas = tpsldCanvas;
@@ -633,6 +1171,126 @@
                 }
                 
                 document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_SLD Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tpmccbcompartment') {
+                // Show TP_MCCB_COMPARTMENT canvas, hide others
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tpmccbcompartmentCanvas;
+                currentImage = tpmccbcompartmentCanvasState.image;
+                currentCropRect = tpmccbcompartmentCanvasState.cropRect;
+                originalImageData = tpmccbcompartmentCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tpmccbcompartmentImageData && !tpmccbcompartmentCanvasState.image) {
+                    loadImageToCanvas(type, tpmccbcompartmentImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_MCCB_COMPARTMENT Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tptappingloc') {
+                // Show TP_TAPPING_LOC canvas, hide others
+                document.getElementById('tptappinglocCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tptappinglocCanvas;
+                currentImage = tptappinglocCanvasState.image;
+                currentCropRect = tptappinglocCanvasState.cropRect;
+                originalImageData = tptappinglocCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tptappinglocImageData && !tptappinglocCanvasState.image) {
+                    loadImageToCanvas(type, tptappinglocImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_TAPPING_LOC Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tprouting1') {
+                // Show TP_ROUTING_1 canvas, hide others
+                document.getElementById('tprouting1CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting1Canvas;
+                currentImage = tprouting1CanvasState.image;
+                currentCropRect = tprouting1CanvasState.cropRect;
+                originalImageData = tprouting1CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting1ImageData && !tprouting1CanvasState.image) {
+                    loadImageToCanvas(type, tprouting1ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_1 Image (8.85cm × 10.45cm)';
+                
+            } else if (type === 'tprouting2') {
+                // Show TP_ROUTING_2 canvas, hide others
+                document.getElementById('tprouting2CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting2Canvas;
+                currentImage = tprouting2CanvasState.image;
+                currentCropRect = tprouting2CanvasState.cropRect;
+                originalImageData = tprouting2CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting2ImageData && !tprouting2CanvasState.image) {
+                    loadImageToCanvas(type, tprouting2ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_2 Image (8.85cm × 10.45cm)';
+                
+            } else if (type === 'tprouting3') {
+                // Show TP_ROUTING_3 canvas, hide others
+                document.getElementById('tprouting3CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting3Canvas;
+                currentImage = tprouting3CanvasState.image;
+                currentCropRect = tprouting3CanvasState.cropRect;
+                originalImageData = tprouting3CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting3ImageData && !tprouting3CanvasState.image) {
+                    loadImageToCanvas(type, tprouting3ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_3 Image (17.74cm × 9.28cm)';
             }
             
             // Show toolbar and info panel
@@ -657,9 +1315,52 @@
         function loadImageToCanvas(canvasType, imageSrc) {
             if (!imageSrc || !canvasType) return;
             
-            const targetCanvas = canvasType === 'msb' ? msbCanvas : canvasType === 'mccb' ? mccbCanvas : tpsldCanvas;
-            const canvasState = canvasType === 'msb' ? msbCanvasState : canvasType === 'mccb' ? mccbCanvasState : tpsldCanvasState;
-            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : canvasType === 'mccb' ? MCCB_DIMENSIONS : TPSLD_DIMENSIONS;
+            let targetCanvas, canvasState, dimensions;
+            
+            switch(canvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    canvasState = msbCanvasState;
+                    dimensions = MSB_DIMENSIONS;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    canvasState = mccbCanvasState;
+                    dimensions = MCCB_DIMENSIONS;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    canvasState = tpsldCanvasState;
+                    dimensions = TPSLD_DIMENSIONS;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    canvasState = tpmccbcompartmentCanvasState;
+                    dimensions = TPMCCBCOMPARTMENT_DIMENSIONS;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    canvasState = tptappinglocCanvasState;
+                    dimensions = TPTAPPINGLOC_DIMENSIONS;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    canvasState = tprouting1CanvasState;
+                    dimensions = TPROUTING1_DIMENSIONS;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    canvasState = tprouting2CanvasState;
+                    dimensions = TPROUTING2_DIMENSIONS;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    canvasState = tprouting3CanvasState;
+                    dimensions = TPROUTING3_DIMENSIONS;
+                    break;
+                default:
+                    return;
+            }
             
             fabric.Image.fromURL(imageSrc, function(img) {
                 // Store original image data
@@ -730,6 +1431,26 @@
             switchToImageType('tpsld');
         });
 
+        document.getElementById('editTpmccbcompartmentImage').addEventListener('click', function() {
+            switchToImageType('tpmccbcompartment');
+        });
+
+        document.getElementById('editTptappinglocImage').addEventListener('click', function() {
+            switchToImageType('tptappingloc');
+        });
+
+        document.getElementById('editTprouting1Image').addEventListener('click', function() {
+            switchToImageType('tprouting1');
+        });
+
+        document.getElementById('editTprouting2Image').addEventListener('click', function() {
+            switchToImageType('tprouting2');
+        });
+
+        document.getElementById('editTprouting3Image').addEventListener('click', function() {
+            switchToImageType('tprouting3');
+        });
+
         // Remove image buttons
         document.getElementById('removeMsbImage').addEventListener('click', function() {
             msbImageData = null;
@@ -776,10 +1497,128 @@
             }
         });
 
+        document.getElementById('removeTpmccbcompartmentImage').addEventListener('click', function() {
+            tpmccbcompartmentImageData = null;
+            document.getElementById('tpmccbcompartmentImagePreview').classList.add('hidden');
+            document.getElementById('tpmccbcompartmentImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_MCCB_COMPARTMENT canvas
+            clearSpecificCanvas('tpmccbcompartment');
+            
+            // If currently editing TP_MCCB_COMPARTMENT, hide the editor
+            if (currentEditingType === 'tpmccbcompartment') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTptappinglocImage').addEventListener('click', function() {
+            tptappinglocImageData = null;
+            document.getElementById('tptappinglocImagePreview').classList.add('hidden');
+            document.getElementById('tptappinglocImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_TAPPING_LOC canvas
+            clearSpecificCanvas('tptappingloc');
+            
+            // If currently editing TP_TAPPING_LOC, hide the editor
+            if (currentEditingType === 'tptappingloc') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting1Image').addEventListener('click', function() {
+            tprouting1ImageData = null;
+            document.getElementById('tprouting1ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting1ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_1 canvas
+            clearSpecificCanvas('tprouting1');
+            
+            // If currently editing TP_ROUTING_1, hide the editor
+            if (currentEditingType === 'tprouting1') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting2Image').addEventListener('click', function() {
+            tprouting2ImageData = null;
+            document.getElementById('tprouting2ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting2ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_2 canvas
+            clearSpecificCanvas('tprouting2');
+            
+            // If currently editing TP_ROUTING_2, hide the editor
+            if (currentEditingType === 'tprouting2') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting3Image').addEventListener('click', function() {
+            tprouting3ImageData = null;
+            document.getElementById('tprouting3ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting3ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_3 canvas
+            clearSpecificCanvas('tprouting3');
+            
+            // If currently editing TP_ROUTING_3, hide the editor
+            if (currentEditingType === 'tprouting3') {
+                showEmptyState();
+            }
+        });
+
         function clearSpecificCanvas(canvasType) {
-            const targetCanvas = canvasType === 'msb' ? msbCanvas : canvasType === 'mccb' ? mccbCanvas : tpsldCanvas;
-            const canvasState = canvasType === 'msb' ? msbCanvasState : canvasType === 'mccb' ? mccbCanvasState : tpsldCanvasState;
-            const dimensions = canvasType === 'msb' ? MSB_DIMENSIONS : canvasType === 'mccb' ? MCCB_DIMENSIONS : TPSLD_DIMENSIONS;
+            let targetCanvas, canvasState, dimensions;
+            
+            switch(canvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    canvasState = msbCanvasState;
+                    dimensions = MSB_DIMENSIONS;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    canvasState = mccbCanvasState;
+                    dimensions = MCCB_DIMENSIONS;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    canvasState = tpsldCanvasState;
+                    dimensions = TPSLD_DIMENSIONS;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    canvasState = tpmccbcompartmentCanvasState;
+                    dimensions = TPMCCBCOMPARTMENT_DIMENSIONS;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    canvasState = tptappinglocCanvasState;
+                    dimensions = TPTAPPINGLOC_DIMENSIONS;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    canvasState = tprouting1CanvasState;
+                    dimensions = TPROUTING1_DIMENSIONS;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    canvasState = tprouting2CanvasState;
+                    dimensions = TPROUTING2_DIMENSIONS;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    canvasState = tprouting3CanvasState;
+                    dimensions = TPROUTING3_DIMENSIONS;
+                    break;
+                default:
+                    return;
+            }
             
             if (targetCanvas) {
                 // Clear all objects except keep a fresh crop rectangle
@@ -1458,7 +2297,35 @@
         async function getCanvasWithLegend(canvasType = null) {
             // If no specific canvas type provided, use current canvas
             const targetCanvasType = canvasType || currentEditingType;
-            const targetCanvas = targetCanvasType === 'msb' ? msbCanvas : mccbCanvas;
+            let targetCanvas;
+            switch(targetCanvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    break;
+                default:
+                    targetCanvas = null;
+            }
             
             if (!targetCanvas || !targetCanvasType) {
                 return null;
@@ -1579,14 +2446,30 @@
                 };
                 
                 // Start the process by loading the canvas image
+                // Temporarily hide excluded objects for export
+                const excludedObjects = [];
+                targetCanvas.getObjects().forEach(obj => {
+                    if (obj.excludeFromExport) {
+                        obj.visible = false;
+                        excludedObjects.push(obj);
+                    }
+                });
+                targetCanvas.renderAll();
+                
                 canvasImage.src = targetCanvas.toDataURL('image/png');
+                
+                // Restore excluded objects visibility
+                excludedObjects.forEach(obj => {
+                    obj.visible = true;
+                });
+                targetCanvas.renderAll();
             });
         }
         
         // Generate Proposal button click handler
         document.getElementById('generateProposal').addEventListener('click', async function() {
-            if (!msbImageData && !mccbImageData && !tpsldImageData) {
-                alert('Please upload at least one image (MSB, MCCB, or TP_SLD) before generating a proposal.');
+            if (!msbImageData && !mccbImageData && !tpsldImageData && !tpmccbcompartmentImageData && !tptappinglocImageData && !tprouting1ImageData && !tprouting2ImageData && !tprouting3ImageData) {
+                alert('Please upload at least one image (MSB, MCCB, TP_SLD, TP_MCCB_COMPARTMENT, TP_TAPPING_LOC, TP_ROUTING_1, TP_ROUTING_2, or TP_ROUTING_3) before generating a proposal.');
                 return;
             }
             
@@ -1662,6 +2545,119 @@
                     // Use original TP_SLD image (no edits made)
                     console.log('📋 Using original TP_SLD image data (no edits)...');
                     formData.tpsldImageData = tpsldImageData;
+                }
+            }
+
+            // Process TP_MCCB_COMPARTMENT image if available
+            if (tpmccbcompartmentImageData) {
+                console.log('🖼️ Processing TP_MCCB_COMPARTMENT image data...');
+                
+                if (tpmccbcompartmentCanvasState.image) {
+                    // Canvas has image loaded, use edited version with drawings and legend
+                    console.log('🎨 Getting edited TP_MCCB_COMPARTMENT canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tpmccbcompartment');
+                    if (editedImageDataURL) {
+                        console.log('📋 Using edited TP_MCCB_COMPARTMENT image data...');
+                        formData.tpmccbcompartmentImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_MCCB_COMPARTMENT image data...');
+                        formData.tpmccbcompartmentImageData = tpmccbcompartmentImageData;
+                    }
+                } else {
+                    // Use original TP_MCCB_COMPARTMENT image (no edits made)
+                    console.log('📋 Using original TP_MCCB_COMPARTMENT image data (no edits)...');
+                    formData.tpmccbcompartmentImageData = tpmccbcompartmentImageData;
+                }
+            }
+
+            // Process TP_TAPPING_LOC image if available
+            if (tptappinglocImageData) {
+                console.log('🖼️ Processing TP_TAPPING_LOC image data...');
+                
+                if (tptappinglocCanvasState.image) {
+                    // Canvas has image loaded, use edited version with drawings and legend
+                    console.log('🎨 Getting edited TP_TAPPING_LOC canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tptappingloc');
+                    if (editedImageDataURL) {
+                        console.log('📋 Using edited TP_TAPPING_LOC image data...');
+                        formData.tptappinglocImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_TAPPING_LOC image data...');
+                        formData.tptappinglocImageData = tptappinglocImageData;
+                    }
+                } else {
+                    // Use original TP_TAPPING_LOC image (no edits made)
+                    console.log('📋 Using original TP_TAPPING_LOC image data (no edits)...');
+                    formData.tptappinglocImageData = tptappinglocImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_1 image data if available
+            if (tprouting1ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_1 image data...');
+                
+                // Check if TP_ROUTING_1 canvas has any content (image loaded)
+                if (tprouting1CanvasState.image) {
+                    // Get the edited TP_ROUTING_1 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_1 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting1');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_1 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting1ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_1 image data...');
+                        formData.tprouting1ImageData = tprouting1ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_1 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_1 image data (no edits)...');
+                    formData.tprouting1ImageData = tprouting1ImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_2 image data if available
+            if (tprouting2ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_2 image data...');
+                
+                // Check if TP_ROUTING_2 canvas has any content (image loaded)
+                if (tprouting2CanvasState.image) {
+                    // Get the edited TP_ROUTING_2 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_2 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting2');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_2 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting2ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_2 image data...');
+                        formData.tprouting2ImageData = tprouting2ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_2 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_2 image data (no edits)...');
+                    formData.tprouting2ImageData = tprouting2ImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_3 image data if available
+            if (tprouting3ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_3 image data...');
+                
+                // Check if TP_ROUTING_3 canvas has any content (image loaded)
+                if (tprouting3CanvasState.image) {
+                    // Get the edited TP_ROUTING_3 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_3 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting3');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_3 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting3ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_3 image data...');
+                        formData.tprouting3ImageData = tprouting3ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_3 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_3 image data (no edits)...');
+                    formData.tprouting3ImageData = tprouting3ImageData;
                 }
             }
             
@@ -1940,12 +2936,45 @@
 
         // Initialize canvas on page load
         window.addEventListener('load', function() {
+            updateCanvasContainers();
             initCanvases();
             
             // Prevent default touch behavior on canvas
             document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
             document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
             document.addEventListener('touchend', preventDefaultTouch, { passive: false });
+        });
+
+        // Handle window resize and orientation changes
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                // Recalculate responsive dimensions
+                const newDimensions = calculateResponsiveCanvasDimensions();
+                
+                // Update the dimension constants
+                Object.assign(TPROUTING1_DIMENSIONS, newDimensions.tprouting1);
+                Object.assign(TPROUTING2_DIMENSIONS, newDimensions.tprouting2);
+                Object.assign(TPROUTING3_DIMENSIONS, newDimensions.tprouting3);
+                
+                // Update HTML containers
+                updateCanvasContainers();
+                
+                // Reinitialize Fabric.js canvases with new dimensions
+                if (tprouting1Canvas) {
+                    tprouting1Canvas.setDimensions(TPROUTING1_DIMENSIONS);
+                    tprouting1Canvas.renderAll();
+                }
+                if (tprouting2Canvas) {
+                    tprouting2Canvas.setDimensions(TPROUTING2_DIMENSIONS);  
+                    tprouting2Canvas.renderAll();
+                }
+                if (tprouting3Canvas) {
+                    tprouting3Canvas.setDimensions(TPROUTING3_DIMENSIONS);
+                    tprouting3Canvas.renderAll();
+                }
+            }, 300); // Debounce resize events
             
             // Canvas responsive sizing is handled by CSS and separate canvas system
         });
