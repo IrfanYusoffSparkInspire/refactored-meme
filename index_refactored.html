@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Image Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 min-h-screen overflow-x-hidden">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Image Editor</h1>
+        
+        <!-- Upload Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-8 gap-4 mb-6" id="uploadSection">
+            <!-- Upload sections will be generated dynamically -->
+        </div>
+
+        <!-- Toolbar -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6" id="toolbar">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button id="drawBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Draw</button>
+                <button id="lineBtn" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Line</button>
+                <button id="eraseBtn" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Erase</button>
+                <button id="textBtn" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">Text</button>
+                <button id="clearBtn" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Clear</button>
+                <button id="resetBtn" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Reset</button>
+                <button id="exportBtn" class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">Export PPTX</button>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-center items-center min-h-[400px]">
+                <div id="canvasWrapper" class="relative">
+                    <!-- Canvas will be generated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo Section -->
+        <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Add Logos</h3>
+            <div id="logoSection" class="flex flex-wrap gap-2 justify-center">
+                <!-- Logo buttons will be generated dynamically -->
+            </div>
+        </div>
+
+        <!-- Canvas Type Selector -->
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Select Canvas Type</h3>
+            <div id="canvasSelector" class="flex flex-wrap gap-2 justify-center">
+                <!-- Canvas selector buttons will be generated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
