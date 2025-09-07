@@ -33,13 +33,14 @@ from pptx import Presentation
 from pptx.util import Cm
 from PIL import Image
 
-def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm):
+def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm, suffix=''):
     """
     Resize image to exact PowerPoint dimensions
     Args:
         image_path: Path to the input image
         width_cm: Target width in centimeters
         height_cm: Target height in centimeters
+        suffix: Optional suffix for temporary file naming
     Returns:
         Path to resized image
     """
@@ -59,7 +60,7 @@ def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm):
             resized_img = img.resize((target_width_px, target_height_px), Image.Resampling.LANCZOS)
             
             # Save to temporary file
-            temp_fd, temp_path = tempfile.mkstemp(suffix='.png', prefix='resized_')
+            temp_fd, temp_path = tempfile.mkstemp(suffix='.png', prefix=f'resized_{suffix}_')
             os.close(temp_fd)  # Close file descriptor, we'll use the path
             
             resized_img.save(temp_path, 'PNG', optimize=True, dpi=(dpi, dpi))
@@ -71,19 +72,27 @@ def resize_image_to_powerpoint_dimensions(image_path, width_cm, height_cm):
         print(f"❌ Error resizing image: {str(e)}")
         return None
 
-def replace_placeholders_in_pptx(template_path, form_data, image_path, output_path):
+def replace_placeholders_in_pptx(template_path, form_data, msb_image_path, mccb_image_path, tpsld_image_path, tpmccbcompartment_image_path, tptappingloc_image_path, tprouting1_image_path, tprouting2_image_path, tprouting3_image_path, output_path):
     """
-    Replace placeholders in PowerPoint template and insert image
+    Replace placeholders in PowerPoint template and insert images
     Args:
         template_path: Path to PowerPoint template
         form_data: Dictionary containing form data
-        image_path: Path to the image file (can be None)
+        msb_image_path: Path to the MSB image file (can be None)
+        mccb_image_path: Path to the MCCB image file (can be None)
+        tpsld_image_path: Path to the TP_SLD image file (can be None)
+        tpmccbcompartment_image_path: Path to the TP_MCCB_COMPARTMENT image file (can be None)
+        tptappingloc_image_path: Path to the TP_TAPPING_LOC image file (can be None)
         output_path: Path where to save the output file
     """
     try:
         print("📖 Loading PowerPoint template...")
         print(f"📁 Template path: {template_path}")
-        print(f"🖼️ Image path: {image_path}")
+        print(f"🖼️ MSB Image path: {msb_image_path}")
+        print(f"🖼️ MCCB Image path: {mccb_image_path}")
+        print(f"🖼️ TP_SLD Image path: {tpsld_image_path}")
+        print(f"🖼️ TP_MCCB_COMPARTMENT Image path: {tpmccbcompartment_image_path}")
+        print(f"🖼️ TP_TAPPING_LOC Image path: {tptappingloc_image_path}")
         print(f"📊 Form data: {form_data}")
         
         prs = Presentation(template_path)
@@ -106,6 +115,22 @@ def replace_placeholders_in_pptx(template_path, form_data, image_path, output_pa
                         print(f"    *** FOUND {{TP_MSB}} PLACEHOLDER! ***")
                         print(f"    Position: left={shape.left}, top={shape.top}")
                         print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_MCCB}}' or shape.name == 'TP_MCCB':
+                        print(f"    *** FOUND {{TP_MCCB}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_SLD}}' or shape.name == 'TP_SLD':
+                        print(f"    *** FOUND {{TP_SLD}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_MCCB_COMPARTMENT}}' or shape.name == 'TP_MCCB_COMPARTMENT':
+                        print(f"    *** FOUND {{TP_MCCB_COMPARTMENT}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
+                    elif shape.name == '{{TP_TAPPING_LOC}}' or shape.name == 'TP_TAPPING_LOC':
+                        print(f"    *** FOUND {{TP_TAPPING_LOC}} PLACEHOLDER! ***")
+                        print(f"    Position: left={shape.left}, top={shape.top}")
+                        print(f"    Size: width={shape.width}, height={shape.height}")
                 
                 if hasattr(shape, 'text_frame') and shape.text_frame:
                     print(f"    Has text_frame: True")
@@ -117,11 +142,19 @@ def replace_placeholders_in_pptx(template_path, form_data, image_path, output_pa
                         print(f"    Text content: '{all_text[:100]}{'...' if len(all_text) > 100 else ''}'")
                         if '{{TP_MSB}}' in all_text or 'TP_MSB' in all_text:
                             print(f"    *** CONTAINS {{TP_MSB}} TEXT! ***")
+                        elif '{{TP_MCCB}}' in all_text or 'TP_MCCB' in all_text:
+                            print(f"    *** CONTAINS {{TP_MCCB}} TEXT! ***")
+                        elif '{{TP_SLD}}' in all_text or 'TP_SLD' in all_text:
+                            print(f"    *** CONTAINS {{TP_SLD}} TEXT! ***")
                 
                 if hasattr(shape, 'text') and shape.text:
                     print(f"    Direct text: '{shape.text[:100]}{'...' if len(shape.text) > 100 else ''}'")
                     if '{{TP_MSB}}' in shape.text or 'TP_MSB' in shape.text:
                         print(f"    *** CONTAINS {{TP_MSB}} TEXT! ***")
+                    elif '{{TP_MCCB}}' in shape.text or 'TP_MCCB' in shape.text:
+                        print(f"    *** CONTAINS {{TP_MCCB}} TEXT! ***")
+                    elif '{{TP_SLD}}' in shape.text or 'TP_SLD' in shape.text:
+                        print(f"    *** CONTAINS {{TP_SLD}} TEXT! ***")
         
         # Prepare replacement mappings
         replacements = {
@@ -129,157 +162,241 @@ def replace_placeholders_in_pptx(template_path, form_data, image_path, output_pa
             '{{ADDRESS}}': form_data.get('address', ''),
         }
         
-        print(f"\n🔄 Processing image replacement...")
+        print(f"\n🔄 Processing image replacements...")
         
-        # Process image placeholder first if image is provided
-        if image_path and os.path.exists(image_path):
-            print(f"🖼️ Processing image: {image_path}")
-            print(f"📏 Image file size: {os.path.getsize(image_path)} bytes")
-            
-            # Resize image to exact PowerPoint dimensions (9.25cm x 9.05cm)
-            resized_image_path = resize_image_to_powerpoint_dimensions(
-                image_path, 
-                width_cm=9.05,  # Width: 9.05cm 
-                height_cm=9.25   # Height: 9.25cm
-            )
-            
-            if resized_image_path:
-                print(f"✅ Resized image created: {resized_image_path}")
-                print(f"📏 Resized image file size: {os.path.getsize(resized_image_path)} bytes")
+        # Define image placeholders and their dimensions
+        image_placeholders = [
+            {
+                'placeholder': '{{TP_MSB}}',
+                'alt_placeholder': 'TP_MSB', 
+                'image_path': msb_image_path,
+                'width_cm': 9.05,
+                'height_cm': 9.25,
+                'suffix': 'msb'
+            },
+            {
+                'placeholder': '{{TP_MCCB}}',
+                'alt_placeholder': 'TP_MCCB',
+                'image_path': mccb_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'mccb'
+            },
+            {
+                'placeholder': '{{TP_SLD}}',
+                'alt_placeholder': 'TP_SLD',
+                'image_path': tpsld_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tpsld'
+            },
+            {
+                'placeholder': '{{TP_MCCB_COMPARTMENT}}',
+                'alt_placeholder': 'TP_MCCB_COMPARTMENT',
+                'image_path': tpmccbcompartment_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tpmccbcompartment'
+            },
+            {
+                'placeholder': '{{TP_TAPPING_LOC}}',
+                'alt_placeholder': 'TP_TAPPING_LOC',
+                'image_path': tptappingloc_image_path, 
+                'width_cm': 4.22,
+                'height_cm': 4.57,
+                'suffix': 'tptappingloc'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_1}}',
+                'alt_placeholder': 'TP_ROUTING_1',
+                'image_path': tprouting1_image_path, 
+                'width_cm': 8.85,
+                'height_cm': 10.45,
+                'suffix': 'tprouting1'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_2}}',
+                'alt_placeholder': 'TP_ROUTING_2',
+                'image_path': tprouting2_image_path, 
+                'width_cm': 8.85,
+                'height_cm': 10.45,
+                'suffix': 'tprouting2'
+            },
+            {
+                'placeholder': '{{TP_ROUTING_3}}',
+                'alt_placeholder': 'TP_ROUTING_3',
+                'image_path': tprouting3_image_path, 
+                'width_cm': 17.74,
+                'height_cm': 9.28,
+                'suffix': 'tprouting3'
+            }
+        ]
+        
+        total_replacements_made = 0
+        
+        # Process each image placeholder
+        for placeholder_info in image_placeholders:
+            if placeholder_info['image_path'] and os.path.exists(placeholder_info['image_path']):
+                print(f"🖼️ Processing {placeholder_info['placeholder']} image: {placeholder_info['image_path']}")
+                print(f"📏 Image file size: {os.path.getsize(placeholder_info['image_path'])} bytes")
                 
-                replacements_made = 0
+                # Resize image to exact PowerPoint dimensions
+                resized_image_path = resize_image_to_powerpoint_dimensions(
+                    placeholder_info['image_path'], 
+                    width_cm=placeholder_info['width_cm'],
+                    height_cm=placeholder_info['height_cm'],
+                    suffix=placeholder_info['suffix']
+                )
                 
-                # Process slides to find and replace image placeholder
-                for slide_num, slide in enumerate(prs.slides):
-                    print(f"\n🔍 Processing slide {slide_num + 1}...")
-                    shapes_to_remove = []
-                    image_positions = []
+                if resized_image_path:
+                    print(f"✅ Resized image created: {resized_image_path}")
+                    print(f"📏 Resized image file size: {os.path.getsize(resized_image_path)} bytes")
                     
-                    # Find {{TP_MSB}} placeholder by name
-                    print("  Looking for shapes named '{{TP_MSB}}'...")
-                    for shape_idx, shape in enumerate(slide.shapes):
-                        if hasattr(shape, 'name'):
-                            print(f"    Shape {shape_idx + 1} name: '{shape.name}'")
-                            if shape.name == '{{TP_MSB}}' or shape.name == 'TP_MSB':
-                                print(f"🎯 Found {{TP_MSB}} placeholder on slide {slide_num + 1}")
-                                print(f"    Position: left={shape.left}, top={shape.top}")
-                                print(f"    Size: width={shape.width}, height={shape.height}")
-                                image_positions.append({
-                                    'left': shape.left,
-                                    'top': shape.top,
-                                    'width': shape.width,
-                                    'height': shape.height,
-                                    'slide': slide
-                                })
-                                shapes_to_remove.append(shape)
+                    replacements_made = 0
                     
-                    # Also check for text placeholders containing {{TP_MSB}}
-                    print("  Looking for text containing '{{TP_MSB}}'...")
-                    for shape_idx, shape in enumerate(slide.shapes):
-                        shape_has_placeholder = False
+                    # Process slides to find and replace image placeholder
+                    for slide_num, slide in enumerate(prs.slides):
+                        print(f"\n🔍 Processing slide {slide_num + 1} for {placeholder_info['placeholder']}...")
+                        shapes_to_remove = []
+                        image_positions = []
                         
-                        if hasattr(shape, 'text_frame') and shape.text_frame:
-                            for paragraph in shape.text_frame.paragraphs:
-                                for run in paragraph.runs:
-                                    if '{{TP_MSB}}' in run.text:
-                                        print(f"🎯 Found {{TP_MSB}} text placeholder on slide {slide_num + 1}")
-                                        print(f"    Shape type: {shape.shape_type}")
-                                        print(f"    Full text: '{run.text}'")
-                                        print(f"    Shape position: left={shape.left}, top={shape.top}")
-                                        print(f"    Shape size: width={shape.width}, height={shape.height}")
-                                        
-                                        # If text contains only the placeholder, treat this shape as image placeholder
-                                        if run.text.strip() == '{{TP_MSB}}':
-                                            print("    → This appears to be a text-based image placeholder!")
-                                            image_positions.append({
-                                                'left': shape.left,
-                                                'top': shape.top,
-                                                'width': shape.width,
-                                                'height': shape.height,
-                                                'slide': slide
-                                            })
-                                            shapes_to_remove.append(shape)
-                                            shape_has_placeholder = True
-                                        else:
-                                            # Remove the text placeholder but keep the shape
-                                            run.text = run.text.replace('{{TP_MSB}}', '')
-                                            print(f"    Text after replacement: '{run.text}'")
+                        # Find placeholder by name
+                        print(f"  Looking for shapes named '{placeholder_info['placeholder']}'...")
+                        for shape_idx, shape in enumerate(slide.shapes):
+                            if hasattr(shape, 'name'):
+                                print(f"    Shape {shape_idx + 1} name: '{shape.name}'")
+                                if (shape.name == placeholder_info['placeholder'] or 
+                                    shape.name == placeholder_info['alt_placeholder']):
+                                    print(f"🎯 Found {placeholder_info['placeholder']} placeholder on slide {slide_num + 1}")
+                                    print(f"    Position: left={shape.left}, top={shape.top}")
+                                    print(f"    Size: width={shape.width}, height={shape.height}")
+                                    image_positions.append({
+                                        'left': shape.left,
+                                        'top': shape.top,
+                                        'width': shape.width,
+                                        'height': shape.height,
+                                        'slide': slide
+                                    })
+                                    shapes_to_remove.append(shape)
+                    
+                        # Also check for text placeholders
+                        print(f"  Looking for text containing '{placeholder_info['placeholder']}'...")
+                        for shape_idx, shape in enumerate(slide.shapes):
+                            shape_has_placeholder = False
+                            
+                            if hasattr(shape, 'text_frame') and shape.text_frame:
+                                for paragraph in shape.text_frame.paragraphs:
+                                    for run in paragraph.runs:
+                                        if (placeholder_info['placeholder'] in run.text or 
+                                            placeholder_info['alt_placeholder'] in run.text):
+                                            print(f"🎯 Found {placeholder_info['placeholder']} text placeholder on slide {slide_num + 1}")
+                                            print(f"    Shape type: {shape.shape_type}")
+                                            print(f"    Full text: '{run.text}'")
+                                            print(f"    Shape position: left={shape.left}, top={shape.top}")
+                                            print(f"    Shape size: width={shape.width}, height={shape.height}")
+                                            
+                                            # If text contains only the placeholder, treat this shape as image placeholder
+                                            if (run.text.strip() == placeholder_info['placeholder'] or 
+                                                run.text.strip() == placeholder_info['alt_placeholder']):
+                                                print("    → This appears to be a text-based image placeholder!")
+                                                image_positions.append({
+                                                    'left': shape.left,
+                                                    'top': shape.top,
+                                                    'width': shape.width,
+                                                    'height': shape.height,
+                                                    'slide': slide
+                                                })
+                                                shapes_to_remove.append(shape)
+                                                shape_has_placeholder = True
+                                            else:
+                                                # Remove the text placeholder but keep the shape
+                                                run.text = run.text.replace(placeholder_info['placeholder'], '')
+                                                run.text = run.text.replace(placeholder_info['alt_placeholder'], '')
+                                                print(f"    Text after replacement: '{run.text}'")
+                            
+                            if (not shape_has_placeholder and hasattr(shape, 'text') and 
+                                (placeholder_info['placeholder'] in shape.text or 
+                                 placeholder_info['alt_placeholder'] in shape.text)):
+                                print(f"🎯 Found {placeholder_info['placeholder']} in direct text on slide {slide_num + 1}")
+                                print(f"    Shape type: {shape.shape_type}")
+                                print(f"    Full text: '{shape.text}'")
+                                print(f"    Shape position: left={shape.left}, top={shape.top}")
+                                print(f"    Shape size: width={shape.width}, height={shape.height}")
+                                
+                                # If text contains only the placeholder, treat this shape as image placeholder
+                                if (shape.text.strip() == placeholder_info['placeholder'] or 
+                                    shape.text.strip() == placeholder_info['alt_placeholder']):
+                                    print("    → This appears to be a text-based image placeholder!")
+                                    image_positions.append({
+                                        'left': shape.left,
+                                        'top': shape.top,
+                                        'width': shape.width,
+                                        'height': shape.height,
+                                        'slide': slide
+                                    })
+                                    shapes_to_remove.append(shape)
+                                else:
+                                    shape.text = shape.text.replace(placeholder_info['placeholder'], '')
+                                    shape.text = shape.text.replace(placeholder_info['alt_placeholder'], '')
+                                    print(f"    Text after replacement: '{shape.text}'")
+                    
                         
-                        if not shape_has_placeholder and hasattr(shape, 'text') and ('{{TP_MSB}}' in shape.text):
-                            print(f"🎯 Found {{TP_MSB}} in direct text on slide {slide_num + 1}")
-                            print(f"    Shape type: {shape.shape_type}")
-                            print(f"    Full text: '{shape.text}'")
-                            print(f"    Shape position: left={shape.left}, top={shape.top}")
-                            print(f"    Shape size: width={shape.width}, height={shape.height}")
-                            
-                            # If text contains only the placeholder, treat this shape as image placeholder
-                            if shape.text.strip() == '{{TP_MSB}}':
-                                print("    → This appears to be a text-based image placeholder!")
-                                image_positions.append({
-                                    'left': shape.left,
-                                    'top': shape.top,
-                                    'width': shape.width,
-                                    'height': shape.height,
-                                    'slide': slide
-                                })
-                                shapes_to_remove.append(shape)
-                            else:
-                                shape.text = shape.text.replace('{{TP_MSB}}', '')
-                                print(f"    Text after replacement: '{shape.text}'")
+                        # Remove placeholder shapes
+                        print(f"  Removing {len(shapes_to_remove)} placeholder shapes...")
+                        for shape in shapes_to_remove:
+                            try:
+                                slide.shapes._spTree.remove(shape._element)
+                                print("  ✅ Removed placeholder shape")
+                            except Exception as e:
+                                print(f"  ⚠️ Could not remove placeholder shape: {e}")
+                        
+                        # Add images at the stored positions
+                        print(f"  Adding images at {len(image_positions)} positions...")
+                        for pos_idx, pos_info in enumerate(image_positions):
+                            try:
+                                print(f"    Position {pos_idx + 1}:")
+                                print(f"      left={pos_info['left']}, top={pos_info['top']}")
+                                print(f"      width={pos_info['width']}, height={pos_info['height']}")
+                                
+                                new_picture = pos_info['slide'].shapes.add_picture(
+                                    resized_image_path,
+                                    pos_info['left'],
+                                    pos_info['top'],
+                                    pos_info['width'],
+                                    pos_info['height']
+                                )
+                                
+                                # Bring image to front instead of sending to back
+                                pic_element = new_picture._element
+                                spTree = pos_info['slide'].shapes._spTree
+                                # Remove from current position
+                                spTree.remove(pic_element)
+                                # Add to the end (front-most layer)
+                                spTree.append(pic_element)
+                                
+                                print(f"  ✅ Inserted {placeholder_info['placeholder']} image on slide {slide_num + 1} at position {pos_idx + 1}")
+                                replacements_made += 1
+                                
+                            except Exception as img_error:
+                                print(f"  ❌ Could not insert {placeholder_info['placeholder']} image on slide {slide_num + 1}: {img_error}")
+                                import traceback
+                                traceback.print_exc()
                     
-                    # Remove placeholder shapes
-                    print(f"  Removing {len(shapes_to_remove)} placeholder shapes...")
-                    for shape in shapes_to_remove:
-                        try:
-                            slide.shapes._spTree.remove(shape._element)
-                            print("  ✅ Removed placeholder shape")
-                        except Exception as e:
-                            print(f"  ⚠️ Could not remove placeholder shape: {e}")
+                    print(f"\n📊 Total {placeholder_info['placeholder']} replacements made: {replacements_made}")
+                    total_replacements_made += replacements_made
                     
-                    # Add images at the stored positions
-                    print(f"  Adding images at {len(image_positions)} positions...")
-                    for pos_idx, pos_info in enumerate(image_positions):
-                        try:
-                            print(f"    Position {pos_idx + 1}:")
-                            print(f"      left={pos_info['left']}, top={pos_info['top']}")
-                            print(f"      width={pos_info['width']}, height={pos_info['height']}")
-                            
-                            new_picture = pos_info['slide'].shapes.add_picture(
-                                resized_image_path,
-                                pos_info['left'],
-                                pos_info['top'],
-                                pos_info['width'],
-                                pos_info['height']
-                            )
-                            
-                            # Bring image to front instead of sending to back
-                            pic_element = new_picture._element
-                            spTree = pos_info['slide'].shapes._spTree
-                            # Remove from current position
-                            spTree.remove(pic_element)
-                            # Add to the end (front-most layer)
-                            spTree.append(pic_element)
-                            
-                            print(f"  ✅ Inserted image on slide {slide_num + 1} at position {pos_idx + 1}")
-                            replacements_made += 1
-                            
-                        except Exception as img_error:
-                            print(f"  ❌ Could not insert image on slide {slide_num + 1}: {img_error}")
-                            import traceback
-                            traceback.print_exc()
-                
-                print(f"\n📊 Total image replacements made: {replacements_made}")
-                
-                # Clean up resized image
-                try:
-                    os.unlink(resized_image_path)
-                    print("🗑️ Cleaned up temporary resized image")
-                except Exception as cleanup_error:
-                    print(f"⚠️ Could not clean up resized image: {cleanup_error}")
+                    # Clean up resized image
+                    try:
+                        os.unlink(resized_image_path)
+                        print("🗑️ Cleaned up temporary resized image")
+                    except Exception as cleanup_error:
+                        print(f"⚠️ Could not clean up resized image: {cleanup_error}")
+                else:
+                    print(f"❌ Failed to resize {placeholder_info['placeholder']} image, continuing without image")
             else:
-                print("❌ Failed to resize image, continuing without image")
-        else:
-            print("ℹ️ No image provided or image file not found")
+                print(f"ℹ️ No {placeholder_info['placeholder']} image provided or image file not found")
+        
+        print(f"\n📊 Total image replacements made across all placeholders: {total_replacements_made}")
         
         # Process text replacements
         print(f"\n📝 Processing text replacements...")
@@ -356,7 +473,16 @@ def main():
     parser.add_argument('--template', required=True, help='Path to PowerPoint template file')
     parser.add_argument('--output', required=True, help='Path for output PowerPoint file')
     parser.add_argument('--data', required=True, help='JSON string containing form data')
-    parser.add_argument('--image', help='Path to image file (optional)')
+    parser.add_argument('--msb-image', help='Path to MSB image file (optional)', dest='msb_image')
+    parser.add_argument('--mccb-image', help='Path to MCCB image file (optional)', dest='mccb_image')
+    parser.add_argument('--tpsld-image', help='Path to TP_SLD image file (optional)', dest='tpsld_image')
+    parser.add_argument('--tpmccbcompartment-image', help='Path to TP_MCCB_COMPARTMENT image file (optional)', dest='tpmccbcompartment_image')
+    parser.add_argument('--tptappingloc-image', help='Path to TP_TAPPING_LOC image file (optional)', dest='tptappingloc_image')
+    parser.add_argument('--tprouting1-image', help='Path to TP_ROUTING_1 image file (optional)', dest='tprouting1_image')
+    parser.add_argument('--tprouting2-image', help='Path to TP_ROUTING_2 image file (optional)', dest='tprouting2_image')
+    parser.add_argument('--tprouting3-image', help='Path to TP_ROUTING_3 image file (optional)', dest='tprouting3_image')
+    # Keep legacy --image argument for backward compatibility
+    parser.add_argument('--image', help='Path to image file (legacy, maps to MSB image)', dest='legacy_image')
     
     args = parser.parse_args()
     
@@ -370,10 +496,48 @@ def main():
             print(f"❌ Template file not found: {args.template}")
             sys.exit(1)
         
-        # Validate image file if provided
-        if args.image and not os.path.exists(args.image):
-            print(f"⚠️ Image file not found: {args.image}")
-            args.image = None
+        # Handle legacy image argument (backward compatibility)
+        msb_image_path = args.msb_image or args.legacy_image
+        mccb_image_path = args.mccb_image
+        tpsld_image_path = args.tpsld_image
+        tpmccbcompartment_image_path = args.tpmccbcompartment_image
+        tptappingloc_image_path = args.tptappingloc_image
+        tprouting1_image_path = args.tprouting1_image
+        tprouting2_image_path = args.tprouting2_image
+        tprouting3_image_path = args.tprouting3_image
+        
+        # Validate image files if provided
+        if msb_image_path and not os.path.exists(msb_image_path):
+            print(f"⚠️ MSB image file not found: {msb_image_path}")
+            msb_image_path = None
+            
+        if mccb_image_path and not os.path.exists(mccb_image_path):
+            print(f"⚠️ MCCB image file not found: {mccb_image_path}")
+            mccb_image_path = None
+            
+        if tpsld_image_path and not os.path.exists(tpsld_image_path):
+            print(f"⚠️ TP_SLD image file not found: {tpsld_image_path}")
+            tpsld_image_path = None
+            
+        if tpmccbcompartment_image_path and not os.path.exists(tpmccbcompartment_image_path):
+            print(f"⚠️ TP_MCCB_COMPARTMENT image file not found: {tpmccbcompartment_image_path}")
+            tpmccbcompartment_image_path = None
+            
+        if tptappingloc_image_path and not os.path.exists(tptappingloc_image_path):
+            print(f"⚠️ TP_TAPPING_LOC image file not found: {tptappingloc_image_path}")
+            tptappingloc_image_path = None
+            
+        if tprouting1_image_path and not os.path.exists(tprouting1_image_path):
+            print(f"⚠️ TP_ROUTING_1 image file not found: {tprouting1_image_path}")
+            tprouting1_image_path = None
+            
+        if tprouting2_image_path and not os.path.exists(tprouting2_image_path):
+            print(f"⚠️ TP_ROUTING_2 image file not found: {tprouting2_image_path}")
+            tprouting2_image_path = None
+            
+        if tprouting3_image_path and not os.path.exists(tprouting3_image_path):
+            print(f"⚠️ TP_ROUTING_3 image file not found: {tprouting3_image_path}")
+            tprouting3_image_path = None
         
         # Create output directory if it doesn't exist
         output_dir = os.path.dirname(args.output)
@@ -384,7 +548,14 @@ def main():
         success = replace_placeholders_in_pptx(
             args.template,
             form_data,
-            args.image,
+            msb_image_path,
+            mccb_image_path,
+            tpsld_image_path,
+            tpmccbcompartment_image_path,
+            tptappingloc_image_path,
+            tprouting1_image_path,
+            tprouting2_image_path,
+            tprouting3_image_path,
             args.output
         )
         

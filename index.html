@@ -2,136 +2,577 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Image Editor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Image Editor</h1>
+<body class="bg-gray-100 min-h-screen overflow-x-hidden">
+    <div class="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-7xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Image Editor</h1>
         
-        <!-- Upload Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div class="flex items-center justify-center w-full">
-                <label for="imageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg class="w-8 h-8 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                        <p class="mb-2 text-sm text-gray-500">
-                            <span class="font-semibold">Click to upload</span> or drag and drop
-                        </p>
-                        <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
-                    </div>
-                    <input id="imageInput" type="file" class="hidden" accept="image/*" />
-                </label>
+        <!-- Upload Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 sm:gap-6 mb-4 sm:mb-6">
+            <!-- MSB Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MSB Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="msbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload MSB</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-blue-600 mt-1">Dimensions: 9.05cm × 9.25cm</p>
+                        </div>
+                        <input id="msbImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="msbImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="msbPreviewImg" src="" alt="MSB Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeMsbImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
             </div>
+
+            <!-- MCCB Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">MCCB Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="mccbImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload MCCB</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-green-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="mccbImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="mccbImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="mccbPreviewImg" src="" alt="MCCB Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeMccbImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_SLD Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_SLD Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tpsldImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_SLD</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-purple-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tpsldImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tpsldImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tpsldPreviewImg" src="" alt="TP_SLD Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTpsldImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_MCCB_COMPARTMENT Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_MCCB_COMPARTMENT Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tpmccbcompartmentImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_MCCB_COMPARTMENT</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-indigo-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tpmccbcompartmentImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tpmccbcompartmentImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tpmccbcompartmentPreviewImg" src="" alt="TP_MCCB_COMPARTMENT Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTpmccbcompartmentImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_TAPPING_LOC Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_TAPPING_LOC Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tptappinglocImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_TAPPING_LOC</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-rose-600 mt-1">Dimensions: 4.22cm × 4.57cm</p>
+                        </div>
+                        <input id="tptappinglocImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tptappinglocImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tptappinglocPreviewImg" src="" alt="TP_TAPPING_LOC Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTptappinglocImage" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_1 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_1 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting1ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_1</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-amber-600 mt-1">Dimensions: 8.85cm × 10.45cm</p>
+                        </div>
+                        <input id="tprouting1ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting1ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting1PreviewImg" src="" alt="TP_ROUTING_1 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting1Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_2 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_2 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting2ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_2</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-teal-600 mt-1">Dimensions: 8.85cm × 10.45cm</p>
+                        </div>
+                        <input id="tprouting2ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting2ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting2PreviewImg" src="" alt="TP_ROUTING_2 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting2Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+
+            <!-- TP_ROUTING_3 Image Upload -->
+            <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">TP_ROUTING_3 Image Upload</h3>
+                <div class="flex items-center justify-center w-full">
+                    <label for="tprouting3ImageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-lime-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload TP_ROUTING_3</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG</p>
+                            <p class="text-xs text-lime-600 mt-1">Dimensions: 17.74cm × 9.28cm</p>
+                        </div>
+                        <input id="tprouting3ImageInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+                <div id="tprouting3ImagePreview" class="mt-4 hidden">
+                    <p class="text-sm text-gray-600 mb-2">Preview:</p>
+                    <img id="tprouting3PreviewImg" src="" alt="TP_ROUTING_3 Preview" class="w-full h-20 object-contain border rounded">
+                    <button id="removeTprouting3Image" class="mt-2 px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Selection for Editing -->
+        <div id="imageSelectionPanel" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Select Image to Edit</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
+                <button id="editMsbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit MSB Image
+                    <span class="block text-xs sm:text-sm opacity-75">(9.05cm × 9.25cm)</span>
+                </button>
+                <button id="editMccbImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit MCCB Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTpsldImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_SLD Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTpmccbcompartmentImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_MCCB_COMPARTMENT Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTptappinglocImage" class="px-4 sm:px-6 py-3 sm:py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_TAPPING_LOC Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(4.22cm × 4.57cm)</span>
+                </button>
+                <button id="editTprouting1Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_1 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(8.85cm × 10.45cm)</span>
+                </button>
+                <button id="editTprouting2Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_2 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(8.85cm × 10.45cm)</span>
+                </button>
+                <button id="editTprouting3Image" class="px-4 sm:px-6 py-3 sm:py-3 bg-lime-500 text-white rounded-lg hover:bg-lime-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200 min-h-[48px] text-sm sm:text-base font-medium">
+                    Edit TP_ROUTING_3 Image  
+                    <span class="block text-xs sm:text-sm opacity-75">(17.74cm × 9.28cm)</span>
+                </button>
+            </div>
+            <div id="currentlyEditing" class="text-center mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600 font-medium"></div>
         </div>
 
         <!-- Toolbar -->
-        <div id="toolbar" class="bg-white rounded-lg shadow-md p-2 sm:p-4 mb-6 hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-2">
-                <h3 class="text-lg font-semibold text-gray-800">Tools</h3>
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4">
-                    <label class="text-sm text-gray-600">Mode:</label>
-                    <select id="editMode" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
-                        <option value="crop">Crop Mode</option>
-                        <option value="draw">Draw Mode</option>
-                    </select>
-                </div>
+        <div id="toolbar" class="bg-white rounded-lg shadow-md p-3 sm:p-4 mb-4 sm:mb-6 hidden md:sticky md:top-2 z-20 border border-gray-200 mobile-floating-toolbar">
+            <!-- Mobile minimize button -->
+            <div id="mobileMinimizeBtn" class="md:hidden flex justify-center mb-2">
+                <button id="toolbarToggle" class="px-4 py-1 bg-gray-300 text-gray-700 rounded-full text-xs hover:bg-gray-400 transition-colors duration-200 flex items-center">
+                    <svg id="toolbarToggleIcon" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                    </svg>
+                    <span id="toolbarToggleText">Minimize</span>
+                </button>
             </div>
             
-            <!-- Crop Controls -->
-            <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4 mb-4">
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm text-gray-600">Zoom:</label>
-                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.1" value="1" class="w-24">
-                    <span id="zoomValue" class="text-sm text-gray-600">1x</span>
+            <div id="toolbarContent">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2">
+                    <h3 class="text-lg font-semibold text-gray-800 md:block hidden">Tools</h3>
+                    <h3 class="text-base font-semibold text-gray-800 md:hidden block">Tools</h3>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:space-x-4 w-full sm:w-auto">
+                        <label class="text-sm font-medium text-gray-600">Mode:</label>
+                        <select id="editMode" class="px-3 py-2 border border-gray-300 rounded-md text-sm min-h-[40px] flex-1 sm:flex-none bg-white">
+                            <option value="crop">Crop Mode</option>
+                            <option value="draw">Draw Mode</option>
+                        </select>
+                    </div>
                 </div>
-                <button id="resetZoom" class="px-3 py-1 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600">Reset</button>
+            
+            <!-- Crop Controls -->
+            <div id="cropControls" class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:space-x-4 mb-3 sm:mb-4 bg-gray-50 p-3 rounded-lg">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <label class="text-sm font-medium text-gray-600 whitespace-nowrap">Zoom:</label>
+                    <input id="zoomSlider" type="range" min="0.1" max="3" step="0.01" value="1" class="flex-1 sm:w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="zoomValue" class="text-sm font-medium text-gray-600 min-w-[32px]">1x</span>
+                </div>
+                <button id="resetZoom" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 transition-colors duration-200 min-h-[40px] w-full sm:w-auto">Reset</button>
             </div>
 
             <!-- Drawing Controls -->
-            <div id="drawControls" class="hidden">
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <label class="text-sm text-gray-600 w-full sm:w-auto">Drawing Tool:</label>
-                    <button id="selectTool" class="px-3 py-2 bg-gray-400 text-white rounded-md text-sm hover:bg-gray-500 active-tool flex-1 sm:flex-none border-2 border-gray-600 shadow-lg">Select/Edit</button>
-                    <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-sm hover:bg-red-600 flex-1 sm:flex-none transition-all duration-200">Tray</button>
-                    <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-sm hover:bg-purple-600 flex-1 sm:flex-none transition-all duration-200">MS Trunking</button>
-                    <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex-1 sm:flex-none transition-all duration-200">HDG Trunking</button>
-                    <button id="giPipeTool" class="px-3 py-2 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600 flex-1 sm:flex-none transition-all duration-200">GI Pipe</button>
-                    <button id="corrugatedPipeTool" class="px-3 py-2 bg-cyan-500 text-white rounded-md text-sm hover:bg-cyan-600 flex-1 sm:flex-none transition-all duration-200">Corrugated Pipe</button>
-                    <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 flex-1 sm:flex-none transition-all duration-200">Add Logo</button>
-                    <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-sm hover:bg-yellow-600 flex-1 sm:flex-none transition-all duration-200">Eraser</button>
-                    <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 flex-1 sm:flex-none">Clear All</button>
+            <div id="drawControls" class="hidden bg-gray-50 p-3 rounded-lg">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center">
+                        <label class="text-sm font-medium text-gray-700">Drawing Tools:</label>
+                        <span id="currentToolIndicator" class="ml-2 px-2 py-1 bg-gray-200 text-xs rounded text-gray-600 sm:hidden">Select</span>
+                    </div>
+                    <button id="toggleToolsBtn" class="sm:hidden px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors duration-200 flex items-center">
+                        <svg id="toggleIcon" class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                        <span id="toggleText">Hide</span>
+                    </button>
+                </div>
+                <div id="toolsGrid" class="mb-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-3">
+                        <button id="selectTool" class="px-3 py-2 bg-gray-400 text-white rounded-md text-xs sm:text-sm hover:bg-gray-500 active-tool flex-1 border-2 border-gray-600 shadow-lg min-h-[44px] font-medium transition-all duration-200">
+                            <span class="block">Select</span>
+                            <span class="block text-xs opacity-75">Edit</span>
+                        </button>
+                        <button id="trayTool" class="px-3 py-2 bg-red-500 text-white rounded-md text-xs sm:text-sm hover:bg-red-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Tray</span>
+                        </button>
+                        <button id="msTrunkingTool" class="px-3 py-2 bg-purple-500 text-white rounded-md text-xs sm:text-sm hover:bg-purple-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">MS</span>
+                            <span class="block text-xs opacity-75">Trunking</span>
+                        </button>
+                        <button id="hdgTrunkingTool" class="px-3 py-2 bg-green-600 text-white rounded-md text-xs sm:text-sm hover:bg-green-700 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">HDG</span>
+                            <span class="block text-xs opacity-75">Trunking</span>
+                        </button>
+                        <button id="giPipeTool" class="px-3 py-2 bg-orange-500 text-white rounded-md text-xs sm:text-sm hover:bg-orange-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">GI</span>
+                            <span class="block text-xs opacity-75">Pipe</span>
+                        </button>
+                        <button id="corrugatedPipeTool" class="px-3 py-2 bg-cyan-500 text-white rounded-md text-xs sm:text-sm hover:bg-cyan-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Corrugated</span>
+                            <span class="block text-xs opacity-75">Pipe</span>
+                        </button>
+                        <button id="logoTool" class="px-3 py-2 bg-blue-600 text-white rounded-md text-xs sm:text-sm hover:bg-blue-700 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Add</span>
+                            <span class="block text-xs opacity-75">Logo</span>
+                        </button>
+                        <button id="eraserTool" class="px-3 py-2 bg-yellow-500 text-white rounded-md text-xs sm:text-sm hover:bg-yellow-600 flex-1 transition-all duration-200 min-h-[44px] font-medium">
+                            <span class="block">Eraser</span>
+                        </button>
+                        <button id="clearDrawing" class="px-3 py-2 bg-gray-500 text-white rounded-md text-xs sm:text-sm hover:bg-gray-600 flex-1 min-h-[44px] font-medium transition-all duration-200">
+                            <span class="block">Clear</span>
+                            <span class="block text-xs opacity-75">All</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-4">
-                <button id="exportImage" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm sm:text-base">Export for Backend</button>
-                <button id="generateProposal" class="px-4 sm:px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base">Generate Proposal</button>
-                <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm sm:text-base">Reset</button>
+            <!-- Toolbar Action Button (Reset only) -->
+            <div class="flex justify-center pt-3 border-t border-gray-200">
+                <button id="resetCanvas" class="px-4 sm:px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-semibold transition-all duration-200 min-h-[40px] shadow-sm hover:shadow-md">
+                    <span class="flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Reset All
+                    </span>
+                </button>
             </div>
+            </div> <!-- Close toolbarContent div -->
         </div>
 
         <!-- Canvas Container -->
-        <div class="bg-white rounded-lg shadow-md p-2 sm:p-6">
-            <div class="flex justify-center">
-                <div id="canvasContainer" class="relative border-2 border-gray-300 rounded-lg overflow-hidden touch-none" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
-                    <canvas id="fabricCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"></canvas>
-                    <!-- Legend Box -->
-                    <div id="legendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-1.5 text-xs hidden" style="min-width: 80px;">
-                        <div class="font-medium text-gray-700 mb-0.5 text-center text-xs">Legend</div>
-                        <div id="legendContent"></div>
+        <div class="bg-white rounded-lg shadow-md p-3 sm:p-6 border border-gray-200 canvas-full-mobile">
+            <div class="flex justify-center items-center min-h-[200px] sm:min-h-[350px] mobile-canvas-height">
+                <!-- MSB Canvas -->
+                <div id="msbCanvasContainer" class="relative border-2 border-blue-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 342px; height: 350px; min-width: 280px;">
+                    <canvas id="msbCanvas" width="342" height="350" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">MSB Canvas</div>
+                    <!-- Legend Box for MSB -->
+                    <div id="msbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="msbLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- MCCB Canvas -->
+                <div id="mccbCanvasContainer" class="relative border-2 border-green-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="mccbCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">MCCB Canvas</div>
+                    <!-- Legend Box for MCCB -->
+                    <div id="mccbLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="mccbLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_SLD Canvas -->
+                <div id="tpsldCanvasContainer" class="relative border-2 border-purple-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tpsldCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-purple-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_SLD Canvas</div>
+                    <!-- Legend Box for TP_SLD -->
+                    <div id="tpsldLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tpsldLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_MCCB_COMPARTMENT Canvas -->
+                <div id="tpmccbcompartmentCanvasContainer" class="relative border-2 border-indigo-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tpmccbcompartmentCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-indigo-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_MCCB_COMPARTMENT Canvas</div>
+                    <!-- Legend Box for TP_MCCB_COMPARTMENT -->
+                    <div id="tpmccbcompartmentLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tpmccbcompartmentLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_TAPPING_LOC Canvas -->
+                <div id="tptappinglocCanvasContainer" class="relative border-2 border-rose-300 rounded-lg overflow-hidden touch-none hidden mx-auto" style="max-width: 100%; width: 320px; height: 346px; min-width: 280px;">
+                    <canvas id="tptappinglocCanvas" width="320" height="346" style="max-width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-rose-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_TAPPING_LOC Canvas</div>
+                    <!-- Legend Box for TP_TAPPING_LOC -->
+                    <div id="tptappinglocLegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tptappinglocLegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_1 Canvas -->
+                <div id="tprouting1CanvasContainer" class="relative border-2 border-amber-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting1Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-amber-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_1 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_1 -->
+                    <div id="tprouting1LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting1LegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_2 Canvas -->
+                <div id="tprouting2CanvasContainer" class="relative border-2 border-teal-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting2Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-teal-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_2 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_2 -->
+                    <div id="tprouting2LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting2LegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- TP_ROUTING_3 Canvas -->
+                <div id="tprouting3CanvasContainer" class="relative border-2 border-lime-300 rounded-lg overflow-hidden touch-none hidden mx-auto">
+                    <canvas id="tprouting3Canvas" style="width: 100%; height: 100%; display: block; margin: 0 auto; border-radius: 6px;"></canvas>
+                    <div class="absolute top-2 left-2 bg-lime-500 text-white px-2 py-1 rounded text-xs font-semibold shadow-sm">TP_ROUTING_3 Canvas</div>
+                    <!-- Legend Box for TP_ROUTING_3 -->
+                    <div id="tprouting3LegendBox" class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2 text-xs hidden backdrop-blur-sm bg-opacity-95" style="min-width: 85px;">
+                        <div class="font-semibold text-gray-700 mb-1 text-center text-xs">Legend</div>
+                        <div id="tprouting3LegendContent"></div>
+                    </div>
+                </div>
+                
+                <!-- Default empty state -->
+                <div id="emptyCanvasState" class="relative border-2 border-gray-300 border-dashed rounded-lg overflow-hidden touch-none flex items-center justify-center w-full max-w-md mx-auto" style="min-height: 250px;">
+                    <div class="text-center text-gray-500 p-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-sm font-semibold text-gray-700 mb-2">Upload and select an image to start editing</p>
+                        <p class="text-xs text-gray-500">MSB (9.05×9.25cm), MCCB/TP_SLD/TP_MCCB_COMPARTMENT/TP_TAPPING_LOC (4.22×4.57cm), TP_ROUTING_1&2 (8.85×10.45cm), or TP_ROUTING_3 (17.74×9.28cm)</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Image Gallery Selector (initially hidden) -->
-        <div id="imageGallery" class="bg-white rounded-lg shadow-md p-6 mt-6 hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Select an Image</h3>
-                <button id="closeGallery" class="text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+        <!-- Logo Gallery Section (initially hidden) -->
+        <div id="imageGallery" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6 hidden border border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800 text-blue-700 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    Select a Logo to Add
+                </h3>
+                <div class="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+                    Logo Tool Active
+                </div>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="galleryGrid">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4" id="galleryGrid">
                 <!-- Images will be loaded here dynamically -->
+            </div>
+            <div class="mt-4 text-center bg-blue-50 p-4 rounded-lg">
+                <p class="text-sm font-medium text-blue-800">👆 Tap on any logo above to add it to your canvas</p>
+                <p class="text-xs text-blue-600 mt-1">You can resize and move the logo after adding it</p>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-xs text-gray-500">💡 Scroll back up to continue editing your image</p>
             </div>
         </div>
 
         <!-- Info Panel -->
-        <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 mt-6 hidden">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">Instructions</h3>
-            <div id="cropInstructions" class="text-sm text-gray-600">
-                <p><strong>Crop Mode:</strong></p>
-                <ul class="list-disc list-inside mt-1">
-                    <li>Use the zoom slider to scale the image</li>
-                    <li>Drag the image to position it within the crop area</li>
-                    <li>The final crop will be 600x400 pixels</li>
+        <div id="infoPanel" class="bg-white rounded-lg shadow-md p-4 sm:p-6 mt-4 sm:mt-6 hidden border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Instructions
+            </h3>
+            <div id="cropInstructions" class="text-sm text-gray-700 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                <p class="font-semibold text-blue-800 mb-2">📏 Crop Mode:</p>
+                <ul class="space-y-1 ml-4">
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>Use the zoom slider to scale the image</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>Drag the image to position it within the crop area</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-2">•</span>
+                        <span>The final crop maintains original dimensions</span>
+                    </li>
                 </ul>
             </div>
-            <div id="drawInstructions" class="hidden text-sm text-gray-600">
-                <p><strong>Draw Mode:</strong></p>
-                <ul class="list-disc list-inside mt-1">
-                    <li><strong>Select/Edit:</strong> Default mode for selecting and editing existing objects safely</li>
-                    <li><strong>Drawing Tools:</strong> Select Tray (red), MS Trunking (purple), HDG Trunking (green), GI Pipe (orange), or Corrugated Pipe (cyan) to draw straight dashed lines</li>
-                    <li><strong>Add Logo:</strong> Click anywhere to place the company logo</li>
-                    <li><strong>Eraser:</strong> Click on objects to delete them</li>
-                    <li>Click on existing objects to select and edit them (move/resize)</li>
-                    <li>Press Delete key to remove selected objects</li>
-                    <li>Use "Clear All" to remove all drawings</li>
+            <div id="drawInstructions" class="hidden text-sm text-gray-700 bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                <p class="font-semibold text-green-800 mb-2">✏️ Draw Mode:</p>
+                <ul class="space-y-2 ml-4">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Select/Edit:</strong> Default mode for selecting and editing objects</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Drawing Tools:</strong> Draw colored dashed lines for different components</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Add Logo:</strong> Place logos from the gallery</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span><strong>Eraser:</strong> Tap on objects to delete them</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span>Tap existing objects to select and edit them</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-2">•</span>
+                        <span>Press Delete key to remove selected objects</span>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
 
+    <!-- Fixed Bottom Action Bar -->
+    <div id="bottomActionBar" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 shadow-lg z-50 p-3 sm:p-4">
+        <div class="container mx-auto max-w-7xl">
+            <button id="generateProposal" class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 text-base font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                <span class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Generate Proposal
+                    <span class="ml-2 bg-white bg-opacity-20 px-2 py-1 rounded text-sm">PowerPoint</span>
+                </span>
+            </button>
+        </div>
+    </div>
+
     <script>
         // Global variables
-        let canvas;
+        let msbCanvas = null;
+        let mccbCanvas = null;
+        let tpsldCanvas = null;
+        let tpmccbcompartmentCanvas = null;
+        let tptappinglocCanvas = null;
+        let tprouting1Canvas = null;
+        let tprouting2Canvas = null;
+        let tprouting3Canvas = null;
+        let currentCanvas = null;
         let currentImage = null;
-        let cropRect = null;
+        let currentCropRect = null;
         let isDrawMode = false;
         let currentDrawTool = null;
         let originalImageData = null;
@@ -139,26 +580,226 @@
         let isLogoMode = false;
         let isSelectMode = true;
         
-        // Fixed crop dimensions matching PowerPoint placeholder (9.05cm x 9.25cm)
-        // At 96 DPI: 9.05cm ≈ 342px, 9.25cm ≈ 350px
-        const CROP_WIDTH = 342;
-        const CROP_HEIGHT = 350;
+        // Image storage and canvas state
+        let msbImageData = null;
+        let mccbImageData = null;
+        let tpsldImageData = null;
+        let tpmccbcompartmentImageData = null;
+        let tptappinglocImageData = null;
+        let tprouting1ImageData = null;
+        let tprouting2ImageData = null;
+        let tprouting3ImageData = null;
+        let currentEditingType = null; // 'msb', 'mccb', 'tpsld', 'tpmccbcompartment', 'tptappingloc', 'tprouting1', 'tprouting2', or 'tprouting3'
+        
+        // Canvas state storage
+        let msbCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let mccbCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tpsldCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tpmccbcompartmentCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tptappinglocCanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting1CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting2CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        let tprouting3CanvasState = {
+            image: null,
+            cropRect: null,
+            originalImageData: null
+        };
+        
+        // Dimension constants
+        const MSB_DIMENSIONS = { width: 342, height: 350 }; // 9.05cm × 9.25cm at 96 DPI
+        const MCCB_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPSLD_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPMCCBCOMPARTMENT_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        const TPTAPPINGLOC_DIMENSIONS = { width: 320, height: 346 }; // 4.22cm × 4.57cm scaled 2x for better editing
+        // Dynamic canvas sizing based on screen dimensions and CM ratios
+        function calculateResponsiveCanvasDimensions() {
+            const maxWidth = Math.min(window.innerWidth - 32, 800); // 32px for margins, max 800px
+            const maxHeight = Math.min(window.innerHeight * 0.6, 600); // 60% of viewport height, max 600px
+            
+            // Original CM dimensions and their ratios
+            const canvasSpecs = {
+                tprouting1: { widthCm: 8.85, heightCm: 10.45, ratio: 8.85 / 10.45 }, // 0.847 (portrait)
+                tprouting2: { widthCm: 8.85, heightCm: 10.45, ratio: 8.85 / 10.45 }, // 0.847 (portrait)  
+                tprouting3: { widthCm: 17.74, heightCm: 9.28, ratio: 17.74 / 9.28 }  // 1.911 (landscape)
+            };
+            
+            const responsiveDimensions = {};
+            
+            Object.keys(canvasSpecs).forEach(key => {
+                const spec = canvasSpecs[key];
+                let width, height;
+                
+                if (spec.ratio > 1) {
+                    // Landscape: width > height
+                    width = Math.min(maxWidth, maxHeight * spec.ratio);
+                    height = width / spec.ratio;
+                } else {
+                    // Portrait: height > width  
+                    height = Math.min(maxHeight, maxWidth / spec.ratio);
+                    width = height * spec.ratio;
+                }
+                
+                // Ensure minimum usable size
+                const minSize = 280;
+                if (width < minSize) {
+                    width = minSize;
+                    height = width / spec.ratio;
+                }
+                if (height < minSize * 0.8) {
+                    height = minSize * 0.8;
+                    width = height * spec.ratio;
+                }
+                
+                responsiveDimensions[key] = {
+                    width: Math.round(width),
+                    height: Math.round(height)
+                };
+            });
+            
+            return responsiveDimensions;
+        }
+        
+        // Calculate responsive dimensions
+        const RESPONSIVE_DIMENSIONS = calculateResponsiveCanvasDimensions();
+        
+        // Update the routing dimensions to use responsive values
+        const TPROUTING1_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting1;
+        const TPROUTING2_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting2;
+        const TPROUTING3_DIMENSIONS = RESPONSIVE_DIMENSIONS.tprouting3;
+        
+        // Function to update HTML canvas containers with responsive dimensions
+        function updateCanvasContainers() {
+            // Update TP_ROUTING_1
+            const container1 = document.getElementById('tprouting1CanvasContainer');
+            const canvas1 = document.getElementById('tprouting1Canvas');
+            if (container1 && canvas1) {
+                container1.style.width = TPROUTING1_DIMENSIONS.width + 'px';
+                container1.style.height = TPROUTING1_DIMENSIONS.height + 'px';
+                canvas1.width = TPROUTING1_DIMENSIONS.width;
+                canvas1.height = TPROUTING1_DIMENSIONS.height;
+            }
+            
+            // Update TP_ROUTING_2  
+            const container2 = document.getElementById('tprouting2CanvasContainer');
+            const canvas2 = document.getElementById('tprouting2Canvas');
+            if (container2 && canvas2) {
+                container2.style.width = TPROUTING2_DIMENSIONS.width + 'px';
+                container2.style.height = TPROUTING2_DIMENSIONS.height + 'px';
+                canvas2.width = TPROUTING2_DIMENSIONS.width;
+                canvas2.height = TPROUTING2_DIMENSIONS.height;
+            }
+            
+            // Update TP_ROUTING_3
+            const container3 = document.getElementById('tprouting3CanvasContainer');
+            const canvas3 = document.getElementById('tprouting3Canvas');
+            if (container3 && canvas3) {
+                container3.style.width = TPROUTING3_DIMENSIONS.width + 'px';
+                container3.style.height = TPROUTING3_DIMENSIONS.height + 'px';
+                canvas3.width = TPROUTING3_DIMENSIONS.width;
+                canvas3.height = TPROUTING3_DIMENSIONS.height;
+            }
+        }
 
-        // Initialize Fabric.js canvas
-        function initCanvas() {
-            canvas = new fabric.Canvas('fabricCanvas', {
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
+        // Initialize separate canvases
+        function initCanvases() {
+            // Initialize MSB Canvas
+            msbCanvas = new fabric.Canvas('msbCanvas', {
+                width: MSB_DIMENSIONS.width,
+                height: MSB_DIMENSIONS.height,
                 backgroundColor: '#f8f9fa',
-                enableRetinaScaling: false // Disable retina scaling to prevent offset issues
+                enableRetinaScaling: false
             });
 
-            // Add crop rectangle (visual guide)
-            cropRect = new fabric.Rect({
+            // Initialize MCCB Canvas
+            mccbCanvas = new fabric.Canvas('mccbCanvas', {
+                width: MCCB_DIMENSIONS.width,
+                height: MCCB_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_SLD Canvas
+            tpsldCanvas = new fabric.Canvas('tpsldCanvas', {
+                width: TPSLD_DIMENSIONS.width,
+                height: TPSLD_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_MCCB_COMPARTMENT Canvas
+            tpmccbcompartmentCanvas = new fabric.Canvas('tpmccbcompartmentCanvas', {
+                width: TPMCCBCOMPARTMENT_DIMENSIONS.width,
+                height: TPMCCBCOMPARTMENT_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_TAPPING_LOC Canvas
+            tptappinglocCanvas = new fabric.Canvas('tptappinglocCanvas', {
+                width: TPTAPPINGLOC_DIMENSIONS.width,
+                height: TPTAPPINGLOC_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_1 Canvas
+            tprouting1Canvas = new fabric.Canvas('tprouting1Canvas', {
+                width: TPROUTING1_DIMENSIONS.width,
+                height: TPROUTING1_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_2 Canvas
+            tprouting2Canvas = new fabric.Canvas('tprouting2Canvas', {
+                width: TPROUTING2_DIMENSIONS.width,
+                height: TPROUTING2_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Initialize TP_ROUTING_3 Canvas
+            tprouting3Canvas = new fabric.Canvas('tprouting3Canvas', {
+                width: TPROUTING3_DIMENSIONS.width,
+                height: TPROUTING3_DIMENSIONS.height,
+                backgroundColor: '#f8f9fa',
+                enableRetinaScaling: false
+            });
+
+            // Add crop rectangles to both canvases
+            msbCanvasState.cropRect = new fabric.Rect({
                 left: 0,
                 top: 0,
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
+                width: MSB_DIMENSIONS.width,
+                height: MSB_DIMENSIONS.height,
                 fill: 'transparent',
                 stroke: '#3b82f6',
                 strokeWidth: 2,
@@ -167,9 +808,126 @@
                 evented: false,
                 excludeFromExport: true
             });
-            canvas.add(cropRect);
+            msbCanvas.add(msbCanvasState.cropRect);
 
-            // Canvas event listeners
+            mccbCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: MCCB_DIMENSIONS.width,
+                height: MCCB_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            mccbCanvas.add(mccbCanvasState.cropRect);
+
+            tpsldCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPSLD_DIMENSIONS.width,
+                height: TPSLD_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tpsldCanvas.add(tpsldCanvasState.cropRect);
+
+            tpmccbcompartmentCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPMCCBCOMPARTMENT_DIMENSIONS.width,
+                height: TPMCCBCOMPARTMENT_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tpmccbcompartmentCanvas.add(tpmccbcompartmentCanvasState.cropRect);
+
+            tptappinglocCanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPTAPPINGLOC_DIMENSIONS.width,
+                height: TPTAPPINGLOC_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tptappinglocCanvas.add(tptappinglocCanvasState.cropRect);
+
+            tprouting1CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING1_DIMENSIONS.width,
+                height: TPROUTING1_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting1Canvas.add(tprouting1CanvasState.cropRect);
+
+            tprouting2CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING2_DIMENSIONS.width,
+                height: TPROUTING2_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting2Canvas.add(tprouting2CanvasState.cropRect);
+
+            tprouting3CanvasState.cropRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: TPROUTING3_DIMENSIONS.width,
+                height: TPROUTING3_DIMENSIONS.height,
+                fill: 'transparent',
+                stroke: '#3b82f6',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                selectable: false,
+                evented: false,
+                excludeFromExport: true
+            });
+            tprouting3Canvas.add(tprouting3CanvasState.cropRect);
+
+            // Add event listeners to all canvases
+            setupCanvasEventListeners(msbCanvas);
+            setupCanvasEventListeners(mccbCanvas);
+            setupCanvasEventListeners(tpsldCanvas);
+            setupCanvasEventListeners(tpmccbcompartmentCanvas);
+            setupCanvasEventListeners(tptappinglocCanvas);
+            setupCanvasEventListeners(tprouting1Canvas);
+            setupCanvasEventListeners(tprouting2Canvas);
+            setupCanvasEventListeners(tprouting3Canvas);
+        }
+
+        // Setup event listeners for a canvas
+        function setupCanvasEventListeners(canvas) {
             // Mouse and touch events
             canvas.on('mouse:down', handleMouseDown);
             canvas.on('mouse:move', handleMouseMove);
@@ -187,69 +945,728 @@
                 }
             });
             canvas.on('path:created', handlePathCreated);
-            
-            // Ensure canvas offset is calculated correctly
-            setTimeout(() => {
-                canvas.calcOffset();
-            }, 100);
         }
 
-        // Handle file upload
-        document.getElementById('imageInput').addEventListener('change', function(e) {
+        // Handle MSB image upload
+        document.getElementById('msbImageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    loadImage(event.target.result);
+                    msbImageData = event.target.result;
+                    showImagePreview('msb', event.target.result);
+                    updateImageSelectionPanel();
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // Load image onto canvas
-        function loadImage(imageSrc) {
+        // Handle MCCB image upload
+        document.getElementById('mccbImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    mccbImageData = event.target.result;
+                    showImagePreview('mccb', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_SLD image upload
+        document.getElementById('tpsldImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tpsldImageData = event.target.result;
+                    showImagePreview('tpsld', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('tpmccbcompartmentImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tpmccbcompartmentImageData = event.target.result;
+                    showImagePreview('tpmccbcompartment', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('tptappinglocImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tptappinglocImageData = event.target.result;
+                    showImagePreview('tptappingloc', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_1 image upload
+        document.getElementById('tprouting1ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting1ImageData = event.target.result;
+                    showImagePreview('tprouting1', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_2 image upload
+        document.getElementById('tprouting2ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting2ImageData = event.target.result;
+                    showImagePreview('tprouting2', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle TP_ROUTING_3 image upload
+        document.getElementById('tprouting3ImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    tprouting3ImageData = event.target.result;
+                    showImagePreview('tprouting3', event.target.result);
+                    updateImageSelectionPanel();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Show image preview
+        function showImagePreview(type, imageSrc) {
+            const previewContainer = document.getElementById(`${type}ImagePreview`);
+            const previewImg = document.getElementById(`${type}PreviewImg`);
+            
+            previewImg.src = imageSrc;
+            previewContainer.classList.remove('hidden');
+        }
+
+        // Update image selection panel visibility
+        function updateImageSelectionPanel() {
+            const panel = document.getElementById('imageSelectionPanel');
+            const msbButton = document.getElementById('editMsbImage');
+            const mccbButton = document.getElementById('editMccbImage');
+            const tpsldButton = document.getElementById('editTpsldImage');
+            const tpmccbcompartmentButton = document.getElementById('editTpmccbcompartmentImage');
+            const tptappinglocButton = document.getElementById('editTptappinglocImage');
+            const tprouting1Button = document.getElementById('editTprouting1Image');
+            const tprouting2Button = document.getElementById('editTprouting2Image');
+            const tprouting3Button = document.getElementById('editTprouting3Image');
+            
+            if (msbImageData || mccbImageData || tpsldImageData || tpmccbcompartmentImageData || tptappinglocImageData || tprouting1ImageData || tprouting2ImageData || tprouting3ImageData) {
+                panel.classList.remove('hidden');
+                msbButton.disabled = !msbImageData;
+                mccbButton.disabled = !mccbImageData;
+                tpsldButton.disabled = !tpsldImageData;
+                tpmccbcompartmentButton.disabled = !tpmccbcompartmentImageData;
+                tptappinglocButton.disabled = !tptappinglocImageData;
+                tprouting1Button.disabled = !tprouting1ImageData;
+                tprouting2Button.disabled = !tprouting2ImageData;
+                tprouting3Button.disabled = !tprouting3ImageData;
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        // Switch between canvas types
+        function switchToImageType(type) {
+            currentEditingType = type;
+            
+            // Hide empty state
+            document.getElementById('emptyCanvasState').classList.add('hidden');
+            
+            if (type === 'msb') {
+                // Show MSB canvas, hide others
+                document.getElementById('msbCanvasContainer').classList.remove('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = msbCanvas;
+                currentImage = msbCanvasState.image;
+                currentCropRect = msbCanvasState.cropRect;
+                originalImageData = msbCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (msbImageData && !msbCanvasState.image) {
+                    loadImageToCanvas(type, msbImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: MSB Image (9.05cm × 9.25cm)';
+                
+            } else if (type === 'mccb') {
+                // Show MCCB canvas, hide others
+                document.getElementById('mccbCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = mccbCanvas;
+                currentImage = mccbCanvasState.image;
+                currentCropRect = mccbCanvasState.cropRect;
+                originalImageData = mccbCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (mccbImageData && !mccbCanvasState.image) {
+                    loadImageToCanvas(type, mccbImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: MCCB Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tpsld') {
+                // Show TP_SLD canvas, hide others
+                document.getElementById('tpsldCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tpsldCanvas;
+                currentImage = tpsldCanvasState.image;
+                currentCropRect = tpsldCanvasState.cropRect;
+                originalImageData = tpsldCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tpsldImageData && !tpsldCanvasState.image) {
+                    loadImageToCanvas(type, tpsldImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_SLD Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tpmccbcompartment') {
+                // Show TP_MCCB_COMPARTMENT canvas, hide others
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tpmccbcompartmentCanvas;
+                currentImage = tpmccbcompartmentCanvasState.image;
+                currentCropRect = tpmccbcompartmentCanvasState.cropRect;
+                originalImageData = tpmccbcompartmentCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tpmccbcompartmentImageData && !tpmccbcompartmentCanvasState.image) {
+                    loadImageToCanvas(type, tpmccbcompartmentImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_MCCB_COMPARTMENT Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tptappingloc') {
+                // Show TP_TAPPING_LOC canvas, hide others
+                document.getElementById('tptappinglocCanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tptappinglocCanvas;
+                currentImage = tptappinglocCanvasState.image;
+                currentCropRect = tptappinglocCanvasState.cropRect;
+                originalImageData = tptappinglocCanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tptappinglocImageData && !tptappinglocCanvasState.image) {
+                    loadImageToCanvas(type, tptappinglocImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_TAPPING_LOC Image (4.22cm × 4.57cm)';
+                
+            } else if (type === 'tprouting1') {
+                // Show TP_ROUTING_1 canvas, hide others
+                document.getElementById('tprouting1CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting1Canvas;
+                currentImage = tprouting1CanvasState.image;
+                currentCropRect = tprouting1CanvasState.cropRect;
+                originalImageData = tprouting1CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting1ImageData && !tprouting1CanvasState.image) {
+                    loadImageToCanvas(type, tprouting1ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_1 Image (8.85cm × 10.45cm)';
+                
+            } else if (type === 'tprouting2') {
+                // Show TP_ROUTING_2 canvas, hide others
+                document.getElementById('tprouting2CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting3CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting2Canvas;
+                currentImage = tprouting2CanvasState.image;
+                currentCropRect = tprouting2CanvasState.cropRect;
+                originalImageData = tprouting2CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting2ImageData && !tprouting2CanvasState.image) {
+                    loadImageToCanvas(type, tprouting2ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_2 Image (8.85cm × 10.45cm)';
+                
+            } else if (type === 'tprouting3') {
+                // Show TP_ROUTING_3 canvas, hide others
+                document.getElementById('tprouting3CanvasContainer').classList.remove('hidden');
+                document.getElementById('msbCanvasContainer').classList.add('hidden');
+                document.getElementById('mccbCanvasContainer').classList.add('hidden');
+                document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+                document.getElementById('tpmccbcompartmentCanvasContainer').classList.add('hidden');
+                document.getElementById('tptappinglocCanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting1CanvasContainer').classList.add('hidden');
+                document.getElementById('tprouting2CanvasContainer').classList.add('hidden');
+                
+                // Set current canvas reference
+                currentCanvas = tprouting3Canvas;
+                currentImage = tprouting3CanvasState.image;
+                currentCropRect = tprouting3CanvasState.cropRect;
+                originalImageData = tprouting3CanvasState.originalImageData;
+                
+                // Load image if not already loaded
+                if (tprouting3ImageData && !tprouting3CanvasState.image) {
+                    loadImageToCanvas(type, tprouting3ImageData);
+                }
+                
+                document.getElementById('currentlyEditing').textContent = 'Currently editing: TP_ROUTING_3 Image (17.74cm × 9.28cm)';
+            }
+            
+            // Show toolbar and info panel
+            document.getElementById('toolbar').classList.remove('hidden');
+            document.getElementById('infoPanel').classList.remove('hidden');
+            
+            // Update zoom slider if we have an image
+            if (currentImage) {
+                document.getElementById('zoomSlider').value = currentImage.scaleX;
+                document.getElementById('zoomValue').textContent = currentImage.scaleX.toFixed(1) + 'x';
+            }
+            
+            // Recalculate canvas offset
+            setTimeout(() => {
+                if (currentCanvas) {
+                    currentCanvas.calcOffset();
+                }
+            }, 100);
+        }
+
+        // Load image onto specific canvas
+        function loadImageToCanvas(canvasType, imageSrc) {
+            if (!imageSrc || !canvasType) return;
+            
+            let targetCanvas, canvasState, dimensions;
+            
+            switch(canvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    canvasState = msbCanvasState;
+                    dimensions = MSB_DIMENSIONS;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    canvasState = mccbCanvasState;
+                    dimensions = MCCB_DIMENSIONS;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    canvasState = tpsldCanvasState;
+                    dimensions = TPSLD_DIMENSIONS;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    canvasState = tpmccbcompartmentCanvasState;
+                    dimensions = TPMCCBCOMPARTMENT_DIMENSIONS;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    canvasState = tptappinglocCanvasState;
+                    dimensions = TPTAPPINGLOC_DIMENSIONS;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    canvasState = tprouting1CanvasState;
+                    dimensions = TPROUTING1_DIMENSIONS;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    canvasState = tprouting2CanvasState;
+                    dimensions = TPROUTING2_DIMENSIONS;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    canvasState = tprouting3CanvasState;
+                    dimensions = TPROUTING3_DIMENSIONS;
+                    break;
+                default:
+                    return;
+            }
+            
             fabric.Image.fromURL(imageSrc, function(img) {
                 // Store original image data
-                originalImageData = imageSrc;
+                canvasState.originalImageData = imageSrc;
                 
                 // Remove existing image if any
-                if (currentImage) {
-                    canvas.remove(currentImage);
+                if (canvasState.image) {
+                    targetCanvas.remove(canvasState.image);
                 }
 
                 // Scale image to fit within crop area initially
-                const scaleX = CROP_WIDTH / img.width;
-                const scaleY = CROP_HEIGHT / img.height;
+                const scaleX = dimensions.width / img.width;
+                const scaleY = dimensions.height / img.height;
                 const scale = Math.min(scaleX, scaleY);
                 
                 img.set({
-                    left: CROP_WIDTH / 2,
-                    top: CROP_HEIGHT / 2,
+                    left: dimensions.width / 2,
+                    top: dimensions.height / 2,
                     originX: 'center',
                     originY: 'center',
                     scaleX: scale,
                     scaleY: scale
                 });
 
-                currentImage = img;
-                canvas.add(img);
-                canvas.sendToBack(img);
-                canvas.bringToFront(cropRect);
-                canvas.renderAll();
+                // Store image reference
+                canvasState.image = img;
+                targetCanvas.add(img);
+                targetCanvas.sendToBack(img);
+                targetCanvas.bringToFront(canvasState.cropRect);
+                targetCanvas.renderAll();
 
-                // Show toolbar and info panel
-                document.getElementById('toolbar').classList.remove('hidden');
-                document.getElementById('infoPanel').classList.remove('hidden');
+                // Update current references if this is the active canvas
+                if (currentEditingType === canvasType) {
+                    currentImage = img;
+                    originalImageData = imageSrc;
+                    
+                    // Update zoom slider
+                    document.getElementById('zoomSlider').value = scale;
+                    document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
+                }
                 
-                // Update zoom slider
-                document.getElementById('zoomSlider').value = scale;
-                document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
-                
-                // Recalculate canvas offset after image load
+                // Recalculate canvas offset
                 setTimeout(() => {
-                    canvas.calcOffset();
+                    targetCanvas.calcOffset();
                 }, 100);
             });
+        }
+
+        // Legacy function kept for compatibility
+        function loadImage(imageSrc) {
+            // This is now just an alias that defaults to MSB
+            msbImageData = imageSrc;
+            showImagePreview('msb', imageSrc);
+            updateImageSelectionPanel();
+            switchToImageType('msb');
+        }
+
+        // Image selection buttons
+        document.getElementById('editMsbImage').addEventListener('click', function() {
+            switchToImageType('msb');
+        });
+
+        document.getElementById('editMccbImage').addEventListener('click', function() {
+            switchToImageType('mccb');
+        });
+
+        document.getElementById('editTpsldImage').addEventListener('click', function() {
+            switchToImageType('tpsld');
+        });
+
+        document.getElementById('editTpmccbcompartmentImage').addEventListener('click', function() {
+            switchToImageType('tpmccbcompartment');
+        });
+
+        document.getElementById('editTptappinglocImage').addEventListener('click', function() {
+            switchToImageType('tptappingloc');
+        });
+
+        document.getElementById('editTprouting1Image').addEventListener('click', function() {
+            switchToImageType('tprouting1');
+        });
+
+        document.getElementById('editTprouting2Image').addEventListener('click', function() {
+            switchToImageType('tprouting2');
+        });
+
+        document.getElementById('editTprouting3Image').addEventListener('click', function() {
+            switchToImageType('tprouting3');
+        });
+
+        // Remove image buttons
+        document.getElementById('removeMsbImage').addEventListener('click', function() {
+            msbImageData = null;
+            document.getElementById('msbImagePreview').classList.add('hidden');
+            document.getElementById('msbImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear MSB canvas
+            clearSpecificCanvas('msb');
+            
+            // If currently editing MSB, hide the editor
+            if (currentEditingType === 'msb') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeMccbImage').addEventListener('click', function() {
+            mccbImageData = null;
+            document.getElementById('mccbImagePreview').classList.add('hidden');
+            document.getElementById('mccbImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear MCCB canvas
+            clearSpecificCanvas('mccb');
+            
+            // If currently editing MCCB, hide the editor
+            if (currentEditingType === 'mccb') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTpsldImage').addEventListener('click', function() {
+            tpsldImageData = null;
+            document.getElementById('tpsldImagePreview').classList.add('hidden');
+            document.getElementById('tpsldImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_SLD canvas
+            clearSpecificCanvas('tpsld');
+            
+            // If currently editing TP_SLD, hide the editor
+            if (currentEditingType === 'tpsld') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTpmccbcompartmentImage').addEventListener('click', function() {
+            tpmccbcompartmentImageData = null;
+            document.getElementById('tpmccbcompartmentImagePreview').classList.add('hidden');
+            document.getElementById('tpmccbcompartmentImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_MCCB_COMPARTMENT canvas
+            clearSpecificCanvas('tpmccbcompartment');
+            
+            // If currently editing TP_MCCB_COMPARTMENT, hide the editor
+            if (currentEditingType === 'tpmccbcompartment') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTptappinglocImage').addEventListener('click', function() {
+            tptappinglocImageData = null;
+            document.getElementById('tptappinglocImagePreview').classList.add('hidden');
+            document.getElementById('tptappinglocImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_TAPPING_LOC canvas
+            clearSpecificCanvas('tptappingloc');
+            
+            // If currently editing TP_TAPPING_LOC, hide the editor
+            if (currentEditingType === 'tptappingloc') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting1Image').addEventListener('click', function() {
+            tprouting1ImageData = null;
+            document.getElementById('tprouting1ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting1ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_1 canvas
+            clearSpecificCanvas('tprouting1');
+            
+            // If currently editing TP_ROUTING_1, hide the editor
+            if (currentEditingType === 'tprouting1') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting2Image').addEventListener('click', function() {
+            tprouting2ImageData = null;
+            document.getElementById('tprouting2ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting2ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_2 canvas
+            clearSpecificCanvas('tprouting2');
+            
+            // If currently editing TP_ROUTING_2, hide the editor
+            if (currentEditingType === 'tprouting2') {
+                showEmptyState();
+            }
+        });
+
+        document.getElementById('removeTprouting3Image').addEventListener('click', function() {
+            tprouting3ImageData = null;
+            document.getElementById('tprouting3ImagePreview').classList.add('hidden');
+            document.getElementById('tprouting3ImageInput').value = '';
+            updateImageSelectionPanel();
+            
+            // Clear TP_ROUTING_3 canvas
+            clearSpecificCanvas('tprouting3');
+            
+            // If currently editing TP_ROUTING_3, hide the editor
+            if (currentEditingType === 'tprouting3') {
+                showEmptyState();
+            }
+        });
+
+        function clearSpecificCanvas(canvasType) {
+            let targetCanvas, canvasState, dimensions;
+            
+            switch(canvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    canvasState = msbCanvasState;
+                    dimensions = MSB_DIMENSIONS;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    canvasState = mccbCanvasState;
+                    dimensions = MCCB_DIMENSIONS;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    canvasState = tpsldCanvasState;
+                    dimensions = TPSLD_DIMENSIONS;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    canvasState = tpmccbcompartmentCanvasState;
+                    dimensions = TPMCCBCOMPARTMENT_DIMENSIONS;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    canvasState = tptappinglocCanvasState;
+                    dimensions = TPTAPPINGLOC_DIMENSIONS;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    canvasState = tprouting1CanvasState;
+                    dimensions = TPROUTING1_DIMENSIONS;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    canvasState = tprouting2CanvasState;
+                    dimensions = TPROUTING2_DIMENSIONS;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    canvasState = tprouting3CanvasState;
+                    dimensions = TPROUTING3_DIMENSIONS;
+                    break;
+                default:
+                    return;
+            }
+            
+            if (targetCanvas) {
+                // Clear all objects except keep a fresh crop rectangle
+                targetCanvas.clear();
+                
+                // Re-add crop rectangle
+                canvasState.cropRect = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    fill: 'transparent',
+                    stroke: '#3b82f6',
+                    strokeWidth: 2,
+                    strokeDashArray: [5, 5],
+                    selectable: false,
+                    evented: false,
+                    excludeFromExport: true
+                });
+                targetCanvas.add(canvasState.cropRect);
+                targetCanvas.setBackgroundColor('#f8f9fa', targetCanvas.renderAll.bind(targetCanvas));
+                
+                // Clear state
+                canvasState.image = null;
+                canvasState.originalImageData = null;
+            }
+        }
+
+        function showEmptyState() {
+            // Hide all canvases
+            document.getElementById('msbCanvasContainer').classList.add('hidden');
+            document.getElementById('mccbCanvasContainer').classList.add('hidden');
+            document.getElementById('tpsldCanvasContainer').classList.add('hidden');
+            
+            // Show empty state
+            document.getElementById('emptyCanvasState').classList.remove('hidden');
+            
+            // Hide toolbar and info panel
+            document.getElementById('toolbar').classList.add('hidden');
+            document.getElementById('infoPanel').classList.add('hidden');
+            document.getElementById('currentlyEditing').textContent = '';
+            
+            // Clear current references
+            currentCanvas = null;
+            currentImage = null;
+            currentCropRect = null;
+            originalImageData = null;
+            currentEditingType = null;
         }
 
         // Mode switching
@@ -271,9 +1688,16 @@
                     });
                 }
                 
-                // Enable custom drawing mode for straight lines
-                canvas.isDrawingMode = false; // Disable fabric.js freeform drawing
-                canvas.selection = true; // Allow selection of drawn lines
+                // Enable custom drawing mode for straight lines on current canvas
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false; // Disable fabric.js freeform drawing
+                    currentCanvas.selection = true; // Allow selection of drawn lines
+                }
+                
+                // Show helpful hint on mobile when entering draw mode
+                if (window.innerWidth <= 768) {
+                    showCollapseHint();
+                }
             } else {
                 document.getElementById('cropControls').classList.remove('hidden');
                 document.getElementById('drawControls').classList.add('hidden');
@@ -288,38 +1712,43 @@
                     });
                 }
                 
-                canvas.isDrawingMode = false;
-                canvas.selection = true;
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.selection = true;
+                }
             }
-            canvas.renderAll();
+            if (currentCanvas) {
+                currentCanvas.renderAll();
+            }
         });
 
         // Zoom controls
         document.getElementById('zoomSlider').addEventListener('input', function(e) {
             const zoom = parseFloat(e.target.value);
-            if (currentImage) {
+            if (currentImage && currentCanvas) {
                 currentImage.set({
                     scaleX: zoom,
                     scaleY: zoom
                 });
-                canvas.renderAll();
+                currentCanvas.renderAll();
                 document.getElementById('zoomValue').textContent = zoom.toFixed(1) + 'x';
             }
         });
 
         document.getElementById('resetZoom').addEventListener('click', function() {
-            if (currentImage) {
-                const scaleX = CROP_WIDTH / (currentImage.width * currentImage.scaleX);
-                const scaleY = CROP_HEIGHT / (currentImage.height * currentImage.scaleY);
+            if (currentImage && currentCanvas) {
+                const dimensions = currentEditingType === 'msb' ? MSB_DIMENSIONS : MCCB_DIMENSIONS;
+                const scaleX = dimensions.width / (currentImage.width * currentImage.scaleX);
+                const scaleY = dimensions.height / (currentImage.height * currentImage.scaleY);
                 const scale = Math.min(scaleX, scaleY);
                 
                 currentImage.set({
                     scaleX: scale,
                     scaleY: scale,
-                    left: CROP_WIDTH / 2,
-                    top: CROP_HEIGHT / 2
+                    left: dimensions.width / 2,
+                    top: dimensions.height / 2
                 });
-                canvas.renderAll();
+                currentCanvas.renderAll();
                 
                 document.getElementById('zoomSlider').value = scale;
                 document.getElementById('zoomValue').textContent = scale.toFixed(1) + 'x';
@@ -415,15 +1844,17 @@
         }
 
         function updateLegend() {
-            const legendBox = document.getElementById('legendBox');
-            const legendContent = document.getElementById('legendContent');
+            if (!currentCanvas || !currentEditingType) return;
             
-            if (!canvas) return;
+            const legendBox = document.getElementById(`${currentEditingType}LegendBox`);
+            const legendContent = document.getElementById(`${currentEditingType}LegendContent`);
+            
+            if (!legendBox || !legendContent) return;
             
             // Get all objects except background image and crop rectangle
-            const objects = canvas.getObjects();
+            const objects = currentCanvas.getObjects();
             const drawnObjects = objects.filter(obj => 
-                obj !== cropRect && obj !== currentImage && 
+                obj !== currentCropRect && obj !== currentImage && 
                 (obj.type === 'line' || obj.type === 'image')
             );
             
@@ -479,18 +1910,37 @@
                 btn.classList.add('transition-all', 'duration-200');
             });
             
+            const indicator = document.getElementById('currentToolIndicator');
+            
+            // Hide logo gallery by default
+            hideLogoGallery();
+            
             if (isSelectMode) {
                 document.getElementById('selectTool').classList.add('active-tool', 'border-2', 'border-gray-600', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'default';
+                indicator.textContent = 'Select';
+                indicator.className = 'ml-2 px-2 py-1 bg-gray-200 text-xs rounded text-gray-600 sm:hidden';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'default';
+                }
             } else if (isEraserMode) {
                 document.getElementById('eraserTool').classList.add('active-tool', 'border-2', 'border-yellow-300', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'crosshair';
+                indicator.textContent = 'Eraser';
+                indicator.className = 'ml-2 px-2 py-1 bg-yellow-200 text-xs rounded text-yellow-700 sm:hidden';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
             } else if (isLogoMode) {
                 document.getElementById('logoTool').classList.add('active-tool', 'border-2', 'border-blue-300', 'shadow-lg');
-                canvas.isDrawingMode = false;
-                canvas.defaultCursor = 'crosshair';
+                indicator.textContent = 'Logo';
+                indicator.className = 'ml-2 px-2 py-1 bg-blue-200 text-xs rounded text-blue-700 sm:hidden';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false;
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
+                // Show logo gallery when logo tool is active
+                showLogoGallery();
             } else if (currentDrawTool) {
                 const toolButton = document.getElementById(currentDrawTool + 'Tool');
                 if (toolButton) {
@@ -501,9 +1951,29 @@
                                       currentDrawTool === 'corrugatedPipe' ? 'border-cyan-300' :
                                       'border-gray-300';
                     toolButton.classList.add('active-tool', 'border-2', borderColor, 'shadow-lg');
+                    
+                    // Update indicator
+                    const toolNames = {
+                        'tray': 'Tray',
+                        'msTrunking': 'MS Trunking',
+                        'hdgTrunking': 'HDG Trunking',
+                        'giPipe': 'GI Pipe',
+                        'corrugatedPipe': 'Corrugated'
+                    };
+                    const toolColors = {
+                        'tray': 'bg-red-200 text-red-700',
+                        'msTrunking': 'bg-purple-200 text-purple-700',
+                        'hdgTrunking': 'bg-green-200 text-green-700',
+                        'giPipe': 'bg-orange-200 text-orange-700',
+                        'corrugatedPipe': 'bg-cyan-200 text-cyan-700'
+                    };
+                    indicator.textContent = toolNames[currentDrawTool] || currentDrawTool;
+                    indicator.className = `ml-2 px-2 py-1 text-xs rounded sm:hidden ${toolColors[currentDrawTool] || 'bg-gray-200 text-gray-700'}`;
                 }
-                canvas.isDrawingMode = false; // We handle drawing manually for straight lines
-                canvas.defaultCursor = 'crosshair';
+                if (currentCanvas) {
+                    currentCanvas.isDrawingMode = false; // We handle drawing manually for straight lines
+                    currentCanvas.defaultCursor = 'crosshair';
+                }
             }
         }
 
@@ -513,29 +1983,29 @@
         let currentLine = null;
 
         function handleMouseDown(e) {
-            if (!isDrawMode) return;
+            if (!isDrawMode || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             
             if (isSelectMode) {
                 // Select mode - only allow selecting existing objects
-                const target = canvas.findTarget(e.e, false);
-                if (target && target !== cropRect && target !== currentImage) {
-                    canvas.setActiveObject(target);
-                    canvas.renderAll();
+                const target = currentCanvas.findTarget(e.e, false);
+                if (target && target !== currentCropRect && target !== currentImage) {
+                    currentCanvas.setActiveObject(target);
+                    currentCanvas.renderAll();
                 } else {
-                    canvas.discardActiveObject();
-                    canvas.renderAll();
+                    currentCanvas.discardActiveObject();
+                    currentCanvas.renderAll();
                 }
                 return;
             }
             
             if (isEraserMode) {
                 // Eraser mode - find and remove clicked object
-                const target = canvas.findTarget(e.e, false);
-                if (target && (target.type === 'line' || target.type === 'image') && target !== cropRect && target !== currentImage) {
-                    canvas.remove(target);
-                    canvas.renderAll();
+                const target = currentCanvas.findTarget(e.e, false);
+                if (target && (target.type === 'line' || target.type === 'image') && target !== currentCropRect && target !== currentImage) {
+                    currentCanvas.remove(target);
+                    currentCanvas.renderAll();
                     updateLegend(); // Update legend when object is removed
                 }
                 return;
@@ -548,16 +2018,16 @@
             }
             
             // Drawing mode - check if clicking on existing object first
-            const target = canvas.findTarget(e.e, false);
-            if (target && target !== cropRect && target !== currentImage) {
-                canvas.setActiveObject(target);
-                canvas.renderAll();
+            const target = currentCanvas.findTarget(e.e, false);
+            if (target && target !== currentCropRect && target !== currentImage) {
+                currentCanvas.setActiveObject(target);
+                currentCanvas.renderAll();
                 return;
             }
             
             // Start drawing new line only if we have a drawing tool selected
             if (currentDrawTool) {
-                canvas.discardActiveObject();
+                currentCanvas.discardActiveObject();
                 isDrawing = true;
                 startPoint = { x: pointer.x, y: pointer.y };
                 
@@ -570,7 +2040,7 @@
                     evented: false,
                     opacity: 0.7
                 });
-                canvas.add(currentLine);
+                currentCanvas.add(currentLine);
             }
         }
 
@@ -608,6 +2078,8 @@
         }
         
         function addLogoToCanvas(logoImg, x, y) {
+            if (!currentCanvas) return;
+            
             // Scale the logo to a reasonable size (adjust as needed)
             const maxSize = 80; // Maximum width/height in pixels
             const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
@@ -629,31 +2101,31 @@
                 cornerSize: 8
             });
             
-            canvas.add(logoImg);
-            canvas.bringToFront(logoImg);
-            canvas.bringToFront(cropRect);
-            canvas.setActiveObject(logoImg);
-            canvas.renderAll();
+            currentCanvas.add(logoImg);
+            currentCanvas.bringToFront(logoImg);
+            currentCanvas.bringToFront(currentCropRect);
+            currentCanvas.setActiveObject(logoImg);
+            currentCanvas.renderAll();
             updateLegend(); // Update legend when logo is added
         }
 
         function handleMouseMove(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentLine) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentLine || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             
             // Update preview line
             currentLine.set({
                 x2: pointer.x,
                 y2: pointer.y
             });
-            canvas.renderAll();
+            currentCanvas.renderAll();
         }
 
         function handleMouseUp(e) {
-            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode) return;
+            if (!isDrawMode || !isDrawing || isEraserMode || isLogoMode || isSelectMode || !currentCanvas) return;
             
-            const pointer = canvas.getPointer(e.e);
+            const pointer = currentCanvas.getPointer(e.e);
             isDrawing = false;
             
             if (currentLine && startPoint) {
@@ -664,7 +2136,7 @@
                 );
                 
                 // Remove preview line
-                canvas.remove(currentLine);
+                currentCanvas.remove(currentLine);
                 
                 if (distance > 10) { // Minimum line length
                     // Create final dashed line
@@ -683,13 +2155,13 @@
                         cornerSize: 8
                     });
                     
-                    canvas.add(finalLine);
-                    canvas.bringToFront(finalLine);
-                    canvas.bringToFront(cropRect);
+                    currentCanvas.add(finalLine);
+                    currentCanvas.bringToFront(finalLine);
+                    currentCanvas.bringToFront(currentCropRect);
                     updateLegend(); // Update legend when line is added
                 }
                 
-                canvas.renderAll();
+                currentCanvas.renderAll();
             }
             
             currentLine = null;
@@ -702,80 +2174,46 @@
 
         // Clear drawing
         document.getElementById('clearDrawing').addEventListener('click', function() {
-            const objects = canvas.getObjects();
+            if (!currentCanvas) return;
+            
+            const objects = currentCanvas.getObjects();
             const toRemove = objects.filter(obj => 
-                (obj.type === 'line' || obj.type === 'path' || obj.type === 'Path') && obj !== cropRect && obj !== currentImage
+                (obj.type === 'line' || obj.type === 'path' || obj.type === 'Path') && obj !== currentCropRect && obj !== currentImage
             );
-            toRemove.forEach(obj => canvas.remove(obj));
-            canvas.renderAll();
+            toRemove.forEach(obj => currentCanvas.remove(obj));
+            currentCanvas.renderAll();
             updateLegend(); // Update legend when all objects are cleared
         });
 
-        // Export functionality
-        document.getElementById('exportImage').addEventListener('click', function() {
-            if (!currentImage) return;
-            
-            // Temporarily hide crop rectangle
-            cropRect.visible = false;
-            canvas.renderAll();
-            
-            // Export the canvas
-            const exportData = {
-                imageData: canvas.toDataURL('image/png'),
-                cropDimensions: {
-                    width: CROP_WIDTH,
-                    height: CROP_HEIGHT
-                },
-                originalImage: originalImageData,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Show crop rectangle again
-            cropRect.visible = true;
-            canvas.renderAll();
-            
-            // For now, just log the export data (later will be sent to backend)
-            console.log('Export data ready for backend:', exportData);
-            
-            // Create download link for testing
-            const link = document.createElement('a');
-            link.download = 'edited-image.png';
-            link.href = exportData.imageData;
-            link.click();
-            
-            alert('Image exported! Check console for backend data and download should start.');
-        });
 
         // Reset canvas
         document.getElementById('resetCanvas').addEventListener('click', function() {
-            canvas.clear();
-            currentImage = null;
-            originalImageData = null;
+            // Clear all image data
+            msbImageData = null;
+            mccbImageData = null;
+            tpsldImageData = null;
             
-            // Re-add crop rectangle
-            cropRect = new fabric.Rect({
-                left: 0,
-                top: 0,
-                width: CROP_WIDTH,
-                height: CROP_HEIGHT,
-                fill: 'transparent',
-                stroke: '#3b82f6',
-                strokeWidth: 2,
-                strokeDashArray: [5, 5],
-                selectable: false,
-                evented: false,
-                excludeFromExport: true
-            });
-            canvas.add(cropRect);
-            canvas.setBackgroundColor('#f8f9fa', canvas.renderAll.bind(canvas));
+            // Clear all canvases completely
+            clearSpecificCanvas('msb');
+            clearSpecificCanvas('mccb');
+            clearSpecificCanvas('tpsld');
             
-            // Hide toolbar and legend
-            document.getElementById('toolbar').classList.add('hidden');
-            document.getElementById('infoPanel').classList.add('hidden');
-            document.getElementById('legendBox').classList.add('hidden');
+            // Show empty state
+            showEmptyState();
             
-            // Reset form
-            document.getElementById('imageInput').value = '';
+            // Hide all UI elements
+            document.getElementById('imageSelectionPanel').classList.add('hidden');
+            document.getElementById('msbImagePreview').classList.add('hidden');
+            document.getElementById('mccbImagePreview').classList.add('hidden');
+            document.getElementById('tpsldImagePreview').classList.add('hidden');
+            document.getElementById('msbLegendBox').classList.add('hidden');
+            document.getElementById('mccbLegendBox').classList.add('hidden');
+            document.getElementById('tpsldLegendBox').classList.add('hidden');
+            
+            // Reset form inputs
+            document.getElementById('msbImageInput').value = '';
+            document.getElementById('mccbImageInput').value = '';
+            document.getElementById('tpsldImageInput').value = '';
         });
         
         // Available images in the images folder
@@ -789,104 +2227,131 @@
             { name: 'wheel_stopper', filename: 'wheel_stopper.png', displayName: 'Wheel Stopper' }
         ];
         
-        // Show image gallery
-        function showImageGallery() {
+        // Show logo gallery section
+        function showLogoGallery() {
             const gallery = document.getElementById('imageGallery');
             const galleryGrid = document.getElementById('galleryGrid');
             
-            // Clear existing content
-            galleryGrid.innerHTML = '';
+            if (!gallery || !galleryGrid) {
+                return;
+            }
             
-            // Add each image to the gallery
-            availableImages.forEach(imageInfo => {
-                const imageCard = document.createElement('div');
-                imageCard.className = 'border border-gray-300 rounded-lg p-2 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all duration-200';
-                imageCard.innerHTML = `
-                    <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-20 object-contain mb-2 rounded">
-                    <p class="text-xs text-gray-700 text-center truncate">${imageInfo.displayName}</p>
-                `;
-                
-                imageCard.addEventListener('click', () => {
-                    selectImage(imageInfo);
+            // Only populate if empty
+            if (galleryGrid.children.length === 0) {
+                // Add each image to the gallery
+                availableImages.forEach((imageInfo) => {
+                    const imageCard = document.createElement('div');
+                    imageCard.className = 'gallery-item border border-gray-300 rounded-lg p-3 hover:border-blue-500 cursor-pointer transition-all duration-200 bg-white hover:bg-blue-50';
+                    imageCard.innerHTML = `
+                        <img src="images/${imageInfo.filename}" alt="${imageInfo.displayName}" class="w-full h-16 sm:h-20 object-contain mb-2 rounded">
+                        <p class="text-xs font-medium text-gray-700 text-center truncate">${imageInfo.displayName}</p>
+                    `;
+                    
+                    imageCard.addEventListener('click', () => {
+                        selectLogoImage(imageInfo);
+                    });
+                    
+                    galleryGrid.appendChild(imageCard);
                 });
-                
-                galleryGrid.appendChild(imageCard);
-            });
+            }
             
             // Show the gallery
             gallery.classList.remove('hidden');
-            gallery.scrollIntoView({ behavior: 'smooth' });
+            
+            // Smooth scroll to gallery after a short delay
+            setTimeout(() => {
+                gallery.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
         }
         
-        // Select and add image to canvas
-        function selectImage(imageInfo) {
+        // Hide logo gallery section
+        function hideLogoGallery() {
+            const gallery = document.getElementById('imageGallery');
+            if (gallery) {
+                gallery.classList.add('hidden');
+            }
+        }
+        
+        // Select and add logo image to canvas
+        function selectLogoImage(imageInfo) {
+            if (!currentCanvas) {
+                alert('Please select a canvas first before adding logos.');
+                return;
+            }
+            
             const imagePath = `images/${imageInfo.filename}`;
             
             fabric.Image.fromURL(imagePath, function(logoImg) {
-                // Add logo to center of canvas
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
+                // Add logo to center of current canvas
+                const centerX = currentCanvas.width / 2;
+                const centerY = currentCanvas.height / 2;
                 addLogoToCanvas(logoImg, centerX, centerY);
             });
             
-            // Hide the gallery
-            document.getElementById('imageGallery').classList.add('hidden');
+            // Keep gallery visible so users can add more logos if needed
+            // They can switch to another tool to hide the gallery
         }
         
-        // Add logo to canvas function
-        function addLogoToCanvas(logoImg, x, y) {
-            // Scale the logo to a reasonable size
-            const maxSize = 60; // Maximum width/height in pixels
-            const scale = Math.min(maxSize / logoImg.width, maxSize / logoImg.height);
-            
-            logoImg.set({
-                left: x,
-                top: y,
-                originX: 'center',
-                originY: 'center',
-                scaleX: scale,
-                scaleY: scale,
-                selectable: true,
-                evented: true,
-                hasControls: true,
-                hasBorders: true,
-                cornerColor: '#fff',
-                cornerStrokeColor: '#2563eb',
-                borderColor: '#2563eb',
-                cornerSize: 6
-            });
-            
-            canvas.add(logoImg);
-            canvas.bringToFront(logoImg);
-            canvas.bringToFront(cropRect);
-            canvas.setActiveObject(logoImg);
-            canvas.renderAll();
-            updateLegend(); // Update legend when logo is added
-        }
         
-        // Function to combine canvas with legend overlay
-        async function getCanvasWithLegend() {
+        // Function to combine specific canvas with legend overlay
+        async function getCanvasWithLegend(canvasType = null) {
+            // If no specific canvas type provided, use current canvas
+            const targetCanvasType = canvasType || currentEditingType;
+            let targetCanvas;
+            switch(targetCanvasType) {
+                case 'msb':
+                    targetCanvas = msbCanvas;
+                    break;
+                case 'mccb':
+                    targetCanvas = mccbCanvas;
+                    break;
+                case 'tpsld':
+                    targetCanvas = tpsldCanvas;
+                    break;
+                case 'tpmccbcompartment':
+                    targetCanvas = tpmccbcompartmentCanvas;
+                    break;
+                case 'tptappingloc':
+                    targetCanvas = tptappinglocCanvas;
+                    break;
+                case 'tprouting1':
+                    targetCanvas = tprouting1Canvas;
+                    break;
+                case 'tprouting2':
+                    targetCanvas = tprouting2Canvas;
+                    break;
+                case 'tprouting3':
+                    targetCanvas = tprouting3Canvas;
+                    break;
+                default:
+                    targetCanvas = null;
+            }
+            
+            if (!targetCanvas || !targetCanvasType) {
+                return null;
+            }
+            
             return new Promise((resolve) => {
                 // Create a temporary canvas to combine canvas + legend
                 const tempCanvas = document.createElement('canvas');
                 const tempCtx = tempCanvas.getContext('2d');
                 
-                // Set same dimensions as original canvas
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
+                // Set same dimensions as target canvas
+                tempCanvas.width = targetCanvas.width;
+                tempCanvas.height = targetCanvas.height;
                 
                 // First, draw the original canvas content
                 const canvasImage = new Image();
                 canvasImage.onload = function() {
                     tempCtx.drawImage(canvasImage, 0, 0);
                     
-                    // Check if legend is visible
-                    const legendBox = document.getElementById('legendBox');
+                    // Check if legend is visible for target canvas type
+                    const legendBox = document.getElementById(`${targetCanvasType}LegendBox`);
                     if (!legendBox.classList.contains('hidden')) {
-                        console.log('📋 Adding legend to canvas image...');
+                        console.log(`📋 Adding legend to ${targetCanvasType.toUpperCase()} canvas image...`);
                         
                         // Get legend content and styling
-                        const legendContent = document.getElementById('legendContent');
+                        const legendContent = document.getElementById(`${targetCanvasType}LegendContent`);
                         const legendItems = legendContent.children;
                         
                         // Position for legend (bottom right with padding) - more compact
@@ -981,28 +2446,220 @@
                 };
                 
                 // Start the process by loading the canvas image
-                canvasImage.src = canvas.toDataURL('image/png');
+                // Temporarily hide excluded objects for export
+                const excludedObjects = [];
+                targetCanvas.getObjects().forEach(obj => {
+                    if (obj.excludeFromExport) {
+                        obj.visible = false;
+                        excludedObjects.push(obj);
+                    }
+                });
+                targetCanvas.renderAll();
+                
+                canvasImage.src = targetCanvas.toDataURL('image/png');
+                
+                // Restore excluded objects visibility
+                excludedObjects.forEach(obj => {
+                    obj.visible = true;
+                });
+                targetCanvas.renderAll();
             });
         }
         
         // Generate Proposal button click handler
         document.getElementById('generateProposal').addEventListener('click', async function() {
-            if (!currentImage) {
-                alert('Please upload and position an image first before generating a proposal.');
+            if (!msbImageData && !mccbImageData && !tpsldImageData && !tpmccbcompartmentImageData && !tptappinglocImageData && !tprouting1ImageData && !tprouting2ImageData && !tprouting3ImageData) {
+                alert('Please upload at least one image (MSB, MCCB, TP_SLD, TP_MCCB_COMPARTMENT, TP_TAPPING_LOC, TP_ROUTING_1, TP_ROUTING_2, or TP_ROUTING_3) before generating a proposal.');
                 return;
             }
             
-            // Get canvas image data including legend
-            console.log('🖼️ Getting canvas image data with legend...');
-            const imageDataURL = await getCanvasWithLegend();
-            console.log('📊 Image data size:', Math.round(imageDataURL.length / 1024), 'KB');
-            
-            // Simple form data with just the image
+            // Prepare form data object
             const formData = {
                 building_name: 'Test Building',
-                address: 'Test Address',
-                imageData: imageDataURL
+                address: 'Test Address'
             };
+            
+            // Get MSB image data if available
+            if (msbImageData) {
+                console.log('🖼️ Processing MSB image data...');
+                
+                // Check if MSB canvas has any content (image loaded)
+                if (msbCanvasState.image) {
+                    // Get the edited MSB version with any drawings and legend
+                    console.log('📝 Getting MSB canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('msb');
+                    if (editedImageDataURL) {
+                        console.log('📊 MSB Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.imageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get MSB canvas data, using original image');
+                        formData.imageData = msbImageData;
+                    }
+                } else {
+                    // Use original MSB image (no edits made)
+                    console.log('📋 Using original MSB image data (no edits)...');
+                    formData.imageData = msbImageData;
+                }
+            }
+            
+            // Get MCCB image data if available
+            if (mccbImageData) {
+                console.log('🖼️ Processing MCCB image data...');
+                
+                // Check if MCCB canvas has any content (image loaded)
+                if (mccbCanvasState.image) {
+                    // Get the edited MCCB version with any drawings and legend
+                    console.log('📝 Getting MCCB canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('mccb');
+                    if (editedImageDataURL) {
+                        console.log('📊 MCCB Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.mccbImageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get MCCB canvas data, using original image');
+                        formData.mccbImageData = mccbImageData;
+                    }
+                } else {
+                    // Use original MCCB image (no edits made)
+                    console.log('📋 Using original MCCB image data (no edits)...');
+                    formData.mccbImageData = mccbImageData;
+                }
+            }
+            
+            // Get TP_SLD image data if available
+            if (tpsldImageData) {
+                console.log('🖼️ Processing TP_SLD image data...');
+                
+                // Check if TP_SLD canvas has any content (image loaded)
+                if (tpsldCanvasState.image) {
+                    // Get the edited TP_SLD version with any drawings and legend
+                    console.log('📝 Getting TP_SLD canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tpsld');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_SLD Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tpsldImageData = editedImageDataURL;
+                    } else {
+                        console.log('⚠️ Failed to get TP_SLD canvas data, using original image');
+                        formData.tpsldImageData = tpsldImageData;
+                    }
+                } else {
+                    // Use original TP_SLD image (no edits made)
+                    console.log('📋 Using original TP_SLD image data (no edits)...');
+                    formData.tpsldImageData = tpsldImageData;
+                }
+            }
+
+            // Process TP_MCCB_COMPARTMENT image if available
+            if (tpmccbcompartmentImageData) {
+                console.log('🖼️ Processing TP_MCCB_COMPARTMENT image data...');
+                
+                if (tpmccbcompartmentCanvasState.image) {
+                    // Canvas has image loaded, use edited version with drawings and legend
+                    console.log('🎨 Getting edited TP_MCCB_COMPARTMENT canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tpmccbcompartment');
+                    if (editedImageDataURL) {
+                        console.log('📋 Using edited TP_MCCB_COMPARTMENT image data...');
+                        formData.tpmccbcompartmentImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_MCCB_COMPARTMENT image data...');
+                        formData.tpmccbcompartmentImageData = tpmccbcompartmentImageData;
+                    }
+                } else {
+                    // Use original TP_MCCB_COMPARTMENT image (no edits made)
+                    console.log('📋 Using original TP_MCCB_COMPARTMENT image data (no edits)...');
+                    formData.tpmccbcompartmentImageData = tpmccbcompartmentImageData;
+                }
+            }
+
+            // Process TP_TAPPING_LOC image if available
+            if (tptappinglocImageData) {
+                console.log('🖼️ Processing TP_TAPPING_LOC image data...');
+                
+                if (tptappinglocCanvasState.image) {
+                    // Canvas has image loaded, use edited version with drawings and legend
+                    console.log('🎨 Getting edited TP_TAPPING_LOC canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tptappingloc');
+                    if (editedImageDataURL) {
+                        console.log('📋 Using edited TP_TAPPING_LOC image data...');
+                        formData.tptappinglocImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_TAPPING_LOC image data...');
+                        formData.tptappinglocImageData = tptappinglocImageData;
+                    }
+                } else {
+                    // Use original TP_TAPPING_LOC image (no edits made)
+                    console.log('📋 Using original TP_TAPPING_LOC image data (no edits)...');
+                    formData.tptappinglocImageData = tptappinglocImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_1 image data if available
+            if (tprouting1ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_1 image data...');
+                
+                // Check if TP_ROUTING_1 canvas has any content (image loaded)
+                if (tprouting1CanvasState.image) {
+                    // Get the edited TP_ROUTING_1 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_1 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting1');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_1 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting1ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_1 image data...');
+                        formData.tprouting1ImageData = tprouting1ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_1 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_1 image data (no edits)...');
+                    formData.tprouting1ImageData = tprouting1ImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_2 image data if available
+            if (tprouting2ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_2 image data...');
+                
+                // Check if TP_ROUTING_2 canvas has any content (image loaded)
+                if (tprouting2CanvasState.image) {
+                    // Get the edited TP_ROUTING_2 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_2 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting2');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_2 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting2ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_2 image data...');
+                        formData.tprouting2ImageData = tprouting2ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_2 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_2 image data (no edits)...');
+                    formData.tprouting2ImageData = tprouting2ImageData;
+                }
+            }
+            
+            // Get TP_ROUTING_3 image data if available
+            if (tprouting3ImageData) {
+                console.log('🖼️ Processing TP_ROUTING_3 image data...');
+                
+                // Check if TP_ROUTING_3 canvas has any content (image loaded)
+                if (tprouting3CanvasState.image) {
+                    // Get the edited TP_ROUTING_3 version with any drawings and legend
+                    console.log('📝 Getting TP_ROUTING_3 canvas with drawings and legend...');
+                    const editedImageDataURL = await getCanvasWithLegend('tprouting3');
+                    if (editedImageDataURL) {
+                        console.log('📊 TP_ROUTING_3 Image data size:', Math.round(editedImageDataURL.length / 1024), 'KB');
+                        formData.tprouting3ImageData = editedImageDataURL;
+                    } else {
+                        console.log('📋 Fallback to original TP_ROUTING_3 image data...');
+                        formData.tprouting3ImageData = tprouting3ImageData;
+                    }
+                } else {
+                    // Use original TP_ROUTING_3 image (no edits made)
+                    console.log('📋 Using original TP_ROUTING_3 image data (no edits)...');
+                    formData.tprouting3ImageData = tprouting3ImageData;
+                }
+            }
             
             // Disable button and show loading state
             const btn = document.getElementById('generateProposal');
@@ -1125,8 +2782,19 @@
         });
 
         document.getElementById('logoTool').addEventListener('click', function() {
-            if (!currentImage) {
-                alert('Please upload and position an image first before adding logos.');
+            // Simple check - just need to have at least one image uploaded
+            if (!msbImageData && !mccbImageData && !tpsldImageData) {
+                alert('Please upload at least one image (MSB, MCCB, or TP_SLD) before adding logos.');
+                return;
+            }
+            
+            // If no canvas is currently selected, but we have images, prompt user
+            if (!currentEditingType) {
+                let message = 'Please select an image to edit first:\n\n';
+                if (msbImageData) message += '• Click "Edit MSB Image" to edit the MSB image\n';
+                if (mccbImageData) message += '• Click "Edit MCCB Image" to edit the MCCB image\n';
+                if (tpsldImageData) message += '• Click "Edit TP_SLD Image" to edit the TP_SLD image\n';
+                alert(message);
                 return;
             }
             
@@ -1137,8 +2805,8 @@
             isDrawMode = true;
             updateDrawToolUI();
             
-            // Show image gallery
-            showImageGallery();
+            // Show logo gallery section
+            showLogoGallery();
         });
 
         document.getElementById('eraserTool').addEventListener('click', function() {
@@ -1150,9 +2818,99 @@
             updateDrawToolUI();
         });
 
-        // Gallery close button
-        document.getElementById('closeGallery').addEventListener('click', function() {
-            document.getElementById('imageGallery').classList.add('hidden');
+        // Logo gallery is now managed by tool selection - no close button needed
+
+        // Collapsible toolbar functionality for mobile
+        let toolsCollapsed = false;
+        document.getElementById('toggleToolsBtn').addEventListener('click', function() {
+            const toolsGrid = document.getElementById('toolsGrid');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const toggleText = document.getElementById('toggleText');
+            
+            toolsCollapsed = !toolsCollapsed;
+            
+            if (toolsCollapsed) {
+                // Hide tools
+                toolsGrid.style.maxHeight = '0px';
+                toolsGrid.style.overflow = 'hidden';
+                toolsGrid.style.opacity = '0';
+                toolsGrid.style.marginBottom = '0px';
+                
+                // Update button
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
+                toggleText.textContent = 'Show';
+                this.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                this.classList.add('bg-green-500', 'hover:bg-green-600');
+            } else {
+                // Show tools
+                toolsGrid.style.maxHeight = 'none';
+                toolsGrid.style.overflow = 'visible';
+                toolsGrid.style.opacity = '1';
+                toolsGrid.style.marginBottom = '12px';
+                
+                // Update button
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
+                toggleText.textContent = 'Hide';
+                this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                this.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            }
+        });
+        
+        // Auto-collapse tools on mobile when canvas is active (optional enhancement)
+        function autoCollapseOnMobile() {
+            if (window.innerWidth <= 768 && isDrawMode && !toolsCollapsed) {
+                // Auto-collapse after 3 seconds of inactivity on mobile
+                setTimeout(() => {
+                    if (window.innerWidth <= 768 && isDrawMode && !toolsCollapsed) {
+                        document.getElementById('toggleToolsBtn').click();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Show helpful hint about collapsing tools on mobile
+        function showCollapseHint() {
+            if (window.innerWidth <= 768 && !toolsCollapsed) {
+                const hint = document.createElement('div');
+                hint.className = 'collapse-hint';
+                hint.textContent = '💡 Tap "Minimize" to hide toolbar and see more canvas';
+                document.body.appendChild(hint);
+                
+                setTimeout(() => {
+                    if (document.body.contains(hint)) {
+                        document.body.removeChild(hint);
+                    }
+                }, 3000);
+            }
+        }
+
+        // Mobile toolbar toggle functionality
+        let toolbarMinimized = false;
+        document.getElementById('toolbarToggle').addEventListener('click', function() {
+            const toolbar = document.getElementById('toolbar');
+            const toolbarContent = document.getElementById('toolbarContent');
+            const toggleIcon = document.getElementById('toolbarToggleIcon');
+            const toggleText = document.getElementById('toolbarToggleText');
+            
+            toolbarMinimized = !toolbarMinimized;
+            
+            if (toolbarMinimized) {
+                // Minimize toolbar - only show the toggle button
+                toolbar.classList.add('hidden-mobile');
+                toolbarContent.style.display = 'none';
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 15l-7-7-7 7"></path>';
+                toggleText.textContent = 'Show Tools';
+                this.classList.remove('bg-gray-300', 'hover:bg-gray-400');
+                this.classList.add('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+            } else {
+                // Show full toolbar
+                toolbar.classList.remove('hidden-mobile');
+                toolbarContent.style.display = 'block';
+                toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>';
+                toggleText.textContent = 'Minimize';
+                this.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'text-white');
+                this.classList.add('bg-gray-300', 'hover:bg-gray-400');
+            }
         });
 
         // Place logo function for click placement
@@ -1164,12 +2922,12 @@
         // Keyboard event handling for delete key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Delete' || e.key === 'Backspace') {
-                if (isDrawMode) {
-                    const activeObject = canvas.getActiveObject();
-                    if (activeObject && activeObject.type === 'line' && activeObject !== cropRect && activeObject !== currentImage) {
-                        canvas.remove(activeObject);
-                        canvas.discardActiveObject();
-                        canvas.renderAll();
+                if (isDrawMode && currentCanvas) {
+                    const activeObject = currentCanvas.getActiveObject();
+                    if (activeObject && activeObject.type === 'line' && activeObject !== currentCropRect && activeObject !== currentImage) {
+                        currentCanvas.remove(activeObject);
+                        currentCanvas.discardActiveObject();
+                        currentCanvas.renderAll();
                         updateLegend(); // Update legend when object is deleted
                     }
                 }
@@ -1178,54 +2936,53 @@
 
         // Initialize canvas on page load
         window.addEventListener('load', function() {
-            initCanvas();
+            updateCanvasContainers();
+            initCanvases();
             
             // Prevent default touch behavior on canvas
             document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
             document.addEventListener('touchmove', preventDefaultTouch, { passive: false });
             document.addEventListener('touchend', preventDefaultTouch, { passive: false });
-            
-            // Make canvas responsive
-            function resizeCanvas() {
-                const container = document.getElementById('canvasContainer');
-                const canvasElement = document.getElementById('fabricCanvas');
-                const containerWidth = container.offsetWidth - 4; // Account for border
-                const scale = Math.min(1, containerWidth / CROP_WIDTH);
-                
-                if (canvas) {
-                    if (scale < 1) {
-                        // Scale both the visual display and the fabric canvas
-                        canvas.setDimensions({
-                            width: CROP_WIDTH * scale,
-                            height: CROP_HEIGHT * scale
-                        });
-                        canvas.setZoom(scale);
-                        container.style.height = (CROP_HEIGHT * scale + 4) + 'px';
-                        
-                        // Remove CSS transform since we're using fabric scaling
-                        canvasElement.style.transform = 'none';
-                    } else {
-                        canvas.setDimensions({
-                            width: CROP_WIDTH,
-                            height: CROP_HEIGHT
-                        });
-                        canvas.setZoom(1);
-                        container.style.height = CROP_HEIGHT + 'px';
-                        canvasElement.style.transform = 'none';
-                    }
-                    
-                    canvas.calcOffset();
-                }
-            }
-            
-            // Resize on load and window resize
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
         });
 
-        // Add some CSS for active tool styling
+        // Handle window resize and orientation changes
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                // Recalculate responsive dimensions
+                const newDimensions = calculateResponsiveCanvasDimensions();
+                
+                // Update the dimension constants
+                Object.assign(TPROUTING1_DIMENSIONS, newDimensions.tprouting1);
+                Object.assign(TPROUTING2_DIMENSIONS, newDimensions.tprouting2);
+                Object.assign(TPROUTING3_DIMENSIONS, newDimensions.tprouting3);
+                
+                // Update HTML containers
+                updateCanvasContainers();
+                
+                // Reinitialize Fabric.js canvases with new dimensions
+                if (tprouting1Canvas) {
+                    tprouting1Canvas.setDimensions(TPROUTING1_DIMENSIONS);
+                    tprouting1Canvas.renderAll();
+                }
+                if (tprouting2Canvas) {
+                    tprouting2Canvas.setDimensions(TPROUTING2_DIMENSIONS);  
+                    tprouting2Canvas.renderAll();
+                }
+                if (tprouting3Canvas) {
+                    tprouting3Canvas.setDimensions(TPROUTING3_DIMENSIONS);
+                    tprouting3Canvas.renderAll();
+                }
+            }, 300); // Debounce resize events
+            
+            // Canvas responsive sizing is handled by CSS and separate canvas system
+        });
+
+        // Add enhanced CSS for mobile-friendly styling
         const style = document.createElement('style');
         style.textContent = `
+            /* Enhanced active tool styling */
             .active-tool {
                 transform: scale(1.05);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -1239,6 +2996,217 @@
                 border-radius: inherit;
                 background: linear-gradient(45deg, rgba(255,255,255,0.3), transparent);
                 z-index: -1;
+            }
+            
+            /* Custom range slider styling */
+            input[type="range"] {
+                -webkit-appearance: none;
+                background: transparent;
+            }
+            input[type="range"]::-webkit-slider-track {
+                background: #e5e7eb;
+                height: 8px;
+                border-radius: 4px;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3b82f6;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            input[type="range"]::-moz-range-track {
+                background: #e5e7eb;
+                height: 8px;
+                border-radius: 4px;
+                border: none;
+            }
+            input[type="range"]::-moz-range-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: #3b82f6;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            
+            /* Desktop bottom action bar styles */
+            @media (min-width: 769px) {
+                #bottomActionBar {
+                    position: relative !important;
+                    box-shadow: none !important;
+                    border-top: 1px solid #e5e7eb !important;
+                    margin-top: 2rem;
+                }
+                
+                body {
+                    padding-bottom: 0;
+                }
+                
+                .canvas-full-mobile {
+                    margin-bottom: 0 !important;
+                }
+            }
+
+            /* Enhanced touch targets for mobile */
+            @media (max-width: 768px) {
+                button, input[type="file"], select {
+                    min-height: 44px;
+                }
+                
+                .canvas-container {
+                    touch-action: manipulation;
+                }
+                
+                /* Adjust main container for top toolbar */
+                .container.mx-auto {
+                    padding-top: 8px !important;
+                }
+                
+                /* Logo gallery spacing adjustment */
+                #imageGallery {
+                    margin-bottom: 100px !important;
+                }
+                
+                /* Mobile floating toolbar */
+                .mobile-floating-toolbar {
+                    position: fixed !important;
+                    top: 48px;
+                    left: 0;
+                    right: 0;
+                    margin: 0 !important;
+                    border-radius: 16px !important;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+                    backdrop-filter: blur(12px);
+                    background-color: rgba(255, 255, 255, 0.98) !important;
+                    transform: translateY(0);
+                    transition: transform 0.3s ease-in-out;
+                    max-height: 75vh;
+                    overflow-y: auto;
+                    padding: 12px 16px 16px 16px !important;
+                    z-index: 100;
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    margin: 0 8px !important;
+                }
+                
+                .mobile-floating-toolbar.hidden-mobile {
+                    transform: translateY(calc(-100% + 52px));
+                }
+                
+                .mobile-floating-toolbar h3 {
+                    font-size: 16px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                /* Compact toolbar sections */
+                .mobile-floating-toolbar .flex.flex-col.sm\\:flex-row {
+                    gap: 8px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                .mobile-floating-toolbar #cropControls {
+                    padding: 8px 12px !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                .mobile-floating-toolbar #drawControls {
+                    padding: 8px 12px !important;
+                }
+                
+                /* Better spacing for mobile */
+                .mobile-spacing {
+                    margin-bottom: 1rem;
+                }
+                
+                /* Canvas gets full screen on mobile */
+                .canvas-full-mobile {
+                    margin-top: 108px !important;
+                    margin-bottom: 80px !important;
+                    padding-bottom: 20px !important;
+                }
+                
+                .mobile-canvas-height {
+                    min-height: calc(100vh - 240px) !important;
+                    max-height: calc(100vh - 220px) !important;
+                }
+                
+                /* Bottom action bar mobile styles */
+                #bottomActionBar {
+                    backdrop-filter: blur(8px);
+                    background-color: rgba(255, 255, 255, 0.98) !important;
+                }
+                
+                /* Ensure body has bottom padding for fixed action bar */
+                body {
+                    padding-bottom: 80px;
+                }
+                
+                /* Collapsible tools animation */
+                #toolsGrid {
+                    transition: all 0.3s ease-in-out;
+                }
+                
+                /* Auto-collapse message */
+                .collapse-hint {
+                    position: fixed;
+                    top: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    z-index: 1000;
+                    animation: fadeInOut 3s ease-in-out;
+                }
+                
+                @keyframes fadeInOut {
+                    0%, 100% { opacity: 0; }
+                    50% { opacity: 1; }
+                }
+                
+                /* Hide info panel on mobile to save space */
+                #infoPanel {
+                    display: none !important;
+                }
+            }
+            
+            /* Gallery image hover effects */
+            .gallery-item {
+                transition: all 0.2s ease;
+            }
+            .gallery-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+            .gallery-item:active {
+                transform: translateY(0px);
+            }
+            
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
+            }
+            
+            /* Custom scrollbar for gallery */
+            .gallery-scroll::-webkit-scrollbar {
+                width: 8px;
+            }
+            .gallery-scroll::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 4px;
+            }
+            .gallery-scroll::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            .gallery-scroll::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
             }
         `;
         document.head.appendChild(style);
